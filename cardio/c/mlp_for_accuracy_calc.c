@@ -1,12 +1,8 @@
 #include <stdio.h>
-#include <math.h>
-#include <stdlib.h>
+#include "static_data.h"
 
-#define INPUT_SIZE 21
 #define HIDDEN_SIZE 3
 #define OUTPUT_SIZE 3
-
-#define DATA_SIZE 2126
 
 typedef struct {
     int num_neurons;
@@ -21,7 +17,21 @@ double relu(double x) {
     return 0;
 }
 
-void forward_pass(double input[INPUT_SIZE], Layer hidden_layer, Layer output_layer, double output[OUTPUT_SIZE]) {
+// calculating the exp with the taylor series
+double baremetal_exp(double x) {
+    double result = 1.0;
+    double term = 1.0;
+    int i;
+
+    for (i = 1; i < 26; ++i) { // 26 terms is the minimum to get max accuracy
+        term *= x / i;
+        result += term;
+    }
+
+    return result;
+}
+
+void forward_pass(const double input[INPUT_SIZE], Layer hidden_layer, Layer output_layer, double output[OUTPUT_SIZE]) {
     double hidden_outputs[HIDDEN_SIZE] = {0};
     double output_logits[OUTPUT_SIZE] = {0};
 
@@ -32,6 +42,7 @@ void forward_pass(double input[INPUT_SIZE], Layer hidden_layer, Layer output_lay
         }
         hidden_outputs[i] = relu(neuron_output);
     }
+
 
     for (int i = 0; i < OUTPUT_SIZE; i++) {
         double neuron_output = output_layer.biases[i];
@@ -48,12 +59,12 @@ void forward_pass(double input[INPUT_SIZE], Layer hidden_layer, Layer output_lay
             max_logit = output_logits[i];
         }
     }
-    double exp_sum = 0;
+    double exp_sum = 0.0;
     for (int i = 0; i < OUTPUT_SIZE; i++) {
-        exp_sum += exp(output_logits[i]-max_logit);
+        exp_sum += baremetal_exp(output_logits[i]-max_logit);
     }
     for (int i = 0; i < OUTPUT_SIZE; i++) {
-        output[i] = exp(output_logits[i]-max_logit) / exp_sum;
+        output[i] = baremetal_exp(output_logits[i]-max_logit) / exp_sum;
     }
 }
 
@@ -71,16 +82,16 @@ double const output_bias[OUTPUT_SIZE] = {
     -0.6209962969859462
 };
 
-// double const output_weights[OUTPUT_SIZE*HIDDEN_SIZE] = {
-//     1.0746923135666613, -1.2391205226915465, -0.8319610838504377,
-//     -0.6929492209624085, 0.6002867725408909, -0.7236438702563148,
-//     -1.9729783350880774, 0.7706447052098919, 1.1440765214577697
-//     };
-
 double const output_weights[OUTPUT_SIZE*HIDDEN_SIZE] = {
-    1.07469231, -0.69294922, -1.97297834,
-    -1.23912052,  0.60028677,  0.77064471,
-    -0.83196108, -0.72364387,  1.14407652
+    1.0746923135666613,
+    -1.2391205226915465,
+    -0.8319610838504377,
+    -0.6929492209624085,
+    0.6002867725408909,
+    -0.7236438702563148,
+    -1.9729783350880774,
+    0.7706447052098919,
+    1.1440765214577697
 };
 
 double const hidden_weights[INPUT_SIZE*HIDDEN_SIZE] = {
@@ -151,7 +162,7 @@ double const hidden_weights[INPUT_SIZE*HIDDEN_SIZE] = {
 
 
 int read_csv(double (*inputs_list)[INPUT_SIZE], double *outputs_list) {
-    FILE *file = fopen("cardio_data.csv", "r");
+    FILE *file = fopen("test_data_fp20.csv", "r");
     if (file == NULL) {
         printf("Error: Unable to open file\n");
         return 1;
@@ -170,24 +181,93 @@ int read_csv(double (*inputs_list)[INPUT_SIZE], double *outputs_list) {
 
     fclose(file);
 
-    // printf("Loaded data:\n");
-    // for (int i = 0; i < 5; i++) {
-    //     printf("Input:");
-    //     for (int j = 0; j < INPUT_SIZE; j++) {
-    //         printf(" %.4f", inputs_list[i][j]);
-    //     }
-    //     printf(", Output: %.4f\n", outputs_list[i]);
-    // }
+    // Open the file for writing
+    FILE *t_file = fopen("inputs.txt", "w");
+    if (t_file == NULL) {
+        printf("Error opening file.\n");
+        return 1;
+    }
+
+    // Write data to the file
+    for (int i = 0; i < DATA_SIZE; i++) {
+        fprintf(t_file, "{");
+        for (int j = 0; j < INPUT_SIZE; j++) {
+            fprintf(t_file, "%lf", inputs_list[i][j]);  // Adjust the precision as needed
+            if (j < INPUT_SIZE - 1) {
+                fprintf(t_file, ", ");
+            }
+        }
+        fprintf(t_file, "},\n");
+    }
+
+    // Close the file
+    fclose(t_file);
 
     return 0;
 };
 
-int main() {
+int predictions[DATA_SIZE] = {0};
+
+int* read_inputs_run_mlp() {
+    // using input_array from static_data.h
+    Layer hidden_layer = {
+        .num_neurons = HIDDEN_SIZE,
+        .weights = {{0}},
+        .biases = {0}
+    };
+
+    Layer output_layer = {
+        .num_neurons = OUTPUT_SIZE,
+        .weights = {{0}},
+        .biases = {0}
+    };
+
+    // set the hidden layer params
+    int ind = 0;
+    for (int i=0; i < HIDDEN_SIZE; i++) {
+        hidden_layer.biases[i] = hidden_bias[i];
+        for (int j=0; j < INPUT_SIZE; j++) {
+            hidden_layer.weights[i][j] = hidden_weights[ind];
+            ind++;
+        }
+    }
+
+    // set the output layer params
+    ind = 0;
+    for (int i=0; i < OUTPUT_SIZE; i++) {
+        output_layer.biases[i] = output_bias[i];
+        for (int j=0; j < HIDDEN_SIZE; j++) {
+            output_layer.weights[i][j] = output_weights[ind];
+            ind++;
+        }
+    }
+
+    double output_pred[OUTPUT_SIZE];
+
+    for (int i=0; i < DATA_SIZE; i++) {
+        forward_pass(input_array[i], hidden_layer, output_layer, output_pred);
+        int argmax = 0;
+        double max_val = output_pred[0];
+        for (int m=1; m < OUTPUT_SIZE; m++) {
+            if (output_pred[m] > max_val) {
+                argmax = m;
+                max_val = output_pred[m];
+            };
+        };
+        predictions[i] = argmax+1;
+    }
+
+    return predictions;
+}
+
+
+int calculate_accuracy() {
     double inputs[DATA_SIZE][INPUT_SIZE];
     double outputs[DATA_SIZE];
+    
     read_csv(inputs, outputs);
+    read_inputs_run_mlp();
 
-    // double input[INPUT_SIZE] = {132,0.006,0,0.006,0.003,0,0,17,2.1,0,10.4,130,68,198,6,1,141,136,140,12,0};
 
     Layer hidden_layer = {
         .num_neurons = HIDDEN_SIZE,
@@ -204,7 +284,7 @@ int main() {
     // set the hidden layer params
     int ind = 0;
     for (int i=0; i < HIDDEN_SIZE; i++) {
-        hidden_layer.biases[i] = hidden_bias[ind];
+        hidden_layer.biases[i] = hidden_bias[i];
         for (int j=0; j < INPUT_SIZE; j++) {
             hidden_layer.weights[i][j] = hidden_weights[ind];
             ind++;
@@ -214,7 +294,7 @@ int main() {
     // set the output layer params
     ind = 0;
     for (int i=0; i < OUTPUT_SIZE; i++) {
-        output_layer.biases[i] = output_bias[ind];
+        output_layer.biases[i] = output_bias[i];
         for (int j=0; j < HIDDEN_SIZE; j++) {
             output_layer.weights[i][j] = output_weights[ind];
             ind++;
@@ -231,12 +311,10 @@ int main() {
         for (int m=1; m < OUTPUT_SIZE; m++) {
             if (output_pred[m] > max_val) {
                 argmax = m;
+                max_val = output_pred[m];
             };
         };
-        // printf("predicted: %d \n", argmax+1);
-        // printf("correct: %d \n", (int) outputs[i]);
-        // printf("______");
-        // check if correct prediction
+
         if ((argmax+1) == (int) outputs[i]) {
             num_correct += 1;
         }
@@ -246,4 +324,8 @@ int main() {
     printf("%f \n", accuracy);
 
     return 0;
+}
+
+int main() {
+    calculate_accuracy();
 }
