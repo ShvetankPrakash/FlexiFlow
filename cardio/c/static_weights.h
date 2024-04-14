@@ -2,19 +2,19 @@
 #define HIDDEN_SIZE 3
 #define OUTPUT_SIZE 3
 
-double const hidden_bias[HIDDEN_SIZE] = {
+const double hidden_bias[HIDDEN_SIZE] = {
     0.39832570839026904,
     0.1605624598440905,
     0.5324232692249139
 };
 
-double const output_bias[OUTPUT_SIZE] = {
+const double output_bias[OUTPUT_SIZE] = {
     0.5144837505841111,
     -0.3180327795072319,
     -0.6209962969859462
 };
 
-double const output_weights[OUTPUT_SIZE*HIDDEN_SIZE] = {
+const double output_weights[OUTPUT_SIZE*HIDDEN_SIZE] = {
     1.0746923135666613,
     -1.2391205226915465,
     -0.8319610838504377,
@@ -26,7 +26,7 @@ double const output_weights[OUTPUT_SIZE*HIDDEN_SIZE] = {
     1.1440765214577697
 };
 
-double const hidden_weights[INPUT_SIZE*HIDDEN_SIZE] = {
+const double hidden_weights[INPUT_SIZE*HIDDEN_SIZE] = {
     -0.08219146251432813,
     1.0769869899550182,
     -0.05088947388031397,
