@@ -6,7 +6,7 @@
 
 typedef struct {
     int num_neurons;
-    double weights[HIDDEN_SIZE][INPUT_SIZE];
+    double weights[HIDDEN_SIZE][NUM_INPUT_FEATURES];
     double biases[HIDDEN_SIZE];
 } Layer;
 
@@ -31,13 +31,13 @@ double baremetal_exp(double x) {
     return result;
 }
 
-void forward_pass(const double input[INPUT_SIZE], Layer hidden_layer, Layer output_layer, double output[OUTPUT_SIZE]) {
+void forward_pass(const double input[NUM_INPUT_FEATURES], Layer hidden_layer, Layer output_layer, double output[OUTPUT_SIZE]) {
     double hidden_outputs[HIDDEN_SIZE] = {0};
     double output_logits[OUTPUT_SIZE] = {0};
 
     for (int i = 0; i < HIDDEN_SIZE; i++) {
         double neuron_output = hidden_layer.biases[i];
-        for (int j = 0; j < INPUT_SIZE; j++) { // each neuron is connected to all inputs
+        for (int j = 0; j < NUM_INPUT_FEATURES; j++) { // each neuron is connected to all inputs
             neuron_output += hidden_layer.weights[i][j] * input[j];
         }
         hidden_outputs[i] = relu(neuron_output);
@@ -68,7 +68,7 @@ void forward_pass(const double input[INPUT_SIZE], Layer hidden_layer, Layer outp
     }
 }
 
-double const sample_input[INPUT_SIZE] = {120,0,0,0,0,0,0,73,0.5,43,2.4,64,62,126,2,0,120,137,121,73,1};
+double const sample_input[NUM_INPUT_FEATURES] = {120,0,0,0,0,0,0,73,0.5,43,2.4,64,62,126,2,0,120,137,121,73,1};
 
 double const hidden_bias[HIDDEN_SIZE] = {
     0.39832570839026904,
@@ -94,7 +94,7 @@ double const output_weights[OUTPUT_SIZE*HIDDEN_SIZE] = {
     1.1440765214577697
 };
 
-double const hidden_weights[INPUT_SIZE*HIDDEN_SIZE] = {
+double const hidden_weights[NUM_INPUT_FEATURES*HIDDEN_SIZE] = {
     -0.08219146251432813,
     1.0769869899550182,
     -0.05088947388031397,
@@ -161,7 +161,7 @@ double const hidden_weights[INPUT_SIZE*HIDDEN_SIZE] = {
     };
 
 
-int read_csv(double (*inputs_list)[INPUT_SIZE], double *outputs_list) {
+int read_csv(double (*inputs_list)[NUM_INPUT_FEATURES], double *outputs_list) {
     FILE *file = fopen("test_data_fp20.csv", "r");
     if (file == NULL) {
         printf("Error: Unable to open file\n");
@@ -175,7 +175,7 @@ int read_csv(double (*inputs_list)[INPUT_SIZE], double *outputs_list) {
                   &inputs_list[num_lines][8], &inputs_list[num_lines][9], &inputs_list[num_lines][10], &inputs_list[num_lines][11],
                   &inputs_list[num_lines][12], &inputs_list[num_lines][13], &inputs_list[num_lines][14], &inputs_list[num_lines][15],
                   &inputs_list[num_lines][16], &inputs_list[num_lines][17], &inputs_list[num_lines][18], &inputs_list[num_lines][19],
-                  &inputs_list[num_lines][20], &outputs_list[num_lines]) == INPUT_SIZE + 1) {
+                  &inputs_list[num_lines][20], &outputs_list[num_lines]) == NUM_INPUT_FEATURES + 1) {
         num_lines++;
     }
 
@@ -189,11 +189,11 @@ int read_csv(double (*inputs_list)[INPUT_SIZE], double *outputs_list) {
     }
 
     // Write data to the file
-    for (int i = 0; i < DATA_SIZE; i++) {
+    for (int i = 0; i < SAMPLE_SIZE; i++) {
         fprintf(t_file, "{");
-        for (int j = 0; j < INPUT_SIZE; j++) {
+        for (int j = 0; j < NUM_INPUT_FEATURES; j++) {
             fprintf(t_file, "%lf", inputs_list[i][j]);  // Adjust the precision as needed
-            if (j < INPUT_SIZE - 1) {
+            if (j < NUM_INPUT_FEATURES - 1) {
                 fprintf(t_file, ", ");
             }
         }
@@ -206,7 +206,7 @@ int read_csv(double (*inputs_list)[INPUT_SIZE], double *outputs_list) {
     return 0;
 };
 
-int predictions[DATA_SIZE] = {0};
+int predictions[SAMPLE_SIZE] = {0};
 
 int* read_inputs_run_mlp() {
     // using input_array from static_data.h
@@ -226,7 +226,7 @@ int* read_inputs_run_mlp() {
     int ind = 0;
     for (int i=0; i < HIDDEN_SIZE; i++) {
         hidden_layer.biases[i] = hidden_bias[i];
-        for (int j=0; j < INPUT_SIZE; j++) {
+        for (int j=0; j < NUM_INPUT_FEATURES; j++) {
             hidden_layer.weights[i][j] = hidden_weights[ind];
             ind++;
         }
@@ -244,7 +244,7 @@ int* read_inputs_run_mlp() {
 
     double output_pred[OUTPUT_SIZE];
 
-    for (int i=0; i < DATA_SIZE; i++) {
+    for (int i=0; i < SAMPLE_SIZE; i++) {
         forward_pass(input_array[i], hidden_layer, output_layer, output_pred);
         int argmax = 0;
         double max_val = output_pred[0];
@@ -262,8 +262,8 @@ int* read_inputs_run_mlp() {
 
 
 int calculate_accuracy() {
-    double inputs[DATA_SIZE][INPUT_SIZE];
-    double outputs[DATA_SIZE];
+    double inputs[SAMPLE_SIZE][NUM_INPUT_FEATURES];
+    double outputs[SAMPLE_SIZE];
     
     read_csv(inputs, outputs);
     read_inputs_run_mlp();
@@ -285,7 +285,7 @@ int calculate_accuracy() {
     int ind = 0;
     for (int i=0; i < HIDDEN_SIZE; i++) {
         hidden_layer.biases[i] = hidden_bias[i];
-        for (int j=0; j < INPUT_SIZE; j++) {
+        for (int j=0; j < NUM_INPUT_FEATURES; j++) {
             hidden_layer.weights[i][j] = hidden_weights[ind];
             ind++;
         }
@@ -304,7 +304,7 @@ int calculate_accuracy() {
     double output_pred[OUTPUT_SIZE];
     int num_correct = 0;
 
-    for (int i=0; i < DATA_SIZE; i++) {
+    for (int i=0; i < SAMPLE_SIZE; i++) {
         forward_pass(inputs[i], hidden_layer, output_layer, output_pred);
         int argmax = 0;
         double max_val = output_pred[0];
@@ -320,7 +320,7 @@ int calculate_accuracy() {
         }
     }
 
-    double accuracy = (double) num_correct / (double) DATA_SIZE;
+    double accuracy = (double) num_correct / (double) SAMPLE_SIZE;
     printf("%f \n", accuracy);
 
     return 0;

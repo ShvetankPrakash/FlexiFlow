@@ -1,7 +1,7 @@
 #include "static_data.h"
 #include "static_weights.h"
 
-int predictions[DATA_SIZE] = {0};
+int predictions[SAMPLE_SIZE] = {0};
 
 typedef struct {
     int num_neurons;
@@ -103,7 +103,7 @@ int* read_inputs_run_mlp() {
 
     double output_pred[OUTPUT_SIZE];
 
-    for (int i=0; i < DATA_SIZE; i++) {
+    for (int i=0; i < SAMPLE_SIZE; i++) {
         forward_pass(input_array[i], hidden_layer, output_layer, output_pred);
         int argmax = 0;
         double max_val = output_pred[0];
