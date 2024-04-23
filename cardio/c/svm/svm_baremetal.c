@@ -1,9 +1,14 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "static_params.h"
-#include "../static_data.h"
+#include "static_data.h"
 
-double dot_product(const double svi[NUM_INPUT_FEATURES], const double input[NUM_INPUT_FEATURES], int length) {
+// returns prediction class (= index+1)
+int predictions[SAMPLE_SIZE] = {0};
+
+double dot_product(
+    const double* svi,
+    const double* input,
+    int length
+    ) {
     double result = 0.0;
     for (int i = 0; i < length; i++) {
         result += svi[i] * input[i];
@@ -11,7 +16,11 @@ double dot_product(const double svi[NUM_INPUT_FEATURES], const double input[NUM_
     return result;
 }
 
-void linear_kernel(const double sv[TOTAL_SV_NUM][NUM_INPUT_FEATURES], const double input[NUM_INPUT_FEATURES], double result[TOTAL_SV_NUM]) {
+void linear_kernel(
+    const double (*sv)[NUM_INPUT_FEATURES],
+    const double* input,
+    double* result
+    ) {
     for (int i = 0; i < TOTAL_SV_NUM; i++) {
         result[i] = dot_product(sv[i], input, NUM_INPUT_FEATURES);
     }
@@ -20,16 +29,13 @@ void linear_kernel(const double sv[TOTAL_SV_NUM][NUM_INPUT_FEATURES], const doub
 double kernel_array[TOTAL_SV_NUM] = {0};
 
 void decision_function(
-    const double sv[TOTAL_SV_NUM][NUM_INPUT_FEATURES],
-    const int nv[NUM_CLASSES],
-    const double a[2][TOTAL_SV_NUM],
-    const double b[NUM_CLASSES],
-    const double input[NUM_INPUT_FEATURES],
+    const double (*sv)[NUM_INPUT_FEATURES],
+    const int* nv,
+    const double (*a)[TOTAL_SV_NUM],
+    const double* b,
+    const double* input,
     double* decision
     ) {
-    
-    // FILE *file = fopen("decision.csv", "a");
-
     // 1) kernel calculation
     linear_kernel(sv, input, kernel_array);
 
@@ -62,18 +68,16 @@ void decision_function(
             index++;
         }
     }
-    // fprintf(file, "%f, %f, %f\n", decision[0], decision[1], decision[2]);
-    // fclose(file);
 }
 
 double decision_array[NUM_CLASSES] = {0.0}; // not sure if the size is always NUM_CLASSES, it works here but maybe should use a diff formula
 
 int predict(
-    const double sv[TOTAL_SV_NUM][NUM_INPUT_FEATURES],
-    const int nv[NUM_CLASSES],
-    const double a[2][TOTAL_SV_NUM],
-    const double b[NUM_CLASSES],
-    const double input[NUM_INPUT_FEATURES]
+    const double (*sv)[NUM_INPUT_FEATURES],
+    const int* nv,
+    const double (*a)[TOTAL_SV_NUM],
+    const double* b,
+    const double* input
     ) {
     decision_function(sv, nv, a, b, input, decision_array);
     
@@ -102,14 +106,14 @@ int main() {
 
     for (int i = 0; i < SAMPLE_SIZE; i++) {
         int pred_index = predict(
-            support_vectors, num_support_vectors_per_class, dual_coefs, intercepts, input_array[i]
+            &support_vectors[0],
+            num_support_vectors_per_class,
+            &dual_coefs[0],
+            intercepts,
+            input_array[i]
             );
-        if (output_array[i] == (pred_index+1)) {
-            correct += 1;
-        }
+        predictions[i] = pred_index + 1;
     }
 
-    double accuracy = (double) correct / (double) SAMPLE_SIZE;
-    printf("Accuracy: %f \n", accuracy);
     return 0;
 }

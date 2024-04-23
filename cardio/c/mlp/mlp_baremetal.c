@@ -1,5 +1,5 @@
 #include "static_data.h"
-#include "static_weights.h"
+#include "static_params.h"
 
 int predictions[SAMPLE_SIZE] = {0};
 
@@ -30,7 +30,7 @@ double baremetal_exp(double x) {
     return result;
 }
 
-void forward_pass(const double input[INPUT_SIZE], Layer hidden_layer, Layer output_layer, double output[OUTPUT_SIZE]) {
+void forward_pass(const double* input, Layer hidden_layer, Layer output_layer, double* output) {
     double hidden_outputs[HIDDEN_SIZE] = {0};
     double output_logits[OUTPUT_SIZE] = {0};
 
