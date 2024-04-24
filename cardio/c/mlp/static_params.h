@@ -2,6 +2,8 @@
 #define HIDDEN_SIZE 3
 #define OUTPUT_SIZE 3
 
+// IMPORTANT NOTE: weight matrices are transposed
+
 const double hidden_bias[HIDDEN_SIZE] = {
     0.39832570839026904,
     0.1605624598440905,
