@@ -21,21 +21,20 @@ int cosine_similarity(const int* u, const int* v) {
 
 // Find the array with the lowest cosine similarity to the 'ngram' array
 void find_closest() {
-    int minSim = 99999999;  // Initialize minimum similarity to the highest possible int value
+    int maxSim = 0;  // Initialize minimum similarity to the highest possible int value
     int label = -1;  // Initialize label to -1
     int sim;
 
     for (int i = 0; i < AM_COUNT; i++) {
-        sim = VECTOR_SIZE - cosine_similarity(AM[i], Ngram_Array);
+        sim = cosine_similarity(AM[i], Ngram_Array);
 
-  //      printf("Cosine similarity: %d (Label: %d)\n", sim, i);
-        if (sim < minSim) {
-            minSim = sim;
+        if (sim > maxSim) {
+            maxSim = sim;
             label = i;
         }
     }
 
-    printf("Lowest cosine similarity: %d (Label: %d)\n", minSim, label);
+    printf("Lowest cosine similarity: %d (Label: %d)\n", maxSim, label);
 }
 
 int main() {
