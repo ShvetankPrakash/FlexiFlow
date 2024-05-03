@@ -2,9 +2,6 @@
 #include "static_data.h"
 #include "static_params.h"
 
-#define HIDDEN_SIZE 3
-#define OUTPUT_SIZE 3
-
 typedef struct {
     int num_neurons;
     double weights[HIDDEN_SIZE][NUM_INPUT_FEATURES];
@@ -68,51 +65,6 @@ void forward_pass(const double* input, Layer hidden_layer, Layer output_layer, d
         output[i] = baremetal_exp(output_logits[i]-max_logit) / exp_sum;
     }
 }
-
-// int read_csv(double (*inputs_list)[NUM_INPUT_FEATURES], double *outputs_list) {
-//     FILE *file = fopen("test_data_fp20.csv", "r");
-//     if (file == NULL) {
-//         printf("Error: Unable to open file\n");
-//         return 1;
-//     }
-
-//     int num_lines = 0;
-//     while (fscanf(file, "%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf,%lf\n",
-//                   &inputs_list[num_lines][0], &inputs_list[num_lines][1], &inputs_list[num_lines][2], &inputs_list[num_lines][3],
-//                   &inputs_list[num_lines][4], &inputs_list[num_lines][5], &inputs_list[num_lines][6], &inputs_list[num_lines][7],
-//                   &inputs_list[num_lines][8], &inputs_list[num_lines][9], &inputs_list[num_lines][10], &inputs_list[num_lines][11],
-//                   &inputs_list[num_lines][12], &inputs_list[num_lines][13], &inputs_list[num_lines][14], &inputs_list[num_lines][15],
-//                   &inputs_list[num_lines][16], &inputs_list[num_lines][17], &inputs_list[num_lines][18], &inputs_list[num_lines][19],
-//                   &inputs_list[num_lines][20], &outputs_list[num_lines]) == NUM_INPUT_FEATURES + 1) {
-//         num_lines++;
-//     }
-
-//     fclose(file);
-
-//     // Open the file for writing
-//     FILE *t_file = fopen("inputs.txt", "w");
-//     if (t_file == NULL) {
-//         printf("Error opening file.\n");
-//         return 1;
-//     }
-
-//     // Write data to the file
-//     for (int i = 0; i < SAMPLE_SIZE; i++) {
-//         fprintf(t_file, "{");
-//         for (int j = 0; j < NUM_INPUT_FEATURES; j++) {
-//             fprintf(t_file, "%lf", inputs_list[i][j]);  // Adjust the precision as needed
-//             if (j < NUM_INPUT_FEATURES - 1) {
-//                 fprintf(t_file, ", ");
-//             }
-//         }
-//         fprintf(t_file, "},\n");
-//     }
-
-//     // Close the file
-//     fclose(t_file);
-
-//     return 0;
-// };
 
 int predictions[SAMPLE_SIZE] = {0};
 
