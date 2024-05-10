@@ -2,10 +2,10 @@ import math
 
 # Define constants for scaling
 AMPLITUDE = 127  # Amplitude of the sine wave
-SAMPLE_RATE = 6  # in Hz
-FREQUENCY_1 = 1  # Frequency for '1'
-FREQUENCY_2 = 2  # Frequency for '0'
-SYMBOL_DURATION = 1  # Duration of each symbol in seconds
+SAMPLE_RATE = 120000  # in Hz
+FREQUENCY_1 = 100  # Frequency for '1'
+FREQUENCY_2 = 200  # Frequency for '0'
+SYMBOL_DURATION = 0.01  # Duration of each symbol in seconds
 USER_ID = '11110000'  # Example reader query, expecting this to be the correct signal to respond to
 VERIFICATION = '11000101'
 
@@ -54,7 +54,13 @@ def invert_bits(binary_sequence):
 # Test data generation
 binary_sequence = '11000101'  # RFID Tag's data
 generated_signal = modulate_binary_sequence(binary_sequence, FREQUENCY_1, FREQUENCY_2, SYMBOL_DURATION, SAMPLE_RATE)
-
+with open("output.txt", "w") as txt_file:
+    while len(generated_signal)>0:
+        line_to_write = ""
+        for x in range(0,10):
+            line_to_write += str(generated_signal.pop(0)) + ", "
+        txt_file.write(line_to_write + "\n")
+        
 # Simulate receiving and demodulating the signal at the reader
 decoded_sequence = demodulate_fsk_signal(generated_signal, FREQUENCY_1, FREQUENCY_2, SYMBOL_DURATION, SAMPLE_RATE)
 
