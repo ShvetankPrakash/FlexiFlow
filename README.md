@@ -57,9 +57,15 @@ TODO
 
 # References
 [1] SDGs
+
 [2] Sustainable Computing Ref.
+
 [3] Sustainable Computing Ref.
+
 [4] Sustainable Computing Ref.
+
 [5] World Economic Forum 
+
 [6] Pragmatic Sustainability White Paper
+
 [7] Pragmatic Ref.
