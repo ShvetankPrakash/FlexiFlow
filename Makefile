@@ -1,0 +1,74 @@
+##############################################
+#   Flexibench / Sustainabench Makefile      #
+##############################################
+
+# RISC-V Toolchain and Compiler
+RV_PREFIX = /opt/riscv/bin/riscv64-unknown-elf-
+CC = $(RV_PREFIX)gcc
+
+# Flags telling GCC to compile to rv32e, without libraries (e.g. baremetal), to use a different memory model so that we can put our code at 0x80000000, to use the specified linker script, and turn on full optimizations.
+CCFLAGS = -march=rv32e_zicsr -mabi=ilp32e -nostdlib -mcmodel=medany -Tlink.ld -O3
+
+# Source directory
+SRC_DIR = src
+
+# Path to write compiled executables and object files
+BUILD_DIR = build/
+BUILD_BIN_DIR = $(BUILD_DIR)bin
+BUILD_OBJ_DIR = $(BUILD_DIR)obj
+BUILD_SRC_DIR = $(BUILD_DIR)src
+
+# Default values for INFERENCE (multi or single) and DATA_SAMPLE_NUM
+INFERENCE ?= single
+DATA_SAMPLE_NUM ?= 0
+
+# Create the build directories if they don't exist
+build_dirs:
+	mkdir -p $(BUILD_DIR)
+	mkdir -p $(BUILD_BIN_DIR)
+	mkdir -p $(BUILD_OBJ_DIR)
+	mkdir -p $(BUILD_SRC_DIR)
+
+# Compile all benchmarks
+all: SDG_02 SDG_03 SDG_06 SDG_12 SDG_13 SDG_14 SDG_15
+
+# Compile each benchmark with inference type and sample number
+SDG_02:
+	$(MAKE) compile_inference SDG_DIR=SDG_02_Zero_Hunger C_FILE=food_spoilage_detection BIN_FILE=SDG_02_food_spoilage_detection
+
+SDG_03:
+	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being C_FILE=gesture_recognition BIN_FILE=SDG_03_gesture_recognition
+
+SDG_06:
+	$(MAKE) compile_inference SDG_DIR=SDG_06_Clean_Water_and_Sanitation C_FILE=water_quality_monitoring BIN_FILE=SDG_06_water_quality_monitoring
+
+SDG_12:
+	$(MAKE) compile_inference SDG_DIR=SDG_12_Responsible_Consumption_and_Production C_FILE=odor_detection BIN_FILE=SDG_12_odor_detection
+
+SDG_13:
+	$(MAKE) compile_inference SDG_DIR=SDG_13_Climate_Action C_FILE=SDG_13_hvac_monitoring BIN_FILE=SDG_13_hvac_monitoring
+
+SDG_14:
+	$(MAKE) compile_inference SDG_DIR=SDG_14_Life_Below_Water C_FILE=animal_tracking BIN_FILE=SDG_14_animal_tracking
+
+SDG_15:
+	$(MAKE) compile_inference SDG_DIR=SDG_15_Life_on_Land C_FILE=deforestation_tracking BIN_FILE=SDG_15_deforestation_tracking
+
+# Rule to handle multi-inference and single-inference compilation
+compile_inference: build_dirs
+	cp $(SRC_DIR)/$(SDG_DIR)/$(INFERENCE)_inference/$(C_FILE).c $(BUILD_SRC_DIR)/
+	cp $(SRC_DIR)/asm/init.s $(BUILD_SRC_DIR)/
+	@if [ "$(INFERENCE)" = "multi" ]; then \
+		cp $(SRC_DIR)/$(SDG_DIR)/multi_inference/sample_data.h $(BUILD_SRC_DIR)/; \
+		$(CC) $(CCFLAGS) -c $(BUILD_SRC_DIR)/init.s -o $(BUILD_OBJ_DIR)/init.o; \
+		$(CC) $(CCFLAGS) -c $(BUILD_SRC_DIR)/$(C_FILE).c -o $(BUILD_OBJ_DIR)/$(notdir $(C_FILE)).o; \
+		$(CC) $(CCFLAGS) -o $(BUILD_BIN_DIR)/$(BIN_FILE)_multi_inference $(BUILD_OBJ_DIR)/$(notdir $(C_FILE)).o $(BUILD_OBJ_DIR)/init.o; \
+	elif [ "$(INFERENCE)" = "single" ]; then \
+		cp $(SRC_DIR)/$(SDG_DIR)/single_inference/data/sample_$(DATA_SAMPLE_NUM).h $(BUILD_SRC_DIR)/; \
+		mv $(BUILD_SRC_DIR)/sample_$(DATA_SAMPLE_NUM).h $(BUILD_SRC_DIR)/sample_data.h; \
+		$(CC) $(CCFLAGS) -c $(BUILD_SRC_DIR)/init.s -o $(BUILD_OBJ_DIR)/init.o; \
+		$(CC) $(CCFLAGS) -c $(BUILD_SRC_DIR)/$(C_FILE).c -o $(BUILD_OBJ_DIR)/$(notdir $(C_FILE)).o; \
+		$(CC) $(CCFLAGS) -o $(BUILD_BIN_DIR)/$(BIN_FILE)_single_inference_sample_$(DATA_SAMPLE_NUM) $(BUILD_OBJ_DIR)/$(notdir $(C_FILE)).o $(BUILD_OBJ_DIR)/init.o; \
+	fi
+clean:
+	rm -rf $(BUILD_DIR)
