@@ -12,7 +12,7 @@ char potable_check(double o2, double pH, double tds) {
   return o2 > O2_MIN && (pH < PH_MAX && pH > PH_MIN) && tds < TDS_MAX;
 }
 
-char Read_Sensor_Values_Run() {
+char Read_Sensor_Values_Run_Check() {
   double pH, o2, tds;
   char potable, golden_reference;
 
@@ -36,6 +36,6 @@ char Read_Sensor_Values_Run() {
 }
 
 int main() {
-  correct_result = Read_Sensor_Values_Run();
+  correct_result = Read_Sensor_Values_Run_Check();
   return 0;
 }
