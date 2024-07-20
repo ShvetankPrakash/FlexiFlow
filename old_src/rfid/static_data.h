@@ -970,7 +970,7 @@ const int RFID_Input_Signal [Num_Data_Samples] = {
 #define Num_Degrees 360
 
 // Precomputed sine wave lookup table (scaled to 8-bit integer range)
-volatile const int sine_wave_lookup [Num_Degrees] = {
+const int sine_wave_lookup [Num_Degrees] = {
       0,    2,    4,    6,    8,   11,   13,   15,   17,   19,
      22,   24,   26,   28,   30,   32,   35,   37,   39,   41,
      43,   45,   47,   49,   51,   53,   55,   57,   59,   61,
