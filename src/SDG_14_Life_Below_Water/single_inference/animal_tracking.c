@@ -89,7 +89,7 @@ void demodulate_fsk_signal(int* fsk_signal, char* decoded_bits, int frequency_1,
     decoded_bits[len / samples_per_symbol] = '\0';
 }
 
-char RFID_Run_Check() {
+char run_animal_tracking() {
     char GPIO;
 
     // Test data generation
@@ -121,6 +121,6 @@ char RFID_Run_Check() {
 }
 
 int main() {
-  correct_result = RFID_Run_Check();
+  correct_result = run_animal_tracking();
   return 0;
 }

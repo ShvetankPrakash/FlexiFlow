@@ -22,7 +22,7 @@ int cosine_similarity(const int* u, const int* v) {
 }
 
 // Find the array with the lowest cosine similarity to the 'ngram' array
-char Gesture_Recognition_Run_Check() {
+char run_muscle() {
     char GPIO;
 
     int maxSim = 0;  // Initialize minimum similarity to the highest possible int value
@@ -48,7 +48,7 @@ char Gesture_Recognition_Run_Check() {
     printf("Lowest cosine similarity: %d (Label: %d)\n", maxSim, label);
 }
 int main() {
-  correct_result = Gesture_Recognition_Run_Check();
+  correct_result = run_muscle();
   return 0;
 }
 
