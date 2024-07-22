@@ -9,6 +9,9 @@ CC = $(RV_PREFIX)gcc
 # Flags telling GCC to compile to rv32e, without libraries (e.g. baremetal), to use a different memory model so that we can put our code at 0x80000000, to use the specified linker script, and turn on full optimizations.
 CCFLAGS = -march=rv32e_zicsr -mabi=ilp32e -nostdlib -mcmodel=medany -Tlink.ld -O3
 
+# Python installation
+PYTHON = python3
+
 # Source directory
 SRC_DIR = src
 
@@ -18,9 +21,11 @@ BUILD_BIN_DIR = $(BUILD_DIR)bin
 BUILD_OBJ_DIR = $(BUILD_DIR)obj
 BUILD_SRC_DIR = $(BUILD_DIR)src
 
-# Default values for INFERENCE (multi or single) and DATA_SAMPLE_NUM
+# Default values for INFERENCE (multi or single), DATA_SAMPLE_NUM, and
+# QUANTIZATION
 INFERENCE ?= single
 DATA_SAMPLE_NUM ?= 0
+QUANTIZATION ?= 8
 
 # Create the build directories if they don't exist
 build_dirs:
@@ -59,13 +64,12 @@ compile_inference: build_dirs
 	cp $(SRC_DIR)/$(SDG_DIR)/$(INFERENCE)_inference/$(C_FILE).c $(BUILD_SRC_DIR)/
 	cp $(SRC_DIR)/asm/init.s $(BUILD_SRC_DIR)/
 	@if [ "$(INFERENCE)" = "multi" ]; then \
-		cp $(SRC_DIR)/$(SDG_DIR)/multi_inference/sample_data.h $(BUILD_SRC_DIR)/; \
+		$(PYTHON) $(SRC_DIR)/$(SDG_DIR)/multi_inference/gen-multi-sample.py $(SRC_DIR)/$(SDG_DIR)/samples.csv $(BUILD_SRC_DIR)/ $(QUANTIZATION); \
 		$(CC) $(CCFLAGS) -c $(BUILD_SRC_DIR)/init.s -o $(BUILD_OBJ_DIR)/init.o; \
 		$(CC) $(CCFLAGS) -c $(BUILD_SRC_DIR)/$(C_FILE).c -o $(BUILD_OBJ_DIR)/$(notdir $(C_FILE)).o; \
 		$(CC) $(CCFLAGS) -o $(BUILD_BIN_DIR)/$(BIN_FILE)_multi_inference $(BUILD_OBJ_DIR)/$(notdir $(C_FILE)).o $(BUILD_OBJ_DIR)/init.o; \
 	elif [ "$(INFERENCE)" = "single" ]; then \
-		cp $(SRC_DIR)/$(SDG_DIR)/single_inference/data/sample_$(DATA_SAMPLE_NUM).h $(BUILD_SRC_DIR)/; \
-		mv $(BUILD_SRC_DIR)/sample_$(DATA_SAMPLE_NUM).h $(BUILD_SRC_DIR)/sample_data.h; \
+		$(PYTHON) $(SRC_DIR)/$(SDG_DIR)/single_inference/gen-sample.py $(SRC_DIR)/$(SDG_DIR)/samples.csv $(BUILD_SRC_DIR)/ $(DATA_SAMPLE_NUM) $(QUANTIZATION); \
 		$(CC) $(CCFLAGS) -c $(BUILD_SRC_DIR)/init.s -o $(BUILD_OBJ_DIR)/init.o; \
 		$(CC) $(CCFLAGS) -c $(BUILD_SRC_DIR)/$(C_FILE).c -o $(BUILD_OBJ_DIR)/$(notdir $(C_FILE)).o; \
 		$(CC) $(CCFLAGS) -o $(BUILD_BIN_DIR)/$(BIN_FILE)_single_inference_sample_$(DATA_SAMPLE_NUM) $(BUILD_OBJ_DIR)/$(notdir $(C_FILE)).o $(BUILD_OBJ_DIR)/init.o; \

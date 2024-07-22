@@ -1,9 +1,10 @@
 #include "sample_data.h"
 
-#define PH_MIN 6.5
-#define PH_MAX 8.5
-#define O2_MIN 6
-#define TDS_MAX 600
+/**
+ * O2 > 6
+ * 6.5 < pH < 8.5
+ * TDS < 600
+ */
 
 // Global volatile variable to verify result is not optimized out
 volatile char correct_result = -1;
