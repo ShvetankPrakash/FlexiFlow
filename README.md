@@ -17,7 +17,7 @@ TODO: Point them to install Spike without PK
 # Compiling Benchmarks
 TODO: Write about how to use Makefile for build
 - Update path to local RISCV toolchain
-- Explain `make [SDG_NUM] INFERENCE=multi` vs `make [SDG_NUM] INFERENCE=single DATA_SAMPLE_NUM=0`
+- Explain `make [SDG_NUM] INFERENCE=multi` vs `make [SDG_NUM] INFERENCE=single DATA_SAMPLE_NUM=0 QUANTIZATION=8`
 - Explain `/build` dirs: `bin/`, `obj/`, `src/`
 
 # Running Benchmarks
