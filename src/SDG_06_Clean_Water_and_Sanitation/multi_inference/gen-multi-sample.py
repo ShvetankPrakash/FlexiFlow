@@ -3,21 +3,20 @@ import argparse
 
 #TODO: update these ranges
 def quantize_O2(val, quant):
-    return int(val / 14.5 * (2**quant - 1))
+    return int(float(val) / 14.5 * (2**quant - 1))
 
 def quantize_pH(val, quant):
-    return int((val) / 14 * (2**quant - 1))
+    return int(float(val) / 14 * (2**quant - 1))
 
 def quantize_TDS(val, quant):
-    return int(val / 55600 * (2**quant - 1))
+    return int(float(val) / 55600 * (2**quant - 1))
 
 def generate_header(csv_filename, header_filename, quant):
     with open(csv_filename, 'r') as csv_file:
         csv_reader = csv.reader(csv_file)
         rows = list(csv_reader)
 
-        # Determine quantization datatype
-        if quant > 64 or quant < 1:
+        if quant > 16 or quant < 1:
             print(f"Error: cannot quantize to {quant}")
             return
 
@@ -38,33 +37,18 @@ def generate_header(csv_filename, header_filename, quant):
 
             header_file.write("\n")
 
-            # O2
-            header_file.write(f"const volatile long {var_names[0]}_Vector[Num_Data_Samples] = {{\n")
-            for i in range(1, len(rows)):
-                o2 = quantize_O2(float(rows[i][0]), quant)
-                header_file.write(f"  {o2},\n")
-            header_file.write("};\n\n")
+            # List of quantization functions to be used on the columns
+            quant_functions = [quantize_O2,quantize_pH,quantize_TDS,None]
 
-            # pH
-            header_file.write(f"const volatile long {var_names[1]}_Vector[Num_Data_Samples] = {{\n")
-            for i in range(1, len(rows)):
-                ph = quantize_pH(float(rows[i][1]), quant)
-                header_file.write(f"  {ph},\n")
-            header_file.write("};\n\n")
-
-            # TDS
-            header_file.write(f"const volatile long {var_names[2]}_Vector[Num_Data_Samples] = {{\n")
-            for i in range(1, len(rows)):
-                tds = quantize_TDS(float(rows[i][2]), quant)
-                header_file.write(f"  {tds},\n")
-            header_file.write("};\n\n")
-
-            # Reference
-            header_file.write(f"const volatile char {var_names[3]}_Vector[Num_Data_Samples] = {{\n")
-            for i in range(1, len(rows)):
-                ref = rows[i][3]
-                header_file.write(f"  {ref},\n")
-            header_file.write("};\n\n")
+            # Iterate through all variables, quantize if needed, and write out
+            for var in range(len(var_names)):
+                header_file.write(f"const volatile char {var_names[var]}_Vector[Num_Data_Samples] = {{\n")
+                for i in range(1, len(rows)):
+                    x = rows[i][var]
+                    if quant_functions[var] != None:
+                        x = quant_functions[var](x,quant)
+                    header_file.write(f"  {x},\n")
+                header_file.write("};\n\n")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate a C header file from a CSV row.')

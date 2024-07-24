@@ -3,13 +3,13 @@ import argparse
 
 #TODO: update these ranges
 def quantize_O2(val, quant):
-    return int(val / 14.5 * (2**quant - 1))
+    return int(float(val) / 14.5 * (2**quant - 1))
 
 def quantize_pH(val, quant):
-    return int((val) / 14 * (2**quant - 1))
+    return int(float(val) / 14 * (2**quant - 1))
 
 def quantize_TDS(val, quant):
-    return int(val / 55600 * (2**quant - 1))
+    return int(float(val) / 55600 * (2**quant - 1))
 
 def generate_header(csv_filename, header_filename, sample, quant):
     with open(csv_filename, 'r') as csv_file:
@@ -43,21 +43,15 @@ def generate_header(csv_filename, header_filename, sample, quant):
 
             header_file.write("\n")
 
-            # O2
-            o2 = quantize_O2(float(row[0]), quant)
-            header_file.write(f"const volatile long {var_names[0]} = {o2};\n")
+            # List of quantization functions to be used on the columns
+            quant_functions = [quantize_O2,quantize_pH,quantize_TDS,None]
 
-            # pH
-            pH = quantize_pH(float(row[1]), quant)
-            header_file.write(f"const volatile long {var_names[1]} = {pH};\n")
-
-            # TDS
-            tds = quantize_TDS(float(row[2]), quant)
-            header_file.write(f"const volatile long {var_names[2]} = {tds};\n")
-
-            # Reference
-            ref = row[3]
-            header_file.write(f"const volatile char {var_names[3]} = {ref};\n")
+            # Iterate through all variables, quantize if needed, and write out
+            for var in range(len(var_names)):
+                x = row[var]
+                if quant_functions[var] != None:
+                    x = quant_functions[var](x,quant)
+                header_file.write(f"const volatile long {var_names[var]} = {x};\n")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate a C header file from a CSV row.')
