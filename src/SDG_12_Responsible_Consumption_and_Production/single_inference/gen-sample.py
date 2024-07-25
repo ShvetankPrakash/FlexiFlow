@@ -11,7 +11,7 @@ def generate_header(csv_filename, header_filename, sample, quant):
         csv_reader = csv.reader(csv_file)
         rows = list(csv_reader)
 
-        if sample > len(rows):
+        if sample >= len(rows)-1:
             print(f"Error: sample {sample} out of range")
             return
 
