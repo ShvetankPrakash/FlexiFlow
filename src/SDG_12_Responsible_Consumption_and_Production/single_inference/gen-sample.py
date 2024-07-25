@@ -11,6 +11,10 @@ def generate_header(csv_filename, header_filename, sample, quant):
         csv_reader = csv.reader(csv_file)
         rows = list(csv_reader)
 
+        if sample > len(rows):
+            print(f"Error: sample {sample} out of range")
+            return
+
         if quant > 7 or quant < 1:
             print(f"Error: cannot quantize to {quant}")
             return
