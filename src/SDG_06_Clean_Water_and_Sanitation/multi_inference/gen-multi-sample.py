@@ -42,7 +42,7 @@ def generate_header(csv_filename, header_filename, quant):
 
             # Iterate through all variables, quantize if needed, and write out
             for var in range(len(var_names)):
-                header_file.write(f"const volatile char {var_names[var]}_Vector[Num_Data_Samples] = {{\n")
+                header_file.write(f"const volatile long {var_names[var]}_Vector[Num_Data_Samples] = {{\n")
                 for i in range(1, len(rows)):
                     x = rows[i][var]
                     if quant_functions[var] != None:
