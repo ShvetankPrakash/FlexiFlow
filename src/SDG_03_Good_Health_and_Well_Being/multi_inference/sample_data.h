@@ -181,9 +181,7 @@ const volatile char Sensor_1_A_Input_Vector [Num_Data_Samples] = {
     0,
     0,
     0,
-    0};
-
-
+    0,
     0,
     0,
     0,
