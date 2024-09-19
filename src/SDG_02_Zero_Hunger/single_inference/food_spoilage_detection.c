@@ -217,7 +217,7 @@ char Predict_Spoiled(char Days, char Fruit_Litchi, short CO2, char Fruit_Plum, c
 }
 
 
-char Read_Sensor_Values_Run_Check() {
+char Read_Sensor_Values_Run_DT() {
     char GPIO;
 
     char days = Days;
@@ -250,6 +250,6 @@ char Read_Sensor_Values_Run_Check() {
 }
 
 int main() {
-    correct_result = Read_Sensor_Values_Run_Check();
+    correct_result = Read_Sensor_Values_Run_DT();
     return 0;
 }
