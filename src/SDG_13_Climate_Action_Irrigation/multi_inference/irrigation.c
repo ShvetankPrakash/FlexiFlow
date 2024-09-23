@@ -1,101 +1,98 @@
-// Custom square root function using the Newton-Raphson method
-double custom_sqrt(double num) {
-    double guess = num / 2.0;
-    double epsilon = 0.00001;
-    
-    while ((guess * guess - num) > epsilon || (num - guess * guess) > epsilon) {
-        guess = (guess + num / guess) / 2.0;
-    }
-    
-    return guess;
-}
+#include "sample_data.h"
+// #include <stdio.h>
+
+#define K 3
+
+// Global volatile variable to verify result is not optimized out
+volatile char correct_result = -1;
+unsigned int num_incorrect = 0;
 
 // Function to calculate Euclidean distance between two points
-double euclidean_distance(double *point1, double *point2, int num_features) {
-    double sum = 0.0;
-    int i;
-    for (i = 0; i < num_features; i++) {
-        double diff = point1[i] - point2[i];
-        sum += diff * diff; // No need for a separate power function
-    }
-    return custom_sqrt(sum);
+unsigned long euclidean_distance(const short *point1, const short *point2) {
+  unsigned long sum = 0;
+  int i;
+  for (i = 0; i < Num_Features; i++) {
+    short diff = point1[i] - point2[i];
+    sum += diff * diff; // No need for a separate power function
+  }
+  return sum;
 }
 
 // Find the majority class among k neighbors
-int majority_vote(int *labels, int k) {
-    int count[2] = {0, 0}; // Assuming binary classification (0 or 1)
-    int i;
-    for (i = 0; i < k; i++) {
-        count[labels[i]]++;
-    }
-    return (count[0] > count[1]) ? 0 : 1;
+char majority_vote(short *labels) {
+  char count[2] = {0, 0}; // Assuming binary classification (0 or 1)
+  for (int i = 0; i < K; i++) {
+    count[labels[i]]++;
+  }
+  return (count[0] > count[1]) ? 0 : 1;
 }
 
 // Custom implementation of KNN without standard library functions
-int predict_classification(double train_data[][3], int train_size, double *test_point, int k, int num_features) {
-    // Static arrays to hold distances and labels
-    double distances[1000]; // Adjust the size based on your data
-    int labels[1000];
-    
-    // Calculate distances to each training point
-    int i, j;
-    for (i = 0; i < train_size; i++) {
-        distances[i] = euclidean_distance(train_data[i], test_point, num_features);
-        labels[i] = (int)train_data[i][num_features]; // Last column as label
-    }
-    
-    // Simple selection sort to find k nearest neighbors
-    for (i = 0; i < train_size - 1; i++) {
-        for (j = i + 1; j < train_size; j++) {
-            if (distances[i] > distances[j]) {
-                // Swap distances
-                double temp_dist = distances[i];
-                distances[i] = distances[j];
-                distances[j] = temp_dist;
-                
-                // Swap labels accordingly
-                int temp_label = labels[i];
-                labels[i] = labels[j];
-                labels[j] = temp_label;
-            }
-        }
-    }
+int predict_classification(short *test_point) {
+  unsigned long
+      distances[Num_Training_Samples]; // Adjust the size based on your data
+  short labels[Num_Training_Samples];
 
-    // Majority vote to decide the class
-    return majority_vote(labels, k);
+  // Calculate distances to each training point
+  int i, j;
+  for (i = 0; i < Num_Training_Samples; i++) {
+    distances[i] =
+        euclidean_distance((const short *)Training_Vector[i], test_point);
+    labels[i] = (int)Training_Vector[i][Num_Features]; // Last column is label
+  }
+
+  // Simple selection sort to find k nearest neighbors
+  for (i = 0; i < Num_Training_Samples - 1; i++) {
+    for (j = i + 1; j < Num_Training_Samples; j++) {
+      if (distances[i] > distances[j]) {
+        // Swap distances
+        unsigned long temp_dist = distances[i];
+        distances[i] = distances[j];
+        distances[j] = temp_dist;
+
+        // Swap labels accordingly
+        int temp_label = labels[i];
+        labels[i] = labels[j];
+        labels[j] = temp_label;
+      }
+    }
+  }
+
+  // Majority vote to decide the class
+  return majority_vote(labels);
 }
 
-void main() {
-    // Example dataset: Columns are [moisture, temp, label]
-    double data[5][3] = {
-        {40815, 11235, 1},
-        {33347, 14979, 1},
-        {47445, 22469, 1},
-        {51115, 41193, 1},
-        {44162, 33704, 1}
-    };
+char Read_Sensor_Values_Run_KNNs() {
 
-    int train_size = 3; // First 3 as training data
-    int test_size = 2;  // Remaining 2 as test data
-    int k = 3;          // Number of neighbors
-    int num_features = 2; // Number of features (moisture, temp)
+  char golden_reference, predicted_pump;
+  short sensor_inputs[Num_Features];
+  unsigned short data_sample;
+  char GPIO;
 
-    // Test data
-    double test_data[2][3] = {
-        {51115, 41193, 1},
-        {44162, 33704, 1}
-    };
+  for (data_sample = 0; data_sample < Num_Data_Samples; data_sample++) {
 
-    // Variables to calculate accuracy
-    int correct_predictions = 0;
-    int i;
-    
-    // Make predictions
-    for (i = 0; i < test_size; i++) {
-        int predicted_class = predict_classification(data, train_size, test_data[i], k, num_features);
-        if (predicted_class == (int)test_data[i][num_features]) {
-            correct_predictions++;
-        }
+    // Fill in current sensor input
+    for (int i = 0; i < Num_Features; ++i)
+        sensor_inputs[i] = Data_Vector[data_sample][i];
+
+    golden_reference = (char) Data_Vector[data_sample][Num_Features];
+
+    predicted_pump = predict_classification(sensor_inputs);
+
+
+    if (golden_reference != predicted_pump) {
+      GPIO = 0;
+      num_incorrect++;
+    } else {
+      // printf ("GPIO=%d for Data Sample:%d\n", GPIO, data_sample);
     }
+  }
 
+  return GPIO;
+}
+
+int main() {
+    correct_result = Read_Sensor_Values_Run_KNNs();
+    // printf("Num incorrect: %d / %d\n", num_incorrect, Num_Data_Samples);
+    return 0;
 }
