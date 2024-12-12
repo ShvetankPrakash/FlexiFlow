@@ -30,7 +30,7 @@ char run_muscle() {
     int sim;
 
     for (int i = 0; i < AM_COUNT; i++) {
-        sim = cosine_similarity(AM[i], Ngram_Array);
+        sim = cosine_similarity((const int *) AM[i], (const int *) Ngram_Array);
 
         if (sim > maxSim) {
             maxSim = sim;
@@ -38,14 +38,13 @@ char run_muscle() {
         }
     }
 
-    if (maxSim != 260 || label != 0) {
+    if (maxSim != 260 || label != 0)
         GPIO = 0;
-        return GPIO;
-    }
-    else return GPIO = 1;
+    else
+        GPIO = 1;
 
-
-    printf("Lowest cosine similarity: %d (Label: %d)\n", maxSim, label);
+    /* printf("Lowest cosine similarity: %d (Label: %d)\n", maxSim, label); */
+    return GPIO;
 }
 int main() {
   correct_result = run_muscle();
