@@ -2,6 +2,10 @@ import csv
 import argparse
 
 def generate_header(csv_filename, header_filename, quant):
+    # Default quantization value
+    if quant == 0:
+        quant = 8
+
     with open(csv_filename, 'r') as csv_file:
         csv_reader = csv.reader(csv_file)
         rows = list(csv_reader)

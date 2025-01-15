@@ -12,6 +12,10 @@ def quantize_TDS(val, quant):
     return int(float(val) / 55600 * (2**quant - 1))
 
 def generate_header(csv_filename, header_filename, sample, quant):
+    # Default quantization value
+    if quant == 0:
+        quant = 16
+
     with open(csv_filename, 'r') as csv_file:
         csv_reader = csv.reader(csv_file)
         rows = list(csv_reader)

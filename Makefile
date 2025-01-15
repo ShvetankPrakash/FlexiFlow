@@ -24,7 +24,7 @@ BUILD_SRC_DIR = $(BUILD_DIR)src
 # QUANTIZATION
 INFERENCE ?= single
 DATA_SAMPLE_NUM ?= 0
-QUANTIZATION ?= 8
+QUANTIZATION ?= 0
 
 # Create the build directories if they don't exist
 build_dirs:
@@ -34,35 +34,35 @@ build_dirs:
 	mkdir -p $(BUILD_SRC_DIR)
 
 # Compile all benchmarks
-all: SDG_02 SDG_03 SDG_06 SDG_10 SDG_12 SDG_13 SDG_13_Irrigation SDG_14 SDG_15
+all: SDG_02 SDG_06 SDG_10 SDG_12 SDG_13 # SDG_03 SDG_09 SDG_11 SDG_14
 
 # Compile each benchmark with inference type and sample number
 SDG_02:
 	$(MAKE) compile_inference SDG_DIR=SDG_02_Zero_Hunger C_FILE=food_spoilage_detection BIN_FILE=SDG_02_food_spoilage_detection
 
-SDG_03:
-	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being C_FILE=gesture_recognition BIN_FILE=SDG_03_gesture_recognition
+# SDG_03:
+# 	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being C_FILE=cardio BIN_FILE=SDG_03_cardio
 
 SDG_06:
 	$(MAKE) compile_inference SDG_DIR=SDG_06_Clean_Water_and_Sanitation C_FILE=water_quality_monitoring BIN_FILE=SDG_06_water_quality_monitoring
 
+# SDG_09:
+# 	$(MAKE) compile_inference SDG_DIR=SDG_09_Industry_Innovation_and_Infrastructure C_FILE=hvac BIN_FILE=SDG_09_hvac
+
 SDG_10:
-	$(MAKE) compile_inference SDG_DIR=SDG_10_Reduced_Inequality C_FILE=muscle BIN_FILE=SDG_12_muscle
+	$(MAKE) compile_inference SDG_DIR=SDG_10_Reduced_Inequality C_FILE=muscle BIN_FILE=SDG_10_muscle
+
+# SDG_11:
+# 	$(MAKE) compile_inference SDG_DIR=SDG_11_Reduced_Inequality C_FILE=pollution_monitoring BIN_FILE=SDG_11_pollution_monitoring
 
 SDG_12:
 	$(MAKE) compile_inference SDG_DIR=SDG_12_Responsible_Consumption_and_Production C_FILE=odor_detection BIN_FILE=SDG_12_odor_detection
 
 SDG_13:
-	$(MAKE) compile_inference SDG_DIR=SDG_13_Climate_Action C_FILE=SDG_13_hvac_monitoring BIN_FILE=SDG_13_hvac_monitoring
+	$(MAKE) compile_inference SDG_DIR=SDG_13_Climate_Action C_FILE=irrigation BIN_FILE=SDG_13_irrigation
 
-SDG_13_Irrigation:
-	$(MAKE) compile_inference SDG_DIR=SDG_13_Climate_Action_Irrigation C_FILE=irrigation BIN_FILE=SDG_13_irrigation
-
-SDG_14:
-	$(MAKE) compile_inference SDG_DIR=SDG_14_Life_Below_Water C_FILE=animal_tracking BIN_FILE=SDG_14_animal_tracking
-
-SDG_15:
-	$(MAKE) compile_inference SDG_DIR=SDG_15_Life_on_Land C_FILE=deforestation_tracking BIN_FILE=SDG_15_deforestation_tracking
+# SDG_14:
+# 	$(MAKE) compile_inference SDG_DIR=SDG_14_Life_Below_Water C_FILE=animal_tracking BIN_FILE=SDG_14_animal_tracking
 
 # Rule to handle multi-inference and single-inference compilation
 compile_inference: build_dirs
