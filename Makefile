@@ -1,7 +1,6 @@
 ##############################################
 #   Flexibench / Sustainabench Makefile      #
 ##############################################
-
 # RISC-V Toolchain and Compiler
 RV_PREFIX = /opt/riscv/bin/riscv64-unknown-elf-
 CC = $(RV_PREFIX)gcc
@@ -35,7 +34,7 @@ build_dirs:
 	mkdir -p $(BUILD_SRC_DIR)
 
 # Compile all benchmarks
-all: SDG_02 SDG_03 SDG_06 SDG_12 SDG_13 SDG_13_Irrigation SDG_14 SDG_15
+all: SDG_02 SDG_03 SDG_06 SDG_10 SDG_12 SDG_13 SDG_13_Irrigation SDG_14 SDG_15
 
 # Compile each benchmark with inference type and sample number
 SDG_02:
@@ -46,6 +45,9 @@ SDG_03:
 
 SDG_06:
 	$(MAKE) compile_inference SDG_DIR=SDG_06_Clean_Water_and_Sanitation C_FILE=water_quality_monitoring BIN_FILE=SDG_06_water_quality_monitoring
+
+SDG_10:
+	$(MAKE) compile_inference SDG_DIR=SDG_10_Reduced_Inequality C_FILE=muscle BIN_FILE=SDG_12_muscle
 
 SDG_12:
 	$(MAKE) compile_inference SDG_DIR=SDG_12_Responsible_Consumption_and_Production C_FILE=odor_detection BIN_FILE=SDG_12_odor_detection
@@ -65,14 +67,22 @@ SDG_15:
 # Rule to handle multi-inference and single-inference compilation
 compile_inference: build_dirs
 	cp $(SRC_DIR)/$(SDG_DIR)/$(INFERENCE)_inference/$(C_FILE).c $(BUILD_SRC_DIR)/
+	@if find "$(SRC_DIR)/$(SDG_DIR)/$(INFERENCE)_inference/" -type f -name "*.h" | grep -q .; then \
+		cp $(SRC_DIR)/$(SDG_DIR)/$(INFERENCE)_inference/*.h $(BUILD_SRC_DIR)/ ; \
+		echo "cp $(SRC_DIR)/$(SDG_DIR)/$(INFERENCE)_inference/*.h $(BUILD_SRC_DIR)/"; \
+	fi 
 	cp $(SRC_DIR)/asm/init.s $(BUILD_SRC_DIR)/
 	@if [ "$(INFERENCE)" = "multi" ]; then \
-		$(PYTHON) $(SRC_DIR)/$(SDG_DIR)/multi_inference/gen-multi-sample.py $(SRC_DIR)/$(SDG_DIR)/samples.csv $(BUILD_SRC_DIR)/ $(QUANTIZATION); \
+		if [ -e "$(SRC_DIR)/$(SDG_DIR)/samples.csv" ]; then \
+			$(PYTHON) $(SRC_DIR)/$(SDG_DIR)/multi_inference/gen-multi-sample.py $(SRC_DIR)/$(SDG_DIR)/samples.csv $(BUILD_SRC_DIR)/ $(QUANTIZATION); \
+		fi ; \
 		$(CC) $(CCFLAGS) -c $(BUILD_SRC_DIR)/init.s -o $(BUILD_OBJ_DIR)/init.o; \
 		$(CC) $(CCFLAGS) -c $(BUILD_SRC_DIR)/$(C_FILE).c -o $(BUILD_OBJ_DIR)/$(notdir $(C_FILE)).o; \
 		$(CC) $(CCFLAGS) -o $(BUILD_BIN_DIR)/$(BIN_FILE)_multi_inference $(BUILD_OBJ_DIR)/$(notdir $(C_FILE)).o $(BUILD_OBJ_DIR)/init.o; \
 	elif [ "$(INFERENCE)" = "single" ]; then \
-		$(PYTHON) $(SRC_DIR)/$(SDG_DIR)/single_inference/gen-sample.py $(SRC_DIR)/$(SDG_DIR)/samples.csv $(BUILD_SRC_DIR)/ $(DATA_SAMPLE_NUM) $(QUANTIZATION); \
+		if [ -e "$(SRC_DIR)/$(SDG_DIR)/samples.csv" ]; then \
+			$(PYTHON) $(SRC_DIR)/$(SDG_DIR)/single_inference/gen-sample.py $(SRC_DIR)/$(SDG_DIR)/samples.csv $(BUILD_SRC_DIR)/ $(DATA_SAMPLE_NUM) $(QUANTIZATION); \
+		fi ; \
 		$(CC) $(CCFLAGS) -c $(BUILD_SRC_DIR)/init.s -o $(BUILD_OBJ_DIR)/init.o; \
 		$(CC) $(CCFLAGS) -c $(BUILD_SRC_DIR)/$(C_FILE).c -o $(BUILD_OBJ_DIR)/$(notdir $(C_FILE)).o; \
 		$(CC) $(CCFLAGS) -o $(BUILD_BIN_DIR)/$(BIN_FILE)_single_inference_sample_$(DATA_SAMPLE_NUM) $(BUILD_OBJ_DIR)/$(notdir $(C_FILE)).o $(BUILD_OBJ_DIR)/init.o; \
