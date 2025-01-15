@@ -7,19 +7,19 @@ volatile char correct_result = -1;
 char  Female_DT(char Sensor_2_B_Input, char Sensor_4_B_Input, char Sensor_2_A_Input, char Sensor_4_A_Input) {
   char predicted_class;
 
-  if (Sensor_2_B_Input <= 41) {
-    if (Sensor_4_A_Input <= 45) {
-      if (Sensor_4_B_Input <= 43) {
-        if (Sensor_2_B_Input <= 39) {
-          if (Sensor_4_A_Input <= 39) predicted_class =  4;
+  if (Sensor_2_B_Input <= 41 >> SHIFT_AMT) {
+    if (Sensor_4_A_Input <= 45 >> SHIFT_AMT) {
+      if (Sensor_4_B_Input <= 43 >> SHIFT_AMT) {
+        if (Sensor_2_B_Input <= 39 >> SHIFT_AMT) {
+          if (Sensor_4_A_Input <= 39 >> SHIFT_AMT) predicted_class =  4;
           else {
-            if (Sensor_2_B_Input <= 35) predicted_class =  8;
+            if (Sensor_2_B_Input <= 35 >> SHIFT_AMT) predicted_class =  8;
             else {
-              if (Sensor_2_A_Input <= 37) predicted_class =  8;
+              if (Sensor_2_A_Input <= 37 >> SHIFT_AMT) predicted_class =  8;
               else {
-                if (Sensor_2_B_Input <= 37) {
-                  if (Sensor_4_A_Input <= 41) {
-                    if (Sensor_2_A_Input <= 39) {
+                if (Sensor_2_B_Input <= 37 >> SHIFT_AMT) {
+                  if (Sensor_4_A_Input <= 41 >> SHIFT_AMT) {
+                    if (Sensor_2_A_Input <= 39 >> SHIFT_AMT) {
                       predicted_class =  4;
                     } 
                     else predicted_class =  4;
@@ -27,7 +27,7 @@ char  Female_DT(char Sensor_2_B_Input, char Sensor_4_B_Input, char Sensor_2_A_In
                   else predicted_class =  4;
                 }
                 else { 
-                  if (Sensor_4_B_Input <= 41) predicted_class =  8;
+                  if (Sensor_4_B_Input <= 41 >> SHIFT_AMT) predicted_class =  8;
                   else predicted_class =  4;
                 }
               }
@@ -39,9 +39,9 @@ char  Female_DT(char Sensor_2_B_Input, char Sensor_4_B_Input, char Sensor_2_A_In
      else predicted_class =  4;
     } 
     else {
-      if (Sensor_2_B_Input <= 39) predicted_class =  16;
+      if (Sensor_2_B_Input <= 39 >> SHIFT_AMT) predicted_class =  16;
       else {
-        if (Sensor_2_A_Input <= 43) predicted_class =  8;
+        if (Sensor_2_A_Input <= 43 >> SHIFT_AMT) predicted_class =  8;
         else {
           predicted_class =  4;
         }
@@ -49,7 +49,7 @@ char  Female_DT(char Sensor_2_B_Input, char Sensor_4_B_Input, char Sensor_2_A_In
     }
   } 
   else {
-    if (Sensor_4_A_Input <= 47) {
+    if (Sensor_4_A_Input <= 47 >> SHIFT_AMT) {
       predicted_class =  1;
     } 
     else {
@@ -65,9 +65,9 @@ char  Female_DT(char Sensor_2_B_Input, char Sensor_4_B_Input, char Sensor_2_A_In
 char Male_DT(char Sensor_3_B_Input, char Sensor_1_A_Input, char Sensor_3_A_Input) {
   char predicted_class;
 
-  if (Sensor_3_B_Input <= 27) {
-    if (Sensor_3_B_Input <= 25) {
-      if (Sensor_3_A_Input <= 25) predicted_class =  4;
+  if (Sensor_3_B_Input <= 27 >> SHIFT_AMT) {
+    if (Sensor_3_B_Input <= 25 >> SHIFT_AMT) {
+      if (Sensor_3_A_Input <= 25 >> SHIFT_AMT) predicted_class =  4;
       else predicted_class =  8;
     }
     else {
@@ -75,21 +75,21 @@ char Male_DT(char Sensor_3_B_Input, char Sensor_1_A_Input, char Sensor_3_A_Input
     }
   } 
   else {
-    if (Sensor_3_A_Input <= 37) {
-      if (Sensor_3_A_Input <= 31) {
-        if (Sensor_3_A_Input <= 27) predicted_class =  8;
+    if (Sensor_3_A_Input <= 37 >> SHIFT_AMT) {
+      if (Sensor_3_A_Input <= 31 >> SHIFT_AMT) {
+        if (Sensor_3_A_Input <= 27 >> SHIFT_AMT) predicted_class =  8;
         else {
-          if (Sensor_3_A_Input <= 29) predicted_class =  2;
+          if (Sensor_3_A_Input <= 29 >> SHIFT_AMT) predicted_class =  2;
           else predicted_class =  4;
         }
       } 
       else {
-        if (Sensor_3_B_Input <= 33) {
-          if (Sensor_3_B_Input <= 31) {
+        if (Sensor_3_B_Input <= 33 >> SHIFT_AMT) {
+          if (Sensor_3_B_Input <= 31 >> SHIFT_AMT) {
             predicted_class =  16;
           } 
           else {
-            if (Sensor_3_A_Input <= 33) predicted_class =  1;
+            if (Sensor_3_A_Input <= 33 >> SHIFT_AMT) predicted_class =  1;
             else predicted_class =  8;
           }
         } 
