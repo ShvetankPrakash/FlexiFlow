@@ -7,6 +7,10 @@ def quantize_sensor(val, quant):
     return int(val) >> shift
 
 def generate_header(csv_filename, header_filename, quant):
+    # Default quantization value
+    if quant == 0:
+        quant = 7
+
     with open(csv_filename, 'r') as csv_file:
         csv_reader = csv.reader(csv_file)
         rows = list(csv_reader)
