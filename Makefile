@@ -6,7 +6,7 @@ RV_PREFIX = /opt/riscv/bin/riscv64-unknown-elf-
 CC = $(RV_PREFIX)gcc
 
 # Flags telling GCC to compile to rv32e, without libraries (e.g. baremetal), to use a different memory model so that we can put our code at 0x80000000, to use the specified linker script, and turn on full optimizations.
-CCFLAGS = -march=rv32e_zicsr -mabi=ilp32e -nostdlib -mcmodel=medany -Tlink.ld -O3
+CCFLAGS = -march=rv32e_zicsr -mabi=ilp32e -nostdlib -mcmodel=medany -Tlink.ld -O3 -fno-builtin
 
 # Python installation
 PYTHON = python3
