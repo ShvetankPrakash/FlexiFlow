@@ -9,12 +9,12 @@ __stack = 0x01000000; /*This is the offset that the stack is from the start of m
 SECTIONS
 {
     . = __mem;
-    .text : {
+    .text : ALIGN(4) {
         *(.text.init) /* add the instruction from init.s*/
         *(.text) /* add the instructions compiled from benchmark c src*/
     }
 
-    .data : {
+    .data : ALIGN(4) {
         *(.sbss)
         *(COMMON)
         *(.bss)
@@ -24,3 +24,4 @@ SECTIONS
         *(.got*)
     }
 }
+
