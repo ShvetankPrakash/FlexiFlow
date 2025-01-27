@@ -26,13 +26,11 @@ char Read_Sensor_Values_Run_Check() {
   potable = potable_check(o2, pH, tds);
   golden_reference = Golden_Reference_Potability;
   
-  if (potable != golden_reference) {
-    // Failure case - this really shouldn't happen for basic thresholding
-    GPIO = 0;
-    return GPIO;
+  if (potable) {
+    GPIO = 1;
   }
 
-  GPIO = 1;
+  GPIO = 0;
   return GPIO;
 }
 
