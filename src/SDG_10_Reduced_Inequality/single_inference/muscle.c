@@ -1,4 +1,5 @@
-#include "sample_0.h"
+#include "data_4.h"
+#include <stdio.h>
 
 volatile char correct_result = -1;
 
@@ -38,5 +39,6 @@ int find_closest() {
 
 int main() {
     correct_result = find_closest();
+    printf("result %d\n\n", correct_result);
     return 0;
 }
