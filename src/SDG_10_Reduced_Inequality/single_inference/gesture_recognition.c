@@ -1,5 +1,5 @@
-#include "data_4.h"
-#include <stdio.h>
+#include "sample_data.h"
+#include "static_data.h"
 
 volatile char correct_result = -1;
 
@@ -21,7 +21,7 @@ int cosine_similarity(const volatile int* u, const volatile int* v) {
 }
 
 // Find the array with the lowest cosine similarity to the 'ngram' array
-int find_closest() {
+int Run_Gesture_Recognition() {
     int maxSim = 0;  // Initialize minimum similarity to the highest possible int value
     int label = -1;  // Initialize label to -1
     int sim;
@@ -38,7 +38,6 @@ int find_closest() {
 }
 
 int main() {
-    correct_result = find_closest();
-    printf("result %d\n\n", correct_result);
+    correct_result = Run_Gesture_Recognition();
     return 0;
 }
