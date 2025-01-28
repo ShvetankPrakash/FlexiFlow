@@ -10,12 +10,12 @@
 volatile char correct_result = -1;
 unsigned int num_incorrect = 0;
 
-char potable_check(double o2, double pH, double tds) {
+char potable_check(long o2, long pH, long tds) {
   return o2 > O2_MIN && (pH < PH_MAX && pH > PH_MIN) && tds < TDS_MAX;
 }
 
 char Read_Sensor_Values_Run_Check() {
-  double pH, o2, tds;
+  long pH, o2, tds;
   char potable, golden_reference;
 
   unsigned short data_sample;
