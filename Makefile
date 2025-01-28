@@ -6,7 +6,7 @@ RV_PREFIX = /opt/riscv/bin/riscv64-unknown-elf-
 CC = $(RV_PREFIX)gcc
 
 # Flags telling GCC to compile to rv32e, without libraries (e.g. baremetal), to use a different memory model so that we can put our code at 0x80000000, to use the specified linker script, and turn on full optimizations.
-CCFLAGS = -march=rv32e_zicsr -mabi=ilp32e -nostdlib -mcmodel=medany -Tlink.ld -O3
+CCFLAGS = -march=rv32e_zicsr -mabi=ilp32e -nostdlib -mcmodel=medany -Tlink.ld -O3 -fno-builtin
 
 # Python installation
 PYTHON = python3
@@ -34,14 +34,17 @@ build_dirs:
 	mkdir -p $(BUILD_SRC_DIR)
 
 # Compile all benchmarks
-all: SDG_02 SDG_06 SDG_10 SDG_12 SDG_13 # SDG_03 SDG_09 SDG_11 SDG_14
+all: SDG_02 SDG_06 SDG_10 SDG_12 SDG_13 SDG_03 SDG_03_Arrythmia # SDG_09 SDG_11 SDG_14
 
 # Compile each benchmark with inference type and sample number
 SDG_02:
 	$(MAKE) compile_inference SDG_DIR=SDG_02_Zero_Hunger C_FILE=food_spoilage_detection BIN_FILE=SDG_02_food_spoilage_detection
 
-# SDG_03:
-# 	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being C_FILE=cardio BIN_FILE=SDG_03_cardio
+SDG_03:
+	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being C_FILE=cardiotocography BIN_FILE=SDG_03_cardiotocography
+
+SDG_03_Arrythmia:
+	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being_Arrythmia C_FILE=tekeste BIN_FILE=SDG_03_arrythmia_detection
 
 SDG_06:
 	$(MAKE) compile_inference SDG_DIR=SDG_06_Clean_Water_and_Sanitation C_FILE=water_quality_monitoring BIN_FILE=SDG_06_water_quality_monitoring
