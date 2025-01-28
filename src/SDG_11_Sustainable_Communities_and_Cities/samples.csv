@@ -1,4 +1,4 @@
-CO(GT),NO2(GT),TFLite_Model_Prediction,NOx(GT)_Golden_Label
+CO,NO2,TFLite_Model_Prediction,NOx_Golden_Value
 -95,-31,-81,-91
 -121,-99,-116,-118
 -98,-43,-86,-93
