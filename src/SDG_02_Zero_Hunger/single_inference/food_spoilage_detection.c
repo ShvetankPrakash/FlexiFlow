@@ -239,13 +239,12 @@ char Read_Sensor_Values_Run_DT() {
 
     char spoiled = Predict_Spoiled(days, fruit_litchi, co2, fruit_plum, temp, humidity, fruit_grapes, fruit_apple, fruit_lemon, fruit_mango, fruit_tomato, fruit_papaya);
 
-    if (spoiled != golden_reference) {
-        // Failure case - this really shouldn't happen for basic thresholding
-        GPIO = 0;
+    if (spoiled) {
+        GPIO = 1;
         return GPIO;
     }
 
-    GPIO = 1;
+    GPIO = 0;
     return GPIO;
 }
 
