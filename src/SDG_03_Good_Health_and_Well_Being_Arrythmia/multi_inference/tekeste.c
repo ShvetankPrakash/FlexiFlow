@@ -1,6 +1,4 @@
-#include "large_data.h"
-#include "parameters.h"
-#include <stdio.h>
+#include "sample_data.h"
 
 volatile int rpeaks_pos_fifo[3];
 volatile unsigned int aclt_fifo[ACLT_FIFO_SIZE];
@@ -251,8 +249,6 @@ int Tekeste_RR_Detection() {
     appt_predict(); 
 
     if (prediction_ready == 1) {
-        printf("inference num %d\n", inference_num);
-        printf("sample num %d\n\n", sample_no);
         inference_num++;
         GPIO = 1;
     } else {

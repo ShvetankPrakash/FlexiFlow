@@ -34,7 +34,7 @@ build_dirs:
 	mkdir -p $(BUILD_SRC_DIR)
 
 # Compile all benchmarks
-all: SDG_02 SDG_06 SDG_10 SDG_12 SDG_13 SDG_03 # SDG_09 SDG_11 SDG_14
+all: SDG_02 SDG_06 SDG_10 SDG_12 SDG_13 SDG_03 SDG_03_Arrythmia # SDG_09 SDG_11 SDG_14
 
 # Compile each benchmark with inference type and sample number
 SDG_02:
@@ -42,6 +42,9 @@ SDG_02:
 
 SDG_03:
 	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being C_FILE=cardiotocography BIN_FILE=SDG_03_cardiotocography
+
+SDG_03_Arrythmia:
+	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being_Arrythmia C_FILE=tekeste BIN_FILE=SDG_03_arrythmia_detection
 
 SDG_06:
 	$(MAKE) compile_inference SDG_DIR=SDG_06_Clean_Water_and_Sanitation C_FILE=water_quality_monitoring BIN_FILE=SDG_06_water_quality_monitoring
