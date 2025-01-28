@@ -6,6 +6,34 @@
 // Global volatile variable to verify result is not optimized out
 volatile char correct_result = -1;
 
+// Software implementation of integer multiplication adapted from: https://github.com/gcc-mirror/gcc/blob/master/libgcc/config/epiphany/mulsi3.c
+int __mulsi3(int a, int b) {
+    int result = 0;
+    int negative = 0;
+
+    // Handle sign and convert to positive
+    if (a < 0) {
+        a = -a;
+        negative = !negative;
+    }
+    if (b < 0) {
+        b = -b;
+        negative = !negative;
+    }
+
+    // Perform shift-and-add multiplication
+    while (b != 0) {
+        if (b & 1) {
+            result += a; // Add multiplicand if LSB of multiplier is 1
+        }
+        b >>= 1; // Shift multiplier to the right by 1 bit
+        a <<= 1; // Shift multiplicand to the left by 1 bit
+    }
+
+    // Apply sign
+    return negative ? -result : result;
+}
+
 // Function to calculate Euclidean distance between two points
 unsigned long euclidean_distance(const short *point1, const short *point2) {
   unsigned long sum = 0;
