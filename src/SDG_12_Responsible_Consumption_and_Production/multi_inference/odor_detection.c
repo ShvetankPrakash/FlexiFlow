@@ -116,7 +116,7 @@ char Read_Sensor_Values_Run_DTs() {
   char Sensor_2_B_Input, Sensor_3_B_Input, Sensor_4_B_Input, Sensor_1_A_Input, Sensor_2_A_Input, Sensor_3_A_Input, Sensor_4_A_Input, python_predicted_class, onehot_encoded_python_predicted_class, gender, c_predicted_class;
   //char Sensor_2_B_Input, Sensor_4_B_Input, Sensor_2_A_Input, Sensor_4_A_Input, data_sample, python_predicted_class, c_predicted_class, onehot_encoded_python_predicted_class;
   unsigned short data_sample;
-  char GPIO = 1;
+  char parity_with_python = 1;
   // Read sensor values from the static data array
   // Because trained Decision Trees use half-point boundary conditions (e.g. 9.5)
   // so I have multiplied these conditions by 2 to make them integer numbers
@@ -147,14 +147,13 @@ char Read_Sensor_Values_Run_DTs() {
       //printf("Error: Python model prediction does not match the C model\n");
       //printf("Data Sample %d: onehot_encoded_python_predicted_class= %d --- c_predicted_class= %d\n", data_sample, onehot_encoded_python_predicted_class, c_predicted_class);
       //exit(-1);
-      GPIO = 0;
+      parity_with_python = 0;
       num_incorrect++;
     }
-    //printf ("GPIO=%d for Data Sample:%d\n", GPIO, data_sample);
   }
 
   //printf("SUCCESS: Predicted classes from the Python model match the predicted classes C model for all data samples in the PlasticArmpit dataset!\n");
-  return GPIO;
+  return parity_with_python;
 }
 
 int main() {

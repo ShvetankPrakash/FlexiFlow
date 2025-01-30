@@ -66,7 +66,7 @@ char Read_Sensor_Values_Run_KNN() {
   char golden_reference, predicted_pump;
   short sensor_inputs[Num_Features];
   unsigned short data_sample;
-  char GPIO = 1;
+  char GPIO;
 
   // Fill in current sensor input
   for (int i = 0; i < Num_Features; ++i)
@@ -76,9 +76,10 @@ char Read_Sensor_Values_Run_KNN() {
 
   predicted_pump = predict_classification(sensor_inputs);
 
-  if (golden_reference != predicted_pump) {
+  if (predicted_pump)
+    GPIO = 1;
+  else
     GPIO = 0;
-  }
 
   return GPIO;
 }
