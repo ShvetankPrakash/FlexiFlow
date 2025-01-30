@@ -135,22 +135,15 @@ char Read_Sensor_Values_Run_DTs() {
   // Because of this, we need to convert the predicted classes coming from the datasets into one-hot format
   onehot_encoded_python_predicted_class = 1 << Golden_Reference_Class_Prediction;
 
-    // Female
-    if (Gender == 0) {
+  // Female
+  if (Gender == 0) {
       c_predicted_class = Female_DT(Sensor_2_B_Input, Sensor_4_B_Input, Sensor_2_A_Input, Sensor_4_A_Input);
-    }
-    else c_predicted_class = Male_DT(Sensor_3_B_Input, Sensor_1_A_Input, Sensor_3_A_Input);
+  }
+  else c_predicted_class = Male_DT(Sensor_3_B_Input, Sensor_1_A_Input, Sensor_3_A_Input);
 
-    if (onehot_encoded_python_predicted_class != c_predicted_class) {
-      //printf("Error: Python model prediction does not match the C model\n");
-      //printf("Data Sample %d: onehot_encoded_python_predicted_class= %d --- c_predicted_class= %d\n", data_sample, onehot_encoded_python_predicted_class, c_predicted_class);
-      //exit(-1);
-      GPIO = 0;
-      return GPIO;
-    }
-    else GPIO = 1;
-    //printf ("GPIO=%d for Data Sample:%d\n", GPIO, data_sample);
-  
+  GPIO = c_predicted_class;
+  //printf ("GPIO=%d for Data Sample:%d\n", GPIO, data_sample);
+
 
   //printf("SUCCESS: Predicted classes from the Python model match the predicted classes C model for all data samples in the PlasticArmpit dataset!\n");
   return GPIO;

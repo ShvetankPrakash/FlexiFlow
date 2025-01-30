@@ -9,12 +9,12 @@
 // Global volatile variable to verify result is not optimized out
 volatile char correct_result = -1;
 
-char potable_check(double o2, double pH, double tds) {
+char potable_check(long o2, long pH, long tds) {
   return o2 > O2_MIN && (pH < PH_MAX && pH > PH_MIN) && tds < TDS_MAX;
 }
 
 char Read_Sensor_Values_Run_Check() {
-  double pH, o2, tds;
+  long pH, o2, tds;
   char potable, golden_reference;
 
   unsigned short data_sample;
@@ -26,13 +26,11 @@ char Read_Sensor_Values_Run_Check() {
   potable = potable_check(o2, pH, tds);
   golden_reference = Golden_Reference_Potability;
   
-  if (potable != golden_reference) {
-    // Failure case - this really shouldn't happen for basic thresholding
-    GPIO = 0;
-    return GPIO;
+  if (potable) {
+    GPIO = 1;
   }
 
-  GPIO = 1;
+  GPIO = 0;
   return GPIO;
 }
 

@@ -6,7 +6,7 @@ RV_PREFIX = /opt/riscv/bin/riscv64-unknown-elf-
 CC = $(RV_PREFIX)gcc
 
 # Flags telling GCC to compile to rv32e, without libraries (e.g. baremetal), to use a different memory model so that we can put our code at 0x80000000, to use the specified linker script, and turn on full optimizations.
-CCFLAGS = -march=rv32e_zicsr -mabi=ilp32e -nostdlib -mcmodel=medany -Tlink.ld -O3
+CCFLAGS = -march=rv32e_zicsr -mabi=ilp32e -nostdlib -mcmodel=medany -Tlink.ld -O3 -fno-builtin
 
 # Python installation
 PYTHON = python3
@@ -34,14 +34,17 @@ build_dirs:
 	mkdir -p $(BUILD_SRC_DIR)
 
 # Compile all benchmarks
-all: SDG_02 SDG_06 SDG_09 SDG_10 SDG_12 SDG_13 # SDG_03 SDG_11 SDG_14
+all: SDG_02 SDG_03 SDG_03_Arrythmia SDG_06 SDG_09 SDG_10 SDG_11 SDG_12 SDG_13 SDG_15
 
 # Compile each benchmark with inference type and sample number
 SDG_02:
 	$(MAKE) compile_inference SDG_DIR=SDG_02_Zero_Hunger C_FILE=food_spoilage_detection BIN_FILE=SDG_02_food_spoilage_detection
 
-# SDG_03:
-# 	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being C_FILE=cardio BIN_FILE=SDG_03_cardio
+SDG_03:
+	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being C_FILE=cardiotocography BIN_FILE=SDG_03_cardiotocography
+
+SDG_03_Arrythmia:
+	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being_Arrythmia C_FILE=tekeste BIN_FILE=SDG_03_arrythmia_detection
 
 SDG_06:
 	$(MAKE) compile_inference SDG_DIR=SDG_06_Clean_Water_and_Sanitation C_FILE=water_quality_monitoring BIN_FILE=SDG_06_water_quality_monitoring
@@ -50,10 +53,10 @@ SDG_09:
 	$(MAKE) compile_inference SDG_DIR=SDG_09_Industry_Innovation_and_Infrastructure C_FILE=hvac BIN_FILE=SDG_09_hvac
 
 SDG_10:
-	$(MAKE) compile_inference SDG_DIR=SDG_10_Reduced_Inequality C_FILE=muscle BIN_FILE=SDG_10_muscle
+	$(MAKE) compile_inference SDG_DIR=SDG_10_Reduced_Inequality C_FILE=gesture_recognition BIN_FILE=SDG_10_gesture_recognition
 
-# SDG_11:
-# 	$(MAKE) compile_inference SDG_DIR=SDG_11_Reduced_Inequality C_FILE=pollution_monitoring BIN_FILE=SDG_11_pollution_monitoring
+SDG_11:
+	$(MAKE) compile_inference SDG_DIR=SDG_11_Sustainable_Communities_and_Cities C_FILE=air_pollution_monitoring BIN_FILE=SDG_11_air_pollution_monitoring
 
 SDG_12:
 	$(MAKE) compile_inference SDG_DIR=SDG_12_Responsible_Consumption_and_Production C_FILE=odor_detection BIN_FILE=SDG_12_odor_detection
@@ -61,8 +64,8 @@ SDG_12:
 SDG_13:
 	$(MAKE) compile_inference SDG_DIR=SDG_13_Climate_Action C_FILE=irrigation BIN_FILE=SDG_13_irrigation
 
-# SDG_14:
-# 	$(MAKE) compile_inference SDG_DIR=SDG_14_Life_Below_Water C_FILE=animal_tracking BIN_FILE=SDG_14_animal_tracking
+SDG_15:
+	$(MAKE) compile_inference SDG_DIR=SDG_15_Life_on_Land C_FILE=animal_tracking BIN_FILE=SDG_15_animal_tracking
 
 # Rule to handle multi-inference and single-inference compilation
 compile_inference: build_dirs
