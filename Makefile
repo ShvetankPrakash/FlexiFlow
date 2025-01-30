@@ -53,7 +53,7 @@ SDG_06:
 # 	$(MAKE) compile_inference SDG_DIR=SDG_09_Industry_Innovation_and_Infrastructure C_FILE=hvac BIN_FILE=SDG_09_hvac
 
 SDG_10:
-	$(MAKE) compile_inference SDG_DIR=SDG_10_Reduced_Inequality C_FILE=muscle BIN_FILE=SDG_10_muscle
+	$(MAKE) compile_inference SDG_DIR=SDG_10_Reduced_Inequality C_FILE=gesture_recognition BIN_FILE=SDG_10_gesture_recognition
 
 SDG_11:
 	$(MAKE) compile_inference SDG_DIR=SDG_11_Sustainable_Communities_and_Cities C_FILE=air_pollution_monitoring BIN_FILE=SDG_11_air_pollution_monitoring

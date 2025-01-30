@@ -1,5 +1,5 @@
 #include "sample_data.h"
-#include "static_data.h"
+#include <stdio.h>
 
 volatile char correct_result = -1;
 
@@ -39,5 +39,6 @@ int Run_Gesture_Recognition() {
 
 int main() {
     correct_result = Run_Gesture_Recognition();
+    printf("res: %d\n", correct_result);
     return 0;
 }
