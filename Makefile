@@ -34,7 +34,7 @@ build_dirs:
 	mkdir -p $(BUILD_SRC_DIR)
 
 # Compile all benchmarks
-all: SDG_02 SDG_03 SDG_06 SDG_10 SDG_11 SDG_12 SDG_13 SDG_15 # SDG_09
+all: SDG_02 SDG_03 SDG_03_Arrythmia SDG_06 SDG_10 SDG_11 SDG_12 SDG_13 SDG_15 # SDG_09
 
 # Compile each benchmark with inference type and sample number
 SDG_02:
@@ -43,6 +43,9 @@ SDG_02:
 SDG_03:
 	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being C_FILE=cardiotocography BIN_FILE=SDG_03_cardiotocography
 
+SDG_03_Arrythmia:
+	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being_Arrythmia C_FILE=tekeste BIN_FILE=SDG_03_arrythmia_detection
+
 SDG_06:
 	$(MAKE) compile_inference SDG_DIR=SDG_06_Clean_Water_and_Sanitation C_FILE=water_quality_monitoring BIN_FILE=SDG_06_water_quality_monitoring
 
@@ -50,7 +53,7 @@ SDG_06:
 # 	$(MAKE) compile_inference SDG_DIR=SDG_09_Industry_Innovation_and_Infrastructure C_FILE=hvac BIN_FILE=SDG_09_hvac
 
 SDG_10:
-	$(MAKE) compile_inference SDG_DIR=SDG_10_Reduced_Inequality C_FILE=muscle BIN_FILE=SDG_10_muscle
+	$(MAKE) compile_inference SDG_DIR=SDG_10_Reduced_Inequality C_FILE=gesture_recognition BIN_FILE=SDG_10_gesture_recognition
 
 SDG_11:
 	$(MAKE) compile_inference SDG_DIR=SDG_11_Sustainable_Communities_and_Cities C_FILE=air_pollution_monitoring BIN_FILE=SDG_11_air_pollution_monitoring
