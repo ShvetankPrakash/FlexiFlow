@@ -10,16 +10,16 @@
 volatile char correct_result = -1;
 unsigned int num_incorrect = 0;
 
-char potable_check(double o2, double pH, double tds) {
+char potable_check(long o2, long pH, long tds) {
   return o2 > O2_MIN && (pH < PH_MAX && pH > PH_MIN) && tds < TDS_MAX;
 }
 
 char Read_Sensor_Values_Run_Check() {
-  double pH, o2, tds;
+  long pH, o2, tds;
   char potable, golden_reference;
 
   unsigned short data_sample;
-  char GPIO = 1;
+  char parity_with_python = 1;
 
   for (data_sample = 0; data_sample < Num_Data_Samples; data_sample++) {
     pH = pH_Sensor_Sample_Input_Vector[data_sample];
@@ -30,12 +30,12 @@ char Read_Sensor_Values_Run_Check() {
 
     if (potable != golden_reference) {
       // Failure case - this really shouldn't happen for basic thresholding
-      GPIO = 0;
+      parity_with_python = 0;
       num_incorrect++;
     }
   }
 
-  return GPIO;
+  return parity_with_python;
 }
 
 int main() {
