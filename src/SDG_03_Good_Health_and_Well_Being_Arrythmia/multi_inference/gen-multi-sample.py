@@ -49,7 +49,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate a C header file from a CSV row.')
     parser.add_argument('data', help='Data CSV')
     parser.add_argument('output_header', help='Output filepath')
-    parser.add_argument('sample', type=int, help='Sample index')
     parser.add_argument('quant', type=int, help='Quantization bits')
 
     args = parser.parse_args()
