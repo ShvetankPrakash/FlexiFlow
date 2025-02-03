@@ -197,9 +197,9 @@ char nn_inference(
 
       // Divide by 2^layer_one_shift and round
       if (temp >= 0) {
-          temp = (temp + (1LL << (N_1 - 1))) >> N_2;
+          temp = (temp + (1LL << (N_2 - 1))) >> N_2;
       } else {
-          temp = (temp - (1LL << (N_1 - 1))) >> N_2;
+          temp = (temp - (1LL << (N_2 - 1))) >> N_2;
       }
 
       // Add the zero point

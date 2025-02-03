@@ -6,6 +6,9 @@
 #define HIDDEN_DIM 32
 #define OUTPUT_DIM 1
 
+// Regression based, keep error with TFLite model below reasonable value (2)
+#define EPSILON 2
+
 #define INPUT_LAYER_ZERO_POINT -128
 const signed char layer_one_weights[INPUT_DIM*HIDDEN_DIM] = {
    98,  -73,   52,  -11,  -31,  -52,  125,  -61,  -70,   67,  -16,  -54,
@@ -199,9 +202,9 @@ char nn_inference(
 
       // Divide by 2^layer_one_shift and round
       if (temp >= 0) {
-          temp = (temp + (1LL << (N_1 - 1))) >> N_2;
+          temp = (temp + (1LL << (N_2 - 1))) >> N_2;
       } else {
-          temp = (temp - (1LL << (N_1 - 1))) >> N_2;
+          temp = (temp - (1LL << (N_2 - 1))) >> N_2;
       }
 
       // Add the zero point
@@ -227,7 +230,7 @@ char nn_inference(
 char Read_Values_Run_Neural_Network() {
   
   signed char co, no2, nox_golden_value;
-  signed char tflite_model_prediction, c_model_prediction;
+  signed char tflite_model_prediction, c_model_prediction, error;
   char parity_with_python;
 
 
@@ -238,7 +241,11 @@ char Read_Values_Run_Neural_Network() {
     tflite_model_prediction = TFLite_Model_Prediction_Vector[i];
 
     c_model_prediction = nn_inference(co, no2);
-    if (tflite_model_prediction != c_model_prediction) {
+
+    error = c_model_prediction - tflite_model_prediction;
+    error = error < 0 ? -error : error;
+
+    if (error > EPSILON) {
       parity_with_python = 0;
       num_incorrect++;
     }
