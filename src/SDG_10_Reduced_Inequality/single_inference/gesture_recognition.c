@@ -24,6 +24,7 @@ int cosine_similarity(const volatile int* u, const volatile int* v) {
 int Run_Gesture_Recognition() {
     int maxSim = 0;  // Initialize minimum similarity to the highest possible int value
     int label = -1;  // Initialize label to -1
+    char GPIO = 0;
     int sim;
 
     for (int i = 0; i < AM_COUNT; i++) {
@@ -34,7 +35,8 @@ int Run_Gesture_Recognition() {
         }
     }
 
-    return label;
+    GPIO = (char) label;
+    return GPIO;
 }
 
 int main() {
