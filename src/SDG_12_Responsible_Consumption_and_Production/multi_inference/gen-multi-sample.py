@@ -15,7 +15,7 @@ def generate_header(csv_filename, header_filename, quant):
         csv_reader = csv.reader(csv_file)
         rows = list(csv_reader)
 
-        if quant > 7 or quant < 1:
+        if quant != 7:
             print(f"Error: cannot quantize to {quant}")
             return
 
