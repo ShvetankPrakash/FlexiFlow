@@ -24,6 +24,7 @@ volatile unsigned char prev_ecg_data;
 volatile unsigned char rpeak_pos_valid;
 volatile char GPIO_ready = 0;
 volatile int num_incorrect = 0;
+volatile int correct_result;
 
 void update_vectors() {
    volatile unsigned char bloom_filter_hash_index;
@@ -269,6 +270,7 @@ int Tekeste_RR_Detection() {
 }
 
 int main() {
-    Tekeste_RR_Detection();
+    correct_result = Tekeste_RR_Detection();
+    // printf("%d\n", correct_result);
     return 0;
 }
