@@ -23,6 +23,7 @@ volatile unsigned char rr_bin_num, drr_bin_num;
 volatile unsigned char prev_ecg_data;
 volatile unsigned char rpeak_pos_valid;
 volatile char GPIO = 0;
+volatile char GPIO_ready = 0;
 
 void update_vectors() {
    volatile unsigned char bloom_filter_hash_index;
@@ -248,17 +249,19 @@ int Tekeste_RR_Detection() {
     update_vectors();
     appt_predict(); 
 
+
     if (prediction_ready == 1) {
         inference_num++;
-        GPIO = 1;
+        GPIO_ready = 1;
+        GPIO = af_prediction;
     } else {
-        GPIO = 0;
+        GPIO_ready = 0;
     }
 
     sample_no++;
  }
 
- return 0;
+ return GPIO;
 }
 
 int main() {

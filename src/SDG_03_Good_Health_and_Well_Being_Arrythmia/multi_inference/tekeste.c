@@ -22,7 +22,9 @@ volatile int rr, drr;
 volatile unsigned char rr_bin_num, drr_bin_num;
 volatile unsigned char prev_ecg_data;
 volatile unsigned char rpeak_pos_valid;
-volatile char GPIO = 0;
+volatile char GPIO_ready = 0;
+volatile int num_incorrect = 0;
+volatile int correct_result;
 
 void update_vectors() {
    volatile unsigned char bloom_filter_hash_index;
@@ -228,6 +230,7 @@ void aclt(volatile unsigned char curr_ecg_data) {
 
 int Tekeste_RR_Detection() {
  volatile unsigned char i;
+ char parity_with_python = 1;
 
  for (i=0; i<3; i++) rpeaks_pos_fifo[i]                    = -1;
  for (i=0; i<ACLT_FIFO_SIZE; i++) aclt_fifo[i]             = 0;
@@ -249,19 +252,25 @@ int Tekeste_RR_Detection() {
     appt_predict(); 
 
     if (prediction_ready == 1) {
+        GPIO_ready = 1;
+        if (Golden_Reference_AF[inference_num] != af_prediction) {
+            parity_with_python = 0;
+            num_incorrect++;
+        }
+
         inference_num++;
-        GPIO = 1;
     } else {
-        GPIO = 0;
+        GPIO_ready = 0;
     }
 
     sample_no++;
  }
 
- return 0;
+ return parity_with_python;
 }
 
 int main() {
-    Tekeste_RR_Detection();
+    correct_result = Tekeste_RR_Detection();
+    // printf("%d\n", correct_result);
     return 0;
 }

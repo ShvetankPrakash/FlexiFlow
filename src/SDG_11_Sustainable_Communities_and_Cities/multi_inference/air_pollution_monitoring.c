@@ -1,9 +1,13 @@
 #include "sample_data.h"
+// #include <stdio.h>
 
 // TODO: Move to another header file and add link to notebook for how these params were obtained
 #define INPUT_DIM  2
 #define HIDDEN_DIM 32
 #define OUTPUT_DIM 1
+
+// Regression based, keep error with TFLite model below reasonable value (2)
+#define EPSILON 2
 
 #define INPUT_LAYER_ZERO_POINT -128
 const signed char layer_one_weights[INPUT_DIM*HIDDEN_DIM] = {
@@ -47,6 +51,7 @@ int output_activations[OUTPUT_DIM];
 
 // Global volatile variable to verify result is not optimized out
 volatile char correct_result = -1;  
+volatile int num_incorrect = 0;
 
 // Software implementation of integer multiplication adapted from: https://github.com/gcc-mirror/gcc/blob/master/libgcc/config/epiphany/mulsi3.c
 int __mulsi3(int a, int b) {
@@ -224,30 +229,32 @@ char nn_inference(
 // Compare the predicted class made by this model to the predicted class made by the TFLite model for equivalence check
 char Read_Values_Run_Neural_Network() {
   
-    signed char co = CO;
-    signed char no2 = NO2;
-    signed char nox_golden_value = NOx_Golden_Value;  // Ground Truth Value
+  signed char co, no2, nox_golden_value;
+  signed char tflite_model_prediction, c_model_prediction, error;
+  char parity_with_python;
 
-    signed char tflite_model_prediction = TFLite_Model_Prediction;
-    signed char c_model_prediction = nn_inference(co, no2);
-    
-    char GPIO;
-    if (tflite_model_prediction != c_model_prediction) {
-      //printf("Error: TFLite model prediction does not match the C model prediction\n");
-      //printf("TFLite model prediction = %d --- C model prediction = %d\n", tflite_model_prediction, c_model_prediction);
-      //exit(-1);
-      GPIO = 0;
-      return GPIO;
+
+  for (int i = 0; i < Num_Data_Samples; ++i) {
+    co = CO_Vector[i];
+    no2 = NO2_Vector[i];
+    nox_golden_value = NOx_Golden_Value_Vector[i];
+    tflite_model_prediction = TFLite_Model_Prediction_Vector[i];
+
+    c_model_prediction = nn_inference(co, no2);
+
+    error = c_model_prediction - tflite_model_prediction;
+    error = error < 0 ? -error : error;
+
+    if (error > EPSILON) {
+      parity_with_python = 0;
+      num_incorrect++;
     }
-    else GPIO = 1;
-    //printf ("GPIO=%d\n", GPIO);
-  
-
-  //printf("SUCCESS: Predicted class from the TFLite model matches the predicted class of the C model!\n");
-  return GPIO;
+  }
+  return parity_with_python;
 }
 
 int main() {
   correct_result = Read_Values_Run_Neural_Network();
+  // printf("Number incorrect: %d / %d\n", num_incorrect, Num_Data_Samples);
   return 0;
 }

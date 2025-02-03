@@ -3,7 +3,7 @@
 
 // Global volatile variable to verify result is not optimized out
 volatile char correct_result = -1;  
-int correct = 0;
+int num_incorrect = 0;
 
 // Function to predict whether a fruit is spoiled based on the decision tree
 char Predict_Spoiled(char Days, char Fruit_Litchi, short CO2, char Fruit_Plum, char Temp, char Humidity, char Fruit_Grapes, char Fruit_Apple, char Fruit_Lemon, char Fruit_Mango, char Fruit_Tomato, char Fruit_Papaya) {
@@ -243,8 +243,7 @@ char Read_Sensor_Values_Run_DTs() {
 
         if (python_predicted_class != c_predicted_class) {
             parity_with_python = 0;
-        } else {
-            correct++;
+            num_incorrect++;
         }
     }
 
@@ -253,6 +252,6 @@ char Read_Sensor_Values_Run_DTs() {
 
 int main() {
     correct_result = Read_Sensor_Values_Run_DTs();
-    // printf("Correct: %d\n", correct);
+    // printf("Incorrect: %d\n", num_incorrect);
     return 0;
 }

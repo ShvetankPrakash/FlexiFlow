@@ -246,7 +246,7 @@ char nn_inference(
   // Return argmax for predicted class
   int max_activation = -128;
   for (int i = 0; i < OUTPUT_DIM; i++) {
-	  if (output_activations[i] > max_activation) {
+	  if (output_activations[i] >= max_activation) {
 		  max_activation = output_activations[i];
 		  predicted_class = i;
 	  }

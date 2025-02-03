@@ -1,41 +1,34 @@
 #include "sample_data.h"
+// #include <stdio.h>
 
 // TODO: Move to another header file and add link to notebook for how these params were obtained
-#define INPUT_DIM  2
-#define HIDDEN_DIM 32
-#define OUTPUT_DIM 1
+#define INPUT_DIM  21
+#define HIDDEN_DIM 3
+#define OUTPUT_DIM 3
 
 #define INPUT_LAYER_ZERO_POINT -128
 const signed char layer_one_weights[INPUT_DIM*HIDDEN_DIM] = {
-   98,  -73,   52,  -11,  -31,  -52,  125,  -61,  -70,   67,  -16,  -54,
-  121,   49,  -91,   17,    5, -101,   29,    7,  -91,  -36,  -12,  -25,
-  120,  109,   -7,  -20,   26,   16,   51,  -63, -106,  -83,  -58,   56,
-   -7,   16,  -95,    1, -102, -104,   99,  -68,  110,   73,  -36,   90,
-   97,   -6,  -82,  -41,   -8, -103,   14, -101,   32,   66,  -49,   80,
-  -64,  -27,  127,   58
+	-33, 127, -26, 72,  31, -42, -112, -49,  79, -84,  34,  18,  8, -7, -18,   1, -16,  12, 29, -70,  32,
+         27,  21, -35,  4, -46, -70, -116, -17, -27, -82,  86,   5, -6,  8,  31,  12,  48,  -1, 64, -76,  28,
+        -12,  13,   2, -4,   0, -26,  -39, -20,  -3, -25, -32, -32, 15,  5,  38, -20,  10, -32, -6, -38, -10
 };
 #define LAYER_ONE_WEIGHTS_ZERO_POINT 0
 const int layer_one_bias[HIDDEN_DIM] = {
-  3679,  -680,     0,  4065, -3252, 10707,   679,  8886,     0, -5100,
-     0,     0,   517,     0,  -259, -1294,     0, -1436, -2625,  -354,
-     0,  3627,   165,   831,   610,     0,     0,     0,   544,    22,
-     0,   106
+	9064, 1891, 0
 };
 #define LAYER_ONE_OUTPUT_ACTIVATIONS_ZERO_POINT -128
 const signed char layer_two_weights[HIDDEN_DIM*OUTPUT_DIM] = {
-  127,   14,   53,   76,   64, -106,   52,  -42,  -85,  -44,  -55,    3,
-   33,   28,   10,  -92,   47,   67,  -70,   12,   55,  124,   21,   91,
-   48,   71,   -7,  -57,   33,    6,  -50,   21
+	127, 40, 30, -81, 91, 4, 15, -119, -63
 };
 #define LAYER_TWO_WEIGHTS_ZERO_POINT 0
 const int layer_two_bias[OUTPUT_DIM] = {
-  1006
+	-906, -3877, 3253
 };
-#define OUTPUT_LAYER_ZERO_POINT -128
+#define OUTPUT_LAYER_ZERO_POINT -30
 
-#define M0_1 1260531456
+#define M0_1 1373103872
 #define N_1 7
-#define M0_2 1165263744
+#define M0_2 1142335232
 #define N_2 7
 
 // Declare arrays for intermediate activations
@@ -47,6 +40,7 @@ int output_activations[OUTPUT_DIM];
 
 // Global volatile variable to verify result is not optimized out
 volatile char correct_result = -1;  
+volatile int num_incorrect = 0;
 
 // Software implementation of integer multiplication adapted from: https://github.com/gcc-mirror/gcc/blob/master/libgcc/config/epiphany/mulsi3.c
 int __mulsi3(int a, int b) {
@@ -103,17 +97,55 @@ long long __muldi3(long long a, long long b) {
     return negative ? -result : result;
 }
 
-// Implementation of integer only neural network inference for 8-bit quantized model trained on UCI air quality dataset with Tensorflow 
+// Implementation of integer only neural network inference for 8-bit quantized model trained on UCI cardiotocography dataset with Tensorflow 
 char nn_inference(
-		signed char co,  // carbon monoxide 
-		signed char no2  // nitrogen dioxide
+		signed char lb, 
+		signed char ac, 
+		signed char fm, 
+		signed char uc, 
+		signed char dl, 
+		signed char ds, 
+		signed char dp, 
+		signed char astv, 
+		signed char mstv, 
+		signed char altv, 
+		signed char mltv, 
+		signed char width, 
+		signed char min, 
+		signed char max, 
+		signed char nmax, 
+		signed char nzeros, 
+		signed char mode, 
+		signed char mean, 
+		signed char median, 
+		signed char variance, 
+		signed char tendency
 		) 
 {
-  signed char predicted_nox = -1;  // nitrogen oxide
+  char predicted_class = -1;
 
   // (Inputs - Zero Point of Inputs)
-  input_activations[0]  = (int)co       - INPUT_LAYER_ZERO_POINT;
-  input_activations[1]  = (int)no2       - INPUT_LAYER_ZERO_POINT;
+  input_activations[0]  = (int)lb       - INPUT_LAYER_ZERO_POINT;
+  input_activations[1]  = (int)ac       - INPUT_LAYER_ZERO_POINT;
+  input_activations[2]  = (int)fm       - INPUT_LAYER_ZERO_POINT;
+  input_activations[3]  = (int)uc       - INPUT_LAYER_ZERO_POINT;
+  input_activations[4]  = (int)dl       - INPUT_LAYER_ZERO_POINT;
+  input_activations[5]  = (int)ds       - INPUT_LAYER_ZERO_POINT;
+  input_activations[6]  = (int)dp       - INPUT_LAYER_ZERO_POINT;
+  input_activations[7]  = (int)astv     - INPUT_LAYER_ZERO_POINT;
+  input_activations[8]  = (int)mstv     - INPUT_LAYER_ZERO_POINT;
+  input_activations[9]  = (int)altv     - INPUT_LAYER_ZERO_POINT;
+  input_activations[10] = (int)mltv     - INPUT_LAYER_ZERO_POINT;
+  input_activations[11] = (int)width    - INPUT_LAYER_ZERO_POINT;
+  input_activations[12] = (int)min      - INPUT_LAYER_ZERO_POINT;
+  input_activations[13] = (int)max      - INPUT_LAYER_ZERO_POINT;
+  input_activations[14] = (int)nmax     - INPUT_LAYER_ZERO_POINT;
+  input_activations[15] = (int)nzeros   - INPUT_LAYER_ZERO_POINT;
+  input_activations[16] = (int)mode     - INPUT_LAYER_ZERO_POINT;
+  input_activations[17] = (int)mean     - INPUT_LAYER_ZERO_POINT;
+  input_activations[18] = (int)median   - INPUT_LAYER_ZERO_POINT;
+  input_activations[19] = (int)variance - INPUT_LAYER_ZERO_POINT;
+  input_activations[20] = (int)tendency - INPUT_LAYER_ZERO_POINT;
 
   // (Weights - Zero Point of Weights)
   // TODO: Optimize this by preprocessing weight offset offline
@@ -197,9 +229,9 @@ char nn_inference(
 
       // Divide by 2^layer_one_shift and round
       if (temp >= 0) {
-          temp = (temp + (1LL << (N_2 - 1))) >> N_2;
+          temp = (temp + (1LL << (N_1 - 1))) >> N_2;
       } else {
-          temp = (temp - (1LL << (N_2 - 1))) >> N_2;
+          temp = (temp - (1LL << (N_1 - 1))) >> N_2;
       }
 
       // Add the zero point
@@ -213,9 +245,15 @@ char nn_inference(
       output_activations[i] = (int)temp;
   }
 
-  // Return output neuron for predicted nox
-  predicted_nox = (signed char)output_activations[0];
-  return predicted_nox;
+  // Return argmax for predicted class
+  int max_activation = -128;
+  for (int i = 0; i < OUTPUT_DIM; i++) {
+	  if (output_activations[i] >= max_activation) {
+		  max_activation = output_activations[i];
+		  predicted_class = i;
+	  }
+  }
+  return predicted_class;
 }
 
 
@@ -223,31 +261,46 @@ char nn_inference(
 // Read the values for the data sample and run the neural network to make a prediction
 // Compare the predicted class made by this model to the predicted class made by the TFLite model for equivalence check
 char Read_Values_Run_Neural_Network() {
-  
-    signed char co = CO;
-    signed char no2 = NO2;
-    signed char nox_golden_value = NOx_Golden_Value;  // Ground Truth Value
+    signed char lb, ac, fm, uc, dl, ds, dp, astv, mstv, altv, mltv, width, min, max, nmax, nzeros, mode, mean, median, variance, tendency, nsp_golden_label;
+    signed char tflite_model_prediction, c_model_prediction;
+    char parity_with_python = 1;
 
-    signed char tflite_model_prediction = TFLite_Model_Prediction;
-    signed char c_model_prediction = nn_inference(co, no2);
-    
-    char GPIO;
-    if (tflite_model_prediction != c_model_prediction) {
-      //printf("Error: TFLite model prediction does not match the C model prediction\n");
-      //printf("TFLite model prediction = %d --- C model prediction = %d\n", tflite_model_prediction, c_model_prediction);
-      //exit(-1);
-      GPIO = 0;
-      return GPIO;
+    for (int i = 0; i < Num_Data_Samples; ++i) {
+        lb = LB_Vector[i];
+        ac = AC_Vector[i];
+        fm = FM_Vector[i];
+        uc = UC_Vector[i];
+        dl = DL_Vector[i];
+        ds = DS_Vector[i];
+        dp = DP_Vector[i];
+        astv = ASTV_Vector[i];
+        mstv = MSTV_Vector[i];
+        altv = ALTV_Vector[i];
+        mltv = MLTV_Vector[i];
+        width = Width_Vector[i];
+        min = Min_Vector[i];
+        max = Max_Vector[i];
+        nmax = Nmax_Vector[i];
+        nzeros = Nzeros_Vector[i];
+        mode = Mode_Vector[i];
+        mean = Mean_Vector[i];
+        median = Median_Vector[i];
+        variance = Variance_Vector[i];
+        tendency = Tendency_Vector[i];
+        nsp_golden_label = NSP_Golden_Label_Vector[i];
+        tflite_model_prediction = TFLite_Model_Prediction_Vector[i];
+
+        c_model_prediction = nn_inference(lb, ac, fm, uc, dl, ds, dp, astv, mstv, altv, mltv, width, min, max, nmax, nzeros, mode, mean, median, variance, tendency);
+        if (tflite_model_prediction != c_model_prediction) {
+          parity_with_python = 0;
+          num_incorrect++;
+        }
     }
-    else GPIO = 1;
-    //printf ("GPIO=%d\n", GPIO);
-  
-
-  //printf("SUCCESS: Predicted class from the TFLite model matches the predicted class of the C model!\n");
-  return GPIO;
+  return parity_with_python;
 }
 
 int main() {
   correct_result = Read_Values_Run_Neural_Network();
+  // printf("Number incorrect: %d / %d\n", num_incorrect, Num_Data_Samples);
   return 0;
 }
