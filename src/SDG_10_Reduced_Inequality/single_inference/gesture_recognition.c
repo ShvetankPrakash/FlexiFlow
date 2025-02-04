@@ -1,7 +1,7 @@
 #include "sample_data.h"
 // #include <stdio.h>
 
-volatile char correct_result = -1;
+volatile char result = -1;
 
 // Function to compute the sign agreement difference
 int sign_agreement_difference(const volatile int* u, const volatile int* v) {
@@ -35,12 +35,12 @@ int Run_Gesture_Recognition() {
         }
     }
 
-    GPIO = (char) label;
+    GPIO = (char)label;
     return GPIO;
 }
 
 int main() {
-    correct_result = Run_Gesture_Recognition();
+    result = Run_Gesture_Recognition();
     //printf("res: %d\n", correct_result);
     return 0;
 }
