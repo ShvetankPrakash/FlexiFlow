@@ -27,24 +27,25 @@ After compiling the workload(s) you can use spike to simulate:
 ```bash
 spike -l --isa=rv32e build/bin/[SDG_benchmark_executable]
 ```
-To debug and verify the output result of the program, find the memory address of `correct_result` using objdump:
+To debug and verify the output result of the program, find the memory address of `result` using objdump:
 ```bash
-riscv64-unknown-elf-objdump -t build/bin/[SDG_benchmark_executable] | grep correct_result
+riscv64-unknown-elf-objdump -t build/bin/[SDG_benchmark_executable] | grep result
 ```
-You will see an output similar to this with the location of `correct_result` in memory:
+You will see an output similar to this with the location of `result` in memory:
 ```bash
-80000344 g     O .data  00000001 correct_result
+80000344 g     O .data  00000001 result
 ```
 Then run the simulator in debug mode:
 ```bash
 spike -d --isa=rv32e build/bin/[SDG_benchmark_executable]
 ```
-and check the value of `correct_result` before and after running the program to verify correct execution (`correct_result` will always start as 0xff and end as 0x01 if run correctly):
+and check the value of `result` before and after running the program to verify correct execution:
 ```bash
 (spike) mem 80000344
 (spike) r
 (spike) mem 80000344
 ```
+`result` will always start as 0xff (i.e., -1) and end as the workload's prediction listed in `build/src/sample_data.h` if run correctly.
 
 # Profiling Benchmarks
 TODO

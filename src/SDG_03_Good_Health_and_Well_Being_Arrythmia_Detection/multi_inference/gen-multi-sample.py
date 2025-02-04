@@ -18,8 +18,8 @@ def generate_header(csv_filename, header_filename, quant):
         with open(header_filename, 'w') as header_file:
             data_range = 357769
 
+            header_file.write("#include \"static_data.h\"\n")
             header_file.write(f"#define ECG_DATA_LENGTH {data_range}\n")
-            header_file.write(f"#define NUM_SW_PREDICTED_LABELS 98\n")
             header_file.write("""
 #define SAMPLE_RATE             200 //sampling frequency in Hz
 #define ACLT_FIFO_SIZE           20 
@@ -49,7 +49,6 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate a C header file from a CSV row.')
     parser.add_argument('data', help='Data CSV')
     parser.add_argument('output_header', help='Output filepath')
-    parser.add_argument('sample', type=int, help='Sample index')
     parser.add_argument('quant', type=int, help='Quantization bits')
 
     args = parser.parse_args()

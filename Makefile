@@ -34,17 +34,17 @@ build_dirs:
 	mkdir -p $(BUILD_SRC_DIR)
 
 # Compile all benchmarks
-all: SDG_02 SDG_03 SDG_03_Arrythmia SDG_06 SDG_09 SDG_10 SDG_11 SDG_12 SDG_13 SDG_15
+all: SDG_02 SDG_03_Cardiotocography SDG_03_Arrythmia_Detection SDG_06 SDG_09 SDG_10 SDG_11 SDG_12 SDG_13 SDG_15
 
 # Compile each benchmark with inference type and sample number
 SDG_02:
 	$(MAKE) compile_inference SDG_DIR=SDG_02_Zero_Hunger C_FILE=food_spoilage_detection BIN_FILE=SDG_02_food_spoilage_detection
 
-SDG_03:
-	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being C_FILE=cardiotocography BIN_FILE=SDG_03_cardiotocography
+SDG_03_Cardiotocography:
+	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being_Cardiotocography C_FILE=cardiotocography BIN_FILE=SDG_03_cardiotocography
 
-SDG_03_Arrythmia:
-	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being_Arrythmia C_FILE=tekeste BIN_FILE=SDG_03_arrythmia_detection
+SDG_03_Arrythmia_Detection:
+	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being_Arrythmia_Detection C_FILE=tekeste BIN_FILE=SDG_03_arrythmia_detection
 
 SDG_06:
 	$(MAKE) compile_inference SDG_DIR=SDG_06_Clean_Water_and_Sanitation C_FILE=water_quality_monitoring BIN_FILE=SDG_06_water_quality_monitoring

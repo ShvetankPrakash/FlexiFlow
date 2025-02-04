@@ -19,7 +19,7 @@ def generate_header(csv_filename, header_filename, sample, quant):
             print(f"Error: sample {sample} out of range")
             return
 
-        if quant > 7 or quant < 1:
+        if quant != 7:
             print(f"Error: cannot quantize to {quant}")
             return
 

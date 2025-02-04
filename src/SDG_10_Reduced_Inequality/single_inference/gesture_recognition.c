@@ -1,7 +1,7 @@
 #include "sample_data.h"
-#include <stdio.h>
+// #include <stdio.h>
 
-volatile char correct_result = -1;
+volatile char result = -1;
 
 // Function to compute the sign agreement difference
 int sign_agreement_difference(const volatile int* u, const volatile int* v) {
@@ -24,6 +24,7 @@ int cosine_similarity(const volatile int* u, const volatile int* v) {
 int Run_Gesture_Recognition() {
     int maxSim = 0;  // Initialize minimum similarity to the highest possible int value
     int label = -1;  // Initialize label to -1
+    char GPIO = 0;
     int sim;
 
     for (int i = 0; i < AM_COUNT; i++) {
@@ -34,11 +35,12 @@ int Run_Gesture_Recognition() {
         }
     }
 
-    return label;
+    GPIO = (char)label;
+    return GPIO;
 }
 
 int main() {
-    correct_result = Run_Gesture_Recognition();
+    result = Run_Gesture_Recognition();
     //printf("res: %d\n", correct_result);
     return 0;
 }

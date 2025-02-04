@@ -1,4 +1,5 @@
 #include "sample_data.h"
+// #include <stdio.h>
 
 // TODO: Move to another header file and add link to notebook for how these params were obtained
 #define INPUT_DIM  21
@@ -39,6 +40,7 @@ int output_activations[OUTPUT_DIM];
 
 // Global volatile variable to verify result is not optimized out
 volatile char correct_result = -1;  
+volatile int num_incorrect = 0;
 
 // Software implementation of integer multiplication adapted from: https://github.com/gcc-mirror/gcc/blob/master/libgcc/config/epiphany/mulsi3.c
 int __mulsi3(int a, int b) {
@@ -246,7 +248,7 @@ char nn_inference(
   // Return argmax for predicted class
   int max_activation = -128;
   for (int i = 0; i < OUTPUT_DIM; i++) {
-	  if (output_activations[i] > max_activation) {
+	  if (output_activations[i] >= max_activation) {
 		  max_activation = output_activations[i];
 		  predicted_class = i;
 	  }
@@ -259,50 +261,46 @@ char nn_inference(
 // Read the values for the data sample and run the neural network to make a prediction
 // Compare the predicted class made by this model to the predicted class made by the TFLite model for equivalence check
 char Read_Values_Run_Neural_Network() {
-  
-    signed char lb = LB;
-    signed char ac = AC;
-    signed char fm = FM;
-    signed char uc = UC;
-    signed char dl = DL;
-    signed char ds = DS;
-    signed char dp = DP;
-    signed char astv = ASTV;
-    signed char mstv = MSTV;
-    signed char altv = ALTV;
-    signed char mltv = MLTV;
-    signed char width = Width;
-    signed char min = Min;
-    signed char max = Max;
-    signed char nmax = Nmax;
-    signed char nzeros = Nzeros;
-    signed char mode = Mode;
-    signed char mean = Mean;
-    signed char median = Median;
-    signed char variance = Variance;
-    signed char tendency = Tendency;
-    signed char nsp_golden_label = NSP_Golden_Label;  // Ground Truth Label
+    signed char lb, ac, fm, uc, dl, ds, dp, astv, mstv, altv, mltv, width, min, max, nmax, nzeros, mode, mean, median, variance, tendency, nsp_golden_label;
+    signed char tflite_model_prediction, c_model_prediction;
+    char parity_with_python = 1;
 
-    signed char tflite_model_prediction = TFLite_Model_Prediction;
-    signed char c_model_prediction = nn_inference(lb, ac, fm, uc, dl, ds, dp, astv, mstv, altv, mltv, width, min, max, nmax, nzeros, mode, mean, median, variance, tendency);
-    
-    char GPIO;
-    if (tflite_model_prediction != c_model_prediction) {
-      //printf("Error: TFLite model prediction does not match the C model prediction\n");
-      //printf("TFLite model prediction = %d --- C model prediction = %d\n", tflite_model_prediction, c_model_prediction);
-      //exit(-1);
-      GPIO = 0;
-      return GPIO;
+    for (int i = 0; i < Num_Data_Samples; ++i) {
+        lb = LB_Vector[i];
+        ac = AC_Vector[i];
+        fm = FM_Vector[i];
+        uc = UC_Vector[i];
+        dl = DL_Vector[i];
+        ds = DS_Vector[i];
+        dp = DP_Vector[i];
+        astv = ASTV_Vector[i];
+        mstv = MSTV_Vector[i];
+        altv = ALTV_Vector[i];
+        mltv = MLTV_Vector[i];
+        width = Width_Vector[i];
+        min = Min_Vector[i];
+        max = Max_Vector[i];
+        nmax = Nmax_Vector[i];
+        nzeros = Nzeros_Vector[i];
+        mode = Mode_Vector[i];
+        mean = Mean_Vector[i];
+        median = Median_Vector[i];
+        variance = Variance_Vector[i];
+        tendency = Tendency_Vector[i];
+        nsp_golden_label = NSP_Golden_Label_Vector[i];
+        tflite_model_prediction = TFLite_Model_Prediction_Vector[i];
+
+        c_model_prediction = nn_inference(lb, ac, fm, uc, dl, ds, dp, astv, mstv, altv, mltv, width, min, max, nmax, nzeros, mode, mean, median, variance, tendency);
+        if (tflite_model_prediction != c_model_prediction) {
+          parity_with_python = 0;
+          num_incorrect++;
+        }
     }
-    else GPIO = 1;
-    //printf ("GPIO=%d\n", GPIO);
-  
-
-  //printf("SUCCESS: Predicted class from the TFLite model matches the predicted class of the C model!\n");
-  return GPIO;
+  return parity_with_python;
 }
 
 int main() {
   correct_result = Read_Values_Run_Neural_Network();
+  // printf("Number incorrect: %d / %d\n", num_incorrect, Num_Data_Samples);
   return 0;
 }
