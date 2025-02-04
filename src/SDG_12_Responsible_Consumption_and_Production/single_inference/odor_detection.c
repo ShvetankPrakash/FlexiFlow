@@ -1,7 +1,7 @@
 #include "sample_data.h"
 
 // Global volatile variable to verify result is not optimized out
-volatile char correct_result = -1;  
+volatile char result = -1;  
 
 // Female DT uses only Sensors J & L
 char  Female_DT(char Sensor_2_B_Input, char Sensor_4_B_Input, char Sensor_2_A_Input, char Sensor_4_A_Input) {
@@ -150,6 +150,6 @@ char Read_Sensor_Values_Run_DTs() {
 }
 
 int main() {
-  correct_result = Read_Sensor_Values_Run_DTs();
+  result = Read_Sensor_Values_Run_DTs();
   return 0;
 }
