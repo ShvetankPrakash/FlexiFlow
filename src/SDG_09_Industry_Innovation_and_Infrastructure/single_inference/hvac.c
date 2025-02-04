@@ -1,4 +1,39 @@
-int predict_tree_0(float features[]) {
+#include "sample_data.h"
+
+volatile char correct_result = -1;
+
+char predict_random_forest(unsigned short features[]);
+
+char Read_Sensor_Values_Run_RF() {
+    char occupancy, golden_reference, GPIO;
+
+    unsigned short features[] = {
+        Temperature_Sensor_Sample_Input,
+        Humidity_Sensor_Sample_Input,
+        Light_Sensor_Sample_Input,
+        CO2_Sensor_Sample_Input,
+        HumidityRatio_Sensor_Sample_Input,
+    };
+
+    golden_reference = Golden_Reference_Occupancy;
+    occupancy = predict_random_forest(features);
+
+    if (occupancy) {
+        GPIO = 1;
+        return GPIO;
+    }
+
+    GPIO = 0;
+    return GPIO;
+}
+
+int main() {
+    correct_result = Read_Sensor_Values_Run_RF();
+
+    return 0;
+}
+
+int predict_tree_0(unsigned short features[]) {
     if (features[2] <= 15378) {
         if (features[4] <= 62709) {
             if (features[2] <= 12258) {
@@ -149,7 +184,7 @@ int predict_tree_0(float features[]) {
         }
     }
 }
-int predict_tree_1(float features[]) {
+int predict_tree_1(unsigned short features[]) {
     if (features[3] <= 8355) {
         if (features[3] <= 3381) {
             if (features[3] <= 2778) {
@@ -344,7 +379,7 @@ int predict_tree_1(float features[]) {
         }
     }
 }
-int predict_tree_2(float features[]) {
+int predict_tree_2(unsigned short features[]) {
     if (features[3] <= 7060) {
         if (features[1] <= 20812) {
             if (features[2] <= 16114) {
@@ -555,7 +590,7 @@ int predict_tree_2(float features[]) {
         }
     }
 }
-int predict_tree_3(float features[]) {
+int predict_tree_3(unsigned short features[]) {
     if (features[0] <= 28811) {
         if (features[0] <= 28191) {
             if (features[3] <= 2778) {
@@ -726,7 +761,7 @@ int predict_tree_3(float features[]) {
         }
     }
 }
-int predict_tree_4(float features[]) {
+int predict_tree_4(unsigned short features[]) {
     if (features[2] <= 15913) {
         if (features[0] <= 27013) {
             if (features[2] <= 12235) {
@@ -925,7 +960,7 @@ int predict_tree_4(float features[]) {
         }
     }
 }
-int predict_tree_5(float features[]) {
+int predict_tree_5(unsigned short features[]) {
     if (features[0] <= 35704) {
         if (features[3] <= 4623) {
             if (features[1] <= 7503) {
@@ -1168,7 +1203,7 @@ int predict_tree_5(float features[]) {
         }
     }
 }
-int predict_tree_6(float features[]) {
+int predict_tree_6(unsigned short features[]) {
     if (features[2] <= 16644) {
         if (features[4] <= 63181) {
             if (features[0] <= 36459) {
@@ -1347,7 +1382,7 @@ int predict_tree_6(float features[]) {
         }
     }
 }
-int predict_tree_7(float features[]) {
+int predict_tree_7(unsigned short features[]) {
     if (features[0] <= 28811) {
         if (features[2] <= 13762) {
             if (features[2] <= 12235) {
@@ -1494,7 +1529,7 @@ int predict_tree_7(float features[]) {
         }
     }
 }
-int predict_tree_8(float features[]) {
+int predict_tree_8(unsigned short features[]) {
     if (features[2] <= 15728) {
         if (features[1] <= 63085) {
             if (features[3] <= 2465) {
@@ -1681,7 +1716,7 @@ int predict_tree_8(float features[]) {
         }
     }
 }
-int predict_tree_9(float features[]) {
+int predict_tree_9(unsigned short features[]) {
     if (features[0] <= 28431) {
         if (features[0] <= 26706) {
             if (features[2] <= 12067) {
@@ -1976,7 +2011,7 @@ int predict_tree_9(float features[]) {
         }
     }
 }
-int predict_tree_10(float features[]) {
+int predict_tree_10(unsigned short features[]) {
     if (features[0] <= 28811) {
         if (features[4] <= 29407) {
             if (features[1] <= 38406) {
@@ -2251,7 +2286,7 @@ int predict_tree_10(float features[]) {
         }
     }
 }
-int predict_tree_11(float features[]) {
+int predict_tree_11(unsigned short features[]) {
     if (features[2] <= 15473) {
         if (features[0] <= 48152) {
             if (features[2] <= 12247) {
@@ -2406,7 +2441,7 @@ int predict_tree_11(float features[]) {
         }
     }
 }
-int predict_tree_12(float features[]) {
+int predict_tree_12(unsigned short features[]) {
     if (features[2] <= 15966) {
         if (features[2] <= 8984) {
             return 0;
@@ -2533,7 +2568,7 @@ int predict_tree_12(float features[]) {
         }
     }
 }
-int predict_tree_13(float features[]) {
+int predict_tree_13(unsigned short features[]) {
     if (features[2] <= 15473) {
         if (features[3] <= 59146) {
             if (features[4] <= 21671) {
@@ -2716,7 +2751,7 @@ int predict_tree_13(float features[]) {
         }
     }
 }
-int predict_tree_14(float features[]) {
+int predict_tree_14(unsigned short features[]) {
     if (features[4] <= 29505) {
         if (features[3] <= 3381) {
             if (features[3] <= 2472) {
@@ -2935,7 +2970,7 @@ int predict_tree_14(float features[]) {
         }
     }
 }
-int predict_tree_15(float features[]) {
+int predict_tree_15(unsigned short features[]) {
     if (features[3] <= 7001) {
         if (features[2] <= 15913) {
             if (features[2] <= 15082) {
@@ -3094,7 +3129,7 @@ int predict_tree_15(float features[]) {
         }
     }
 }
-int predict_tree_16(float features[]) {
+int predict_tree_16(unsigned short features[]) {
     if (features[3] <= 7001) {
         if (features[0] <= 26240) {
             if (features[4] <= 20838) {
@@ -3321,7 +3356,7 @@ int predict_tree_16(float features[]) {
         }
     }
 }
-int predict_tree_17(float features[]) {
+int predict_tree_17(unsigned short features[]) {
     if (features[3] <= 6992) {
         if (features[0] <= 9123) {
             if (features[2] <= 17736) {
@@ -3524,7 +3559,7 @@ int predict_tree_17(float features[]) {
         }
     }
 }
-int predict_tree_18(float features[]) {
+int predict_tree_18(unsigned short features[]) {
     if (features[4] <= 29505) {
         if (features[2] <= 15728) {
             if (features[2] <= 15082) {
@@ -3687,7 +3722,7 @@ int predict_tree_18(float features[]) {
         }
     }
 }
-int predict_tree_19(float features[]) {
+int predict_tree_19(unsigned short features[]) {
     if (features[4] <= 29505) {
         if (features[2] <= 15966) {
             if (features[4] <= 12062) {
@@ -3862,7 +3897,7 @@ int predict_tree_19(float features[]) {
         }
     }
 }
-int predict_tree_20(float features[]) {
+int predict_tree_20(unsigned short features[]) {
     if (features[2] <= 15378) {
         if (features[1] <= 63231) {
             if (features[2] <= 14433) {
@@ -4001,7 +4036,7 @@ int predict_tree_20(float features[]) {
         }
     }
 }
-int predict_tree_21(float features[]) {
+int predict_tree_21(unsigned short features[]) {
     if (features[0] <= 35344) {
         if (features[2] <= 13969) {
             return 0;
@@ -4156,7 +4191,7 @@ int predict_tree_21(float features[]) {
         }
     }
 }
-int predict_tree_22(float features[]) {
+int predict_tree_22(unsigned short features[]) {
     if (features[2] <= 15420) {
         if (features[1] <= 63085) {
             if (features[4] <= 44813) {
@@ -4339,7 +4374,7 @@ int predict_tree_22(float features[]) {
         }
     }
 }
-int predict_tree_23(float features[]) {
+int predict_tree_23(unsigned short features[]) {
     if (features[2] <= 16644) {
         if (features[1] <= 63165) {
             if (features[3] <= 4699) {
@@ -4502,7 +4537,7 @@ int predict_tree_23(float features[]) {
         }
     }
 }
-int predict_tree_24(float features[]) {
+int predict_tree_24(unsigned short features[]) {
     if (features[2] <= 15966) {
         if (features[1] <= 63231) {
             if (features[3] <= 10114) {
@@ -4697,7 +4732,7 @@ int predict_tree_24(float features[]) {
         }
     }
 }
-int predict_tree_25(float features[]) {
+int predict_tree_25(unsigned short features[]) {
     if (features[4] <= 29318) {
         if (features[0] <= 35344) {
             if (features[2] <= 12235) {
@@ -4876,7 +4911,7 @@ int predict_tree_25(float features[]) {
         }
     }
 }
-int predict_tree_26(float features[]) {
+int predict_tree_26(unsigned short features[]) {
     if (features[3] <= 6992) {
         if (features[2] <= 16051) {
             return 0;
@@ -5027,7 +5062,7 @@ int predict_tree_26(float features[]) {
         }
     }
 }
-int predict_tree_27(float features[]) {
+int predict_tree_27(unsigned short features[]) {
     if (features[3] <= 8177) {
         if (features[2] <= 15913) {
             if (features[4] <= 12005) {
@@ -5218,7 +5253,7 @@ int predict_tree_27(float features[]) {
         }
     }
 }
-int predict_tree_28(float features[]) {
+int predict_tree_28(unsigned short features[]) {
     if (features[4] <= 29526) {
         if (features[2] <= 15675) {
             if (features[3] <= 16906) {
@@ -5421,7 +5456,7 @@ int predict_tree_28(float features[]) {
         }
     }
 }
-int predict_tree_29(float features[]) {
+int predict_tree_29(unsigned short features[]) {
     if (features[3] <= 6992) {
         if (features[2] <= 15966) {
             if (features[3] <= 2472) {
@@ -5596,7 +5631,7 @@ int predict_tree_29(float features[]) {
         }
     }
 }
-int predict_tree_30(float features[]) {
+int predict_tree_30(unsigned short features[]) {
     if (features[2] <= 15728) {
         if (features[3] <= 59734) {
             if (features[2] <= 9005) {
@@ -5727,7 +5762,7 @@ int predict_tree_30(float features[]) {
         }
     }
 }
-int predict_tree_31(float features[]) {
+int predict_tree_31(unsigned short features[]) {
     if (features[2] <= 15633) {
         if (features[3] <= 33735) {
             if (features[2] <= 15082) {
@@ -5898,7 +5933,7 @@ int predict_tree_31(float features[]) {
         }
     }
 }
-int predict_tree_32(float features[]) {
+int predict_tree_32(unsigned short features[]) {
     if (features[2] <= 16644) {
         if (features[4] <= 63181) {
             if (features[2] <= 15082) {
@@ -6061,7 +6096,7 @@ int predict_tree_32(float features[]) {
         }
     }
 }
-int predict_tree_33(float features[]) {
+int predict_tree_33(unsigned short features[]) {
     if (features[2] <= 15675) {
         if (features[3] <= 17420) {
             if (features[2] <= 12247) {
@@ -6248,7 +6283,7 @@ int predict_tree_33(float features[]) {
         }
     }
 }
-int predict_tree_34(float features[]) {
+int predict_tree_34(unsigned short features[]) {
     if (features[3] <= 3381) {
         if (features[2] <= 17375) {
             if (features[2] <= 15082) {
@@ -6387,7 +6422,7 @@ int predict_tree_34(float features[]) {
         }
     }
 }
-int predict_tree_35(float features[]) {
+int predict_tree_35(unsigned short features[]) {
     if (features[4] <= 29517) {
         if (features[2] <= 15966) {
             if (features[2] <= 9005) {
@@ -6594,7 +6629,7 @@ int predict_tree_35(float features[]) {
         }
     }
 }
-int predict_tree_36(float features[]) {
+int predict_tree_36(unsigned short features[]) {
     if (features[3] <= 7057) {
         if (features[2] <= 15913) {
             if (features[1] <= 30075) {
@@ -6749,7 +6784,7 @@ int predict_tree_36(float features[]) {
         }
     }
 }
-int predict_tree_37(float features[]) {
+int predict_tree_37(unsigned short features[]) {
     if (features[3] <= 6992) {
         if (features[2] <= 15913) {
             if (features[2] <= 12258) {
@@ -6900,7 +6935,7 @@ int predict_tree_37(float features[]) {
         }
     }
 }
-int predict_tree_38(float features[]) {
+int predict_tree_38(unsigned short features[]) {
     if (features[0] <= 28811) {
         if (features[2] <= 13702) {
             return 0;
@@ -7071,7 +7106,7 @@ int predict_tree_38(float features[]) {
         }
     }
 }
-int predict_tree_39(float features[]) {
+int predict_tree_39(unsigned short features[]) {
     if (features[0] <= 28191) {
         if (features[2] <= 14462) {
             if (features[2] <= 12235) {
@@ -7218,7 +7253,7 @@ int predict_tree_39(float features[]) {
         }
     }
 }
-int predict_tree_40(float features[]) {
+int predict_tree_40(unsigned short features[]) {
     if (features[2] <= 15473) {
         if (features[4] <= 7054) {
             return 0;
@@ -7377,7 +7412,7 @@ int predict_tree_40(float features[]) {
         }
     }
 }
-int predict_tree_41(float features[]) {
+int predict_tree_41(unsigned short features[]) {
     if (features[3] <= 7381) {
         if (features[3] <= 3376) {
             if (features[3] <= 2636) {
@@ -7592,7 +7627,7 @@ int predict_tree_41(float features[]) {
         }
     }
 }
-int predict_tree_42(float features[]) {
+int predict_tree_42(unsigned short features[]) {
     if (features[2] <= 15473) {
         if (features[2] <= 8984) {
             return 0;
@@ -7739,7 +7774,7 @@ int predict_tree_42(float features[]) {
         }
     }
 }
-int predict_tree_43(float features[]) {
+int predict_tree_43(unsigned short features[]) {
     if (features[2] <= 15728) {
         if (features[4] <= 63181) {
             if (features[3] <= 17420) {
@@ -7926,7 +7961,7 @@ int predict_tree_43(float features[]) {
         }
     }
 }
-int predict_tree_44(float features[]) {
+int predict_tree_44(unsigned short features[]) {
     if (features[2] <= 15473) {
         if (features[3] <= 58872) {
             if (features[0] <= 36459) {
@@ -8113,7 +8148,7 @@ int predict_tree_44(float features[]) {
         }
     }
 }
-int predict_tree_45(float features[]) {
+int predict_tree_45(unsigned short features[]) {
     if (features[4] <= 29303) {
         if (features[2] <= 16051) {
             if (features[3] <= 16906) {
@@ -8268,7 +8303,7 @@ int predict_tree_45(float features[]) {
         }
     }
 }
-int predict_tree_46(float features[]) {
+int predict_tree_46(unsigned short features[]) {
     if (features[2] <= 15420) {
         if (features[4] <= 63181) {
             if (features[0] <= 61045) {
@@ -8411,7 +8446,7 @@ int predict_tree_46(float features[]) {
         }
     }
 }
-int predict_tree_47(float features[]) {
+int predict_tree_47(unsigned short features[]) {
     if (features[4] <= 29318) {
         if (features[0] <= 28811) {
             if (features[1] <= 38455) {
@@ -8642,7 +8677,7 @@ int predict_tree_47(float features[]) {
         }
     }
 }
-int predict_tree_48(float features[]) {
+int predict_tree_48(unsigned short features[]) {
     if (features[0] <= 28811) {
         if (features[4] <= 29396) {
             if (features[0] <= 8191) {
@@ -8861,7 +8896,7 @@ int predict_tree_48(float features[]) {
         }
     }
 }
-int predict_tree_49(float features[]) {
+int predict_tree_49(unsigned short features[]) {
     if (features[0] <= 35344) {
         if (features[2] <= 13762) {
             return 0;
@@ -9040,7 +9075,7 @@ int predict_tree_49(float features[]) {
         }
     }
 }
-int predict_tree_50(float features[]) {
+int predict_tree_50(unsigned short features[]) {
     if (features[0] <= 28811) {
         if (features[1] <= 31882) {
             if (features[1] <= 17780) {
@@ -9235,7 +9270,7 @@ int predict_tree_50(float features[]) {
         }
     }
 }
-int predict_tree_51(float features[]) {
+int predict_tree_51(unsigned short features[]) {
     if (features[3] <= 7148) {
         if (features[0] <= 27013) {
             if (features[0] <= 8191) {
@@ -9458,7 +9493,7 @@ int predict_tree_51(float features[]) {
         }
     }
 }
-int predict_tree_52(float features[]) {
+int predict_tree_52(unsigned short features[]) {
     if (features[3] <= 8385) {
         if (features[2] <= 15913) {
             return 0;
@@ -9649,7 +9684,7 @@ int predict_tree_52(float features[]) {
         }
     }
 }
-int predict_tree_53(float features[]) {
+int predict_tree_53(unsigned short features[]) {
     if (features[3] <= 6992) {
         if (features[4] <= 23559) {
             if (features[3] <= 3386) {
@@ -9852,7 +9887,7 @@ int predict_tree_53(float features[]) {
         }
     }
 }
-int predict_tree_54(float features[]) {
+int predict_tree_54(unsigned short features[]) {
     if (features[2] <= 15473) {
         if (features[4] <= 63181) {
             if (features[0] <= 60845) {
@@ -10023,7 +10058,7 @@ int predict_tree_54(float features[]) {
         }
     }
 }
-int predict_tree_55(float features[]) {
+int predict_tree_55(unsigned short features[]) {
     if (features[3] <= 6992) {
         if (features[2] <= 16658) {
             if (features[0] <= 27013) {
@@ -10146,7 +10181,7 @@ int predict_tree_55(float features[]) {
         }
     }
 }
-int predict_tree_56(float features[]) {
+int predict_tree_56(unsigned short features[]) {
     if (features[0] <= 28811) {
         if (features[2] <= 14965) {
             return 0;
@@ -10293,7 +10328,7 @@ int predict_tree_56(float features[]) {
         }
     }
 }
-int predict_tree_57(float features[]) {
+int predict_tree_57(unsigned short features[]) {
     if (features[2] <= 15420) {
         if (features[2] <= 9005) {
             if (features[4] <= 44813) {
@@ -10484,7 +10519,7 @@ int predict_tree_57(float features[]) {
         }
     }
 }
-int predict_tree_58(float features[]) {
+int predict_tree_58(unsigned short features[]) {
     if (features[2] <= 15420) {
         if (features[0] <= 60845) {
             if (features[2] <= 15076) {
@@ -10631,7 +10666,7 @@ int predict_tree_58(float features[]) {
         }
     }
 }
-int predict_tree_59(float features[]) {
+int predict_tree_59(unsigned short features[]) {
     if (features[0] <= 28811) {
         if (features[2] <= 13762) {
             return 0;
@@ -10818,7 +10853,7 @@ int predict_tree_59(float features[]) {
         }
     }
 }
-int predict_tree_60(float features[]) {
+int predict_tree_60(unsigned short features[]) {
     if (features[3] <= 7001) {
         if (features[3] <= 3204) {
             if (features[4] <= 1298) {
@@ -11077,7 +11112,7 @@ int predict_tree_60(float features[]) {
         }
     }
 }
-int predict_tree_61(float features[]) {
+int predict_tree_61(unsigned short features[]) {
     if (features[3] <= 6124) {
         if (features[2] <= 15966) {
             if (features[3] <= 1789) {
@@ -11228,7 +11263,7 @@ int predict_tree_61(float features[]) {
         }
     }
 }
-int predict_tree_62(float features[]) {
+int predict_tree_62(unsigned short features[]) {
     if (features[3] <= 6992) {
         if (features[3] <= 3320) {
             if (features[2] <= 16916) {
@@ -11407,7 +11442,7 @@ int predict_tree_62(float features[]) {
         }
     }
 }
-int predict_tree_63(float features[]) {
+int predict_tree_63(unsigned short features[]) {
     if (features[4] <= 29517) {
         if (features[0] <= 36459) {
             if (features[3] <= 5170) {
@@ -11630,7 +11665,7 @@ int predict_tree_63(float features[]) {
         }
     }
 }
-int predict_tree_64(float features[]) {
+int predict_tree_64(unsigned short features[]) {
     if (features[4] <= 29505) {
         if (features[0] <= 35344) {
             if (features[3] <= 3381) {
@@ -11845,7 +11880,7 @@ int predict_tree_64(float features[]) {
         }
     }
 }
-int predict_tree_65(float features[]) {
+int predict_tree_65(unsigned short features[]) {
     if (features[2] <= 15728) {
         if (features[4] <= 63181) {
             if (features[2] <= 12385) {
@@ -12012,7 +12047,7 @@ int predict_tree_65(float features[]) {
         }
     }
 }
-int predict_tree_66(float features[]) {
+int predict_tree_66(unsigned short features[]) {
     if (features[2] <= 15675) {
         if (features[3] <= 59734) {
             if (features[0] <= 26973) {
@@ -12227,7 +12262,7 @@ int predict_tree_66(float features[]) {
         }
     }
 }
-int predict_tree_67(float features[]) {
+int predict_tree_67(unsigned short features[]) {
     if (features[3] <= 8345) {
         if (features[2] <= 15913) {
             if (features[0] <= 27013) {
@@ -12422,7 +12457,7 @@ int predict_tree_67(float features[]) {
         }
     }
 }
-int predict_tree_68(float features[]) {
+int predict_tree_68(unsigned short features[]) {
     if (features[2] <= 15966) {
         if (features[1] <= 63085) {
             if (features[1] <= 26739) {
@@ -12593,7 +12628,7 @@ int predict_tree_68(float features[]) {
         }
     }
 }
-int predict_tree_69(float features[]) {
+int predict_tree_69(unsigned short features[]) {
     if (features[2] <= 15473) {
         if (features[1] <= 63165) {
             if (features[4] <= 19224) {
@@ -12752,7 +12787,7 @@ int predict_tree_69(float features[]) {
         }
     }
 }
-int predict_tree_70(float features[]) {
+int predict_tree_70(unsigned short features[]) {
     if (features[2] <= 15473) {
         if (features[1] <= 63231) {
             if (features[4] <= 44813) {
@@ -12915,7 +12950,7 @@ int predict_tree_70(float features[]) {
         }
     }
 }
-int predict_tree_71(float features[]) {
+int predict_tree_71(unsigned short features[]) {
     if (features[2] <= 15473) {
         if (features[3] <= 59734) {
             if (features[0] <= 61045) {
@@ -13098,7 +13133,7 @@ int predict_tree_71(float features[]) {
         }
     }
 }
-int predict_tree_72(float features[]) {
+int predict_tree_72(unsigned short features[]) {
     if (features[2] <= 15728) {
         if (features[2] <= 15082) {
             if (features[2] <= 9005) {
@@ -13269,7 +13304,7 @@ int predict_tree_72(float features[]) {
         }
     }
 }
-int predict_tree_73(float features[]) {
+int predict_tree_73(unsigned short features[]) {
     if (features[3] <= 7761) {
         if (features[0] <= 27352) {
             if (features[2] <= 12067) {
@@ -13452,7 +13487,7 @@ int predict_tree_73(float features[]) {
         }
     }
 }
-int predict_tree_74(float features[]) {
+int predict_tree_74(unsigned short features[]) {
     if (features[4] <= 29517) {
         if (features[0] <= 28811) {
             if (features[2] <= 14965) {
@@ -13631,7 +13666,7 @@ int predict_tree_74(float features[]) {
         }
     }
 }
-int predict_tree_75(float features[]) {
+int predict_tree_75(unsigned short features[]) {
     if (features[0] <= 28191) {
         if (features[2] <= 14266) {
             return 0;
@@ -13862,7 +13897,7 @@ int predict_tree_75(float features[]) {
         }
     }
 }
-int predict_tree_76(float features[]) {
+int predict_tree_76(unsigned short features[]) {
     if (features[0] <= 35344) {
         if (features[4] <= 29407) {
             if (features[1] <= 20943) {
@@ -14041,7 +14076,7 @@ int predict_tree_76(float features[]) {
         }
     }
 }
-int predict_tree_77(float features[]) {
+int predict_tree_77(unsigned short features[]) {
     if (features[3] <= 6992) {
         if (features[2] <= 15966) {
             if (features[2] <= 15076) {
@@ -14264,7 +14299,7 @@ int predict_tree_77(float features[]) {
         }
     }
 }
-int predict_tree_78(float features[]) {
+int predict_tree_78(unsigned short features[]) {
     if (features[3] <= 8256) {
         if (features[2] <= 15829) {
             if (features[2] <= 15066) {
@@ -14483,7 +14518,7 @@ int predict_tree_78(float features[]) {
         }
     }
 }
-int predict_tree_79(float features[]) {
+int predict_tree_79(unsigned short features[]) {
     if (features[3] <= 7057) {
         if (features[4] <= 23423) {
             if (features[3] <= 3381) {
@@ -14702,7 +14737,7 @@ int predict_tree_79(float features[]) {
         }
     }
 }
-int predict_tree_80(float features[]) {
+int predict_tree_80(unsigned short features[]) {
     if (features[3] <= 6992) {
         if (features[2] <= 16658) {
             if (features[1] <= 30075) {
@@ -14933,7 +14968,7 @@ int predict_tree_80(float features[]) {
         }
     }
 }
-int predict_tree_81(float features[]) {
+int predict_tree_81(unsigned short features[]) {
     if (features[0] <= 29077) {
         if (features[2] <= 12235) {
             return 0;
@@ -15152,7 +15187,7 @@ int predict_tree_81(float features[]) {
         }
     }
 }
-int predict_tree_82(float features[]) {
+int predict_tree_82(unsigned short features[]) {
     if (features[3] <= 6933) {
         if (features[2] <= 15913) {
             if (features[3] <= 2472) {
@@ -15323,7 +15358,7 @@ int predict_tree_82(float features[]) {
         }
     }
 }
-int predict_tree_83(float features[]) {
+int predict_tree_83(unsigned short features[]) {
     if (features[2] <= 15473) {
         if (features[4] <= 62952) {
             if (features[3] <= 10094) {
@@ -15514,7 +15549,7 @@ int predict_tree_83(float features[]) {
         }
     }
 }
-int predict_tree_84(float features[]) {
+int predict_tree_84(unsigned short features[]) {
     if (features[3] <= 3744) {
         if (features[0] <= 17782) {
             if (features[2] <= 18202) {
@@ -15701,7 +15736,7 @@ int predict_tree_84(float features[]) {
         }
     }
 }
-int predict_tree_85(float features[]) {
+int predict_tree_85(unsigned short features[]) {
     if (features[4] <= 29517) {
         if (features[2] <= 15728) {
             if (features[4] <= 7072) {
@@ -15900,7 +15935,7 @@ int predict_tree_85(float features[]) {
         }
     }
 }
-int predict_tree_86(float features[]) {
+int predict_tree_86(unsigned short features[]) {
     if (features[3] <= 6992) {
         if (features[3] <= 3386) {
             if (features[2] <= 16916) {
@@ -16115,7 +16150,7 @@ int predict_tree_86(float features[]) {
         }
     }
 }
-int predict_tree_87(float features[]) {
+int predict_tree_87(unsigned short features[]) {
     if (features[3] <= 6992) {
         if (features[1] <= 20471) {
             if (features[3] <= 3075) {
@@ -16314,7 +16349,7 @@ int predict_tree_87(float features[]) {
         }
     }
 }
-int predict_tree_88(float features[]) {
+int predict_tree_88(unsigned short features[]) {
     if (features[2] <= 15420) {
         if (features[3] <= 10114) {
             if (features[2] <= 15076) {
@@ -16465,7 +16500,7 @@ int predict_tree_88(float features[]) {
         }
     }
 }
-int predict_tree_89(float features[]) {
+int predict_tree_89(unsigned short features[]) {
     if (features[2] <= 15420) {
         if (features[4] <= 63181) {
             if (features[2] <= 9005) {
@@ -16652,7 +16687,7 @@ int predict_tree_89(float features[]) {
         }
     }
 }
-int predict_tree_90(float features[]) {
+int predict_tree_90(unsigned short features[]) {
     if (features[2] <= 15966) {
         if (features[1] <= 63231) {
             if (features[3] <= 2472) {
@@ -16839,7 +16874,7 @@ int predict_tree_90(float features[]) {
         }
     }
 }
-int predict_tree_91(float features[]) {
+int predict_tree_91(unsigned short features[]) {
     if (features[2] <= 15420) {
         if (features[3] <= 10114) {
             if (features[3] <= 1789) {
@@ -17006,7 +17041,7 @@ int predict_tree_91(float features[]) {
         }
     }
 }
-int predict_tree_92(float features[]) {
+int predict_tree_92(unsigned short features[]) {
     if (features[2] <= 15728) {
         if (features[3] <= 33613) {
             if (features[2] <= 15082) {
@@ -17161,7 +17196,7 @@ int predict_tree_92(float features[]) {
         }
     }
 }
-int predict_tree_93(float features[]) {
+int predict_tree_93(unsigned short features[]) {
     if (features[3] <= 6992) {
         if (features[3] <= 3198) {
             if (features[0] <= 17782) {
@@ -17392,7 +17427,7 @@ int predict_tree_93(float features[]) {
         }
     }
 }
-int predict_tree_94(float features[]) {
+int predict_tree_94(unsigned short features[]) {
     if (features[3] <= 6992) {
         if (features[4] <= 23026) {
             if (features[1] <= 32613) {
@@ -17531,7 +17566,7 @@ int predict_tree_94(float features[]) {
         }
     }
 }
-int predict_tree_95(float features[]) {
+int predict_tree_95(unsigned short features[]) {
     if (features[2] <= 15728) {
         if (features[3] <= 59734) {
             if (features[2] <= 9005) {
@@ -17734,7 +17769,7 @@ int predict_tree_95(float features[]) {
         }
     }
 }
-int predict_tree_96(float features[]) {
+int predict_tree_96(unsigned short features[]) {
     if (features[2] <= 15728) {
         if (features[1] <= 63165) {
             if (features[4] <= 44813) {
@@ -17925,7 +17960,7 @@ int predict_tree_96(float features[]) {
         }
     }
 }
-int predict_tree_97(float features[]) {
+int predict_tree_97(unsigned short features[]) {
     if (features[2] <= 15420) {
         if (features[2] <= 12258) {
             if (features[3] <= 17501) {
@@ -18080,7 +18115,7 @@ int predict_tree_97(float features[]) {
         }
     }
 }
-int predict_tree_98(float features[]) {
+int predict_tree_98(unsigned short features[]) {
     if (features[0] <= 28811) {
         if (features[3] <= 2636) {
             if (features[1] <= 5482) {
@@ -18255,7 +18290,7 @@ int predict_tree_98(float features[]) {
         }
     }
 }
-int predict_tree_99(float features[]) {
+int predict_tree_99(unsigned short features[]) {
     if (features[2] <= 15473) {
         if (features[1] <= 63231) {
             if (features[3] <= 10094) {
@@ -18387,7 +18422,7 @@ int predict_tree_99(float features[]) {
     }
 }
 
-int predict_random_forest(float features[]) {
+char predict_random_forest(unsigned short features[]) {
     int votes[2] = {0};  // Assuming binary classification (class 0 and class 1)
     int prediction_0 = predict_tree_0(features);
     votes[prediction_0]++;

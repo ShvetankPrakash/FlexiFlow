@@ -4,7 +4,7 @@ import argparse
 def generate_header(csv_filename, header_filename, sample, quant):
     # Default quantization value
     if quant == 0:
-        quant = 8
+        quant = 16
 
     with open(csv_filename, 'r') as csv_file:
         csv_reader = csv.reader(csv_file)
@@ -15,7 +15,7 @@ def generate_header(csv_filename, header_filename, sample, quant):
             return
 
         # Check quantization
-        if quant != 8:
+        if quant != 16:
             print(f"Error: cannot quantize to {quant}")
             return
 
@@ -30,32 +30,32 @@ def generate_header(csv_filename, header_filename, sample, quant):
 
             # Define the expected C types for each variable
             quant_types = [
-                "char",      # Temperature (rounded)
-                "char",      # Humidity (rounded)
-                "short",     # Light
-                "short",     # CO2
-                "float",     # HumidityRatio
-                "char"       # Occupancy
+                "unsigned short",     # Temperature (rounded)
+                "unsigned short",     # Humidity (rounded)
+                "unsigned short",     # Light
+                "unsigned short",     # CO2
+                "unsigned short",     # HumidityRatio
+                "char"      # Occupancy
             ]
 
             # Skip the "date" column and write each variable
-            for var in range(1, len(var_names)):  # Start from 1 to skip "date"
+            for var in range(0, len(var_names)):  # Start from 1 to skip "date"
                 var_name = var_names[var]
                 value = row[var]
 
-                # Convert values to correct types
-                try:
-                    if quant_types[var - 1] == "char":
-                        value = int(float(value))  # Convert to int for char
-                    elif quant_types[var - 1] == "short":
-                        value = int(float(value))  # Convert to int for short
-                    elif quant_types[var - 1] == "float":
-                        value = float(value)  # Keep as float
-                except ValueError:
-                    print(f"Warning: Could not convert {value} for {var_name}")
+                # # Convert values to correct types
+                # try:
+                #     if quant_types[var] == "char":
+                #         value = int(float(value))  # Convert to int for char
+                #     elif quant_types[var] == "short":
+                #         value = int(float(value))  # Convert to int for short
+                #     elif quant_types[var] == "float":
+                #         value = float(value)  # Keep as float
+                # except ValueError:
+                #     print(f"Warning: Could not convert {value} for {var_name}")
 
                 # Write to header file
-                header_file.write(f"const volatile {quant_types[var - 1]} {var_name} = {value};\n")
+                header_file.write(f"const volatile {quant_types[var]} {var_name} = {value};\n")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate a C header file from a CSV row.')

@@ -221,7 +221,7 @@ char Predict_Spoiled(char Days, char Fruit_Litchi, short CO2, char Fruit_Plum, c
 // Read the sensor values from the data samples and run the DTs to make predictions
 // Compare the predicted class made by this model to the predicted class made by the Python model for equivalence check
 char Read_Sensor_Values_Run_DTs() {
-    char GPIO = 1;
+    char parity_with_python = 1;
     for (unsigned short data_sample = 0; data_sample < Num_Data_Samples; data_sample++) {
         char Days = Days_Vector[data_sample];
         char Temp = Temp_Vector[data_sample];
@@ -242,13 +242,13 @@ char Read_Sensor_Values_Run_DTs() {
         char c_predicted_class = Predict_Spoiled(Days, Fruit_Litchi, CO2, Fruit_Plum, Temp, Humidity, Fruit_Grapes, Fruit_Apple, Fruit_Lemon, Fruit_Mango, Fruit_Tomato, Fruit_Papaya);
 
         if (python_predicted_class != c_predicted_class) {
-            GPIO = 0;
+            parity_with_python = 0;
         } else {
             correct++;
         }
     }
 
-    return GPIO;
+    return parity_with_python;
 }
 
 int main() {

@@ -67,7 +67,7 @@ char Read_Sensor_Values_Run_KNNs() {
   char golden_reference, predicted_pump;
   short sensor_inputs[Num_Features];
   unsigned short data_sample;
-  char GPIO;
+  char parity_with_python = 1;
 
   for (data_sample = 0; data_sample < Num_Data_Samples; data_sample++) {
 
@@ -81,14 +81,12 @@ char Read_Sensor_Values_Run_KNNs() {
 
 
     if (golden_reference != predicted_pump) {
-      GPIO = 0;
+      parity_with_python = 0;
       num_incorrect++;
-    } else {
-      // printf ("GPIO=%d for Data Sample:%d\n", GPIO, data_sample);
     }
   }
 
-  return GPIO;
+  return parity_with_python;
 }
 
 int main() {
