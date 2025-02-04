@@ -38,7 +38,7 @@ int layer_one_activations[HIDDEN_DIM];
 int output_activations[OUTPUT_DIM];
 
 // Global volatile variable to verify result is not optimized out
-volatile char correct_result = -1;  
+volatile signed char result = -1;  
 
 // Software implementation of integer multiplication adapted from: https://github.com/gcc-mirror/gcc/blob/master/libgcc/config/epiphany/mulsi3.c
 int __mulsi3(int a, int b) {
@@ -286,15 +286,15 @@ char Read_Values_Run_Neural_Network() {
     signed char tflite_model_prediction = TFLite_Model_Prediction;
     signed char c_model_prediction = nn_inference(lb, ac, fm, uc, dl, ds, dp, astv, mstv, altv, mltv, width, min, max, nmax, nzeros, mode, mean, median, variance, tendency);
     
-    char GPIO;
-    if (tflite_model_prediction != c_model_prediction) {
+    signed char GPIO = c_model_prediction;
+    //if (tflite_model_prediction != c_model_prediction) {
       //printf("Error: TFLite model prediction does not match the C model prediction\n");
       //printf("TFLite model prediction = %d --- C model prediction = %d\n", tflite_model_prediction, c_model_prediction);
       //exit(-1);
-      GPIO = 0;
-      return GPIO;
-    }
-    else GPIO = 1;
+      //GPIO = 0;
+      //return GPIO;
+    //}
+    //else GPIO = 1;
     //printf ("GPIO=%d\n", GPIO);
   
 
@@ -303,6 +303,6 @@ char Read_Values_Run_Neural_Network() {
 }
 
 int main() {
-  correct_result = Read_Values_Run_Neural_Network();
+  result = Read_Values_Run_Neural_Network();
   return 0;
 }
