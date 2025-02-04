@@ -6,8 +6,8 @@
  * TDS < 600
  */
 
-// Global volatile variable to verify result is not optimized out
-volatile char correct_result = -1;
+// Global volatile variable to return result
+volatile char result = -1;
 
 char potable_check(long o2, long pH, long tds) {
   return o2 > O2_MIN && (pH < PH_MAX && pH > PH_MIN) && tds < TDS_MAX;
@@ -28,6 +28,7 @@ char Read_Sensor_Values_Run_Check() {
   
   if (potable) {
     GPIO = 1;
+    return GPIO;
   }
 
   GPIO = 0;
@@ -35,6 +36,6 @@ char Read_Sensor_Values_Run_Check() {
 }
 
 int main() {
-  correct_result = Read_Sensor_Values_Run_Check();
+  result = Read_Sensor_Values_Run_Check();
   return 0;
 }
