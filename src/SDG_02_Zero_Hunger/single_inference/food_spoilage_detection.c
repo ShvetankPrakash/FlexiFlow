@@ -1,7 +1,7 @@
 #include "sample_data.h"
 
 // Global volatile variable to verify result is not optimized out
-volatile char correct_result = -1;
+volatile char result = -1;
 
 // Function to predict whether a fruit is spoiled based on the decision tree
 char Predict_Spoiled(char Days, char Fruit_Litchi, short CO2, char Fruit_Plum, char Temp, char Humidity, char Fruit_Grapes, char Fruit_Apple, char Fruit_Lemon, char Fruit_Mango, char Fruit_Tomato, char Fruit_Papaya) {
@@ -249,6 +249,6 @@ char Read_Sensor_Values_Run_DT() {
 }
 
 int main() {
-    correct_result = Read_Sensor_Values_Run_DT();
+    result = Read_Sensor_Values_Run_DT();
     return 0;
 }
