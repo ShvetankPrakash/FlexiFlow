@@ -4,7 +4,7 @@ import argparse
 def generate_header(csv_filename, header_filename, sample, quant):
     # Default quantization value
     if quant == 0:
-        quant = 16
+        quant = 8
 
     with open(csv_filename, 'r') as csv_file:
         csv_reader = csv.reader(csv_file)
@@ -15,7 +15,7 @@ def generate_header(csv_filename, header_filename, sample, quant):
             return
 
         # Check quantization
-        if quant != 16:
+        if quant != 8:
             print(f"Error: cannot quantize to {quant}")
             return
 
