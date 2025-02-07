@@ -1,6 +1,6 @@
 #include "sample_data.h"
 
-volatile char correct_result = -1;
+volatile char result = -1;
 
 char predict_random_forest(unsigned short features[]);
 
@@ -28,7 +28,7 @@ char Read_Sensor_Values_Run_RF() {
 }
 
 int main() {
-    correct_result = Read_Sensor_Values_Run_RF();
+    result = Read_Sensor_Values_Run_RF();
 
     return 0;
 }
