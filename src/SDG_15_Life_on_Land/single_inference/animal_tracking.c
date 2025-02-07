@@ -1,6 +1,6 @@
 #include "sample_data.h"
 
-volatile char correct_result = -1;
+volatile char result = -1;
 
 // Software implementation of integer multiplication adapted from: https://github.com/gcc-mirror/gcc/blob/master/libgcc/config/epiphany/mulsi3.c
 int __mulsi3(int a, int b) {
@@ -124,7 +124,6 @@ char Read_Input_Signal_Respond() {
 }
 
 int main() {
-    correct_result = Read_Input_Signal_Respond();
-
+    result = Read_Input_Signal_Respond();
     return 0;
 }
