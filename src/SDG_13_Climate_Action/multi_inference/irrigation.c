@@ -37,8 +37,8 @@ int predict_classification(short *test_point) {
   int i, j;
   for (i = 0; i < Num_Training_Samples; i++) {
     distances[i] =
-        euclidean_distance((const short *)Training_Vector[i], test_point);
-    labels[i] = (int)Training_Vector[i][Num_Features]; // Last column is label
+        euclidean_distance((const short *)Training_Data_Vector[i], test_point);
+    labels[i] = Training_Pump_Vector[i]; // Last column is label
   }
 
   // Simple selection sort to find k nearest neighbors
@@ -73,9 +73,9 @@ char Read_Sensor_Values_Run_KNNs() {
 
     // Fill in current sensor input
     for (int i = 0; i < Num_Features; ++i)
-        sensor_inputs[i] = Data_Vector[data_sample][i];
+        sensor_inputs[i] = Testing_Data_Vector[data_sample][i];
 
-    golden_reference = (char) Data_Vector[data_sample][Num_Features];
+    golden_reference = (char) Testing_Golden_Reference_Vector[data_sample];
 
     predicted_pump = predict_classification(sensor_inputs);
 

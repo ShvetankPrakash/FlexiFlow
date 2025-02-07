@@ -56,16 +56,15 @@ char majority_vote(short *labels) {
 
 // Custom implementation of KNN without standard library functions
 int predict_classification(short *test_point) {
-  unsigned long
-      distances[Num_Training_Samples]; // Adjust the size based on your data
+  unsigned long distances[Num_Training_Samples]; // Adjust the size based on your data
   short labels[Num_Training_Samples];
 
   // Calculate distances to each training point
   int i, j;
   for (i = 0; i < Num_Training_Samples; i++) {
     distances[i] =
-        euclidean_distance((const short *)Training_Vector[i], test_point);
-    labels[i] = (int)Training_Vector[i][Num_Features]; // Last column is label
+        euclidean_distance((const short *)Training_Data_Vector[i], test_point);
+    labels[i] = Training_Pump_Vector[i]; // Last column is label
   }
 
   // Simple selection sort to find k nearest neighbors
@@ -98,7 +97,7 @@ char Read_Sensor_Values_Run_KNN() {
 
   // Fill in current sensor input
   for (int i = 0; i < Num_Features; ++i)
-    sensor_inputs[i] = Data[i];
+    sensor_inputs[i] = Testing_Data[i];
 
   predicted_pump = predict_classification(sensor_inputs);
 
