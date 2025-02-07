@@ -1,5 +1,5 @@
 #include "sample_data.h"
-#include <stdio.h>
+// #include <stdio.h>
 
 volatile char correct_result = -1;
 int num_incorrect = 0;
@@ -26,7 +26,7 @@ char Read_Sensor_Values_Run_RF() {
 
 int main() {
     correct_result = Read_Sensor_Values_Run_RF();
-    printf("parity: %d, %d\n", correct_result, num_incorrect);
+    // printf("parity: %d, %d\n", correct_result, num_incorrect);
 
     return 0;
 }
