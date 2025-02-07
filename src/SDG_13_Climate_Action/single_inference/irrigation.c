@@ -4,7 +4,7 @@
 #define K 3
 
 // Global volatile variable to verify result is not optimized out
-volatile char correct_result = -1;
+volatile char result = -1;
 
 // Software implementation of integer multiplication adapted from: https://github.com/gcc-mirror/gcc/blob/master/libgcc/config/epiphany/mulsi3.c
 int __mulsi3(int a, int b) {
@@ -91,7 +91,7 @@ int predict_classification(short *test_point) {
 
 char Read_Sensor_Values_Run_KNN() {
 
-  char golden_reference, predicted_pump;
+  char predicted_pump;
   short sensor_inputs[Num_Features];
   unsigned short data_sample;
   char GPIO;
@@ -99,8 +99,6 @@ char Read_Sensor_Values_Run_KNN() {
   // Fill in current sensor input
   for (int i = 0; i < Num_Features; ++i)
     sensor_inputs[i] = Data[i];
-
-  golden_reference = (char) Data[Num_Features];
 
   predicted_pump = predict_classification(sensor_inputs);
 
@@ -113,7 +111,7 @@ char Read_Sensor_Values_Run_KNN() {
 }
 
 int main() {
-  correct_result = Read_Sensor_Values_Run_KNN();
-  // printf("Result: %d\n", correct_result);
+  result = Read_Sensor_Values_Run_KNN();
+  // printf("Result: %d\n", result);
   return 0;
 }
