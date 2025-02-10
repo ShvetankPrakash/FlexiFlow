@@ -21,7 +21,6 @@ def generate_header(csv_filename, header_filename, quant):
         with open(header_filename, 'w') as header_file:
             header_file.write(f"#define QUANTIZATION {quant}\n\n")
             header_file.write(f"#define Num_Data_Samples {len(rows)-1}\n")
-            header_file.write(f"#define Num_Features {len(var_names)-1}\n")
             header_file.write("\n")
 
             # Define the variable names and types
