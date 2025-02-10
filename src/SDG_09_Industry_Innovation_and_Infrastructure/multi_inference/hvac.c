@@ -4,16 +4,21 @@
 volatile char correct_result = -1;
 int num_incorrect = 0;
 
-char predict_random_forest(unsigned short features[]);
+char predict_random_forest(unsigned short temperature, unsigned short humidity,
+                           unsigned short light, unsigned short co2, unsigned short humidity_ratio);
 
 char Read_Sensor_Values_Run_RF() {
     char occupancy, golden_reference, parity_with_python = 1;
-    unsigned short *feature;
+    unsigned short temperature, humidity, light, co2, humidity_ratio;
 
     for (int i = 0; i < Num_Data_Samples; ++i) {
+        temperature = Temperature_Sensor_Sample_Input_Vector[i];
+        humidity = Humidity_Sensor_Sample_Input_Vector[i];
+        light = Light_Sensor_Sample_Input_Vector[i];
+        co2 = CO2_Sensor_Sample_Input_Vector[i];
+        humidity_ratio = HumidityRatio_Sensor_Sample_Input_Vector[i];
         golden_reference = Golden_Reference_Occupancy_Vector[i];
-        feature = (unsigned short *) &Features_Vector[i][0];
-        occupancy = predict_random_forest(feature);
+        occupancy = predict_random_forest(temperature, humidity, light, co2, humidity_ratio);
 
         if (occupancy != golden_reference) {
             parity_with_python = 0;
@@ -31,16 +36,16 @@ int main() {
     return 0;
 }
 
-int predict_tree_0(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[4] <= 245) {
-            if (features[2] <= 48) {
-                if (features[3] <= 68) {
+int predict_tree_0(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (humidity_ratio <= 245) {
+            if (light <= 48) {
+                if (co2 <= 68) {
                     return 0;
                 } else {
-                    if (features[2] <= 31) {
-                        if (features[1] <= 189) {
-                            if (features[3] <= 129) {
+                    if (light <= 31) {
+                        if (humidity <= 189) {
+                            if (co2 <= 129) {
                                 return 0;
                             } else {
                                 return 1;
@@ -53,10 +58,10 @@ int predict_tree_0(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[1] <= 27) {
+                if (humidity <= 27) {
                     return 0;
                 } else {
-                    if (features[1] <= 134) {
+                    if (humidity <= 134) {
                         return 1;
                     } else {
                         return 0;
@@ -67,25 +72,25 @@ int predict_tree_0(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[0] <= 227) {
-            if (features[3] <= 7) {
-                if (features[2] <= 67) {
+        if (temperature <= 227) {
+            if (co2 <= 7) {
+                if (light <= 67) {
                     return 1;
                 } else {
-                    if (features[0] <= 70) {
+                    if (temperature <= 70) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[0] <= 203) {
-                    if (features[1] <= 30) {
-                        if (features[1] <= 30) {
-                            if (features[3] <= 38) {
+                if (temperature <= 203) {
+                    if (humidity <= 30) {
+                        if (humidity <= 30) {
+                            if (co2 <= 38) {
                                 return 1;
                             } else {
-                                if (features[0] <= 168) {
+                                if (temperature <= 168) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -95,21 +100,21 @@ int predict_tree_0(unsigned short features[]) {
                             return 0;
                         }
                     } else {
-                        if (features[0] <= 200) {
-                            if (features[3] <= 10) {
-                                if (features[1] <= 66) {
+                        if (temperature <= 200) {
+                            if (co2 <= 10) {
+                                if (humidity <= 66) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             } else {
-                                if (features[1] <= 43) {
-                                    if (features[1] <= 43) {
-                                        if (features[1] <= 42) {
+                                if (humidity <= 43) {
+                                    if (humidity <= 43) {
+                                        if (humidity <= 42) {
                                             return 1;
                                         } else {
-                                            if (features[2] <= 79) {
-                                                if (features[2] <= 78) {
+                                            if (light <= 79) {
+                                                if (light <= 78) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -119,10 +124,10 @@ int predict_tree_0(unsigned short features[]) {
                                             }
                                         }
                                     } else {
-                                        if (features[2] <= 79) {
+                                        if (light <= 79) {
                                             return 1;
                                         } else {
-                                            if (features[3] <= 63) {
+                                            if (co2 <= 63) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -134,10 +139,10 @@ int predict_tree_0(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[2] <= 73) {
+                            if (light <= 73) {
                                 return 1;
                             } else {
-                                if (features[4] <= 122) {
+                                if (humidity_ratio <= 122) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -146,8 +151,8 @@ int predict_tree_0(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[4] <= 115) {
-                        if (features[3] <= 82) {
+                    if (humidity_ratio <= 115) {
+                        if (co2 <= 82) {
                             return 0;
                         } else {
                             return 1;
@@ -158,13 +163,13 @@ int predict_tree_0(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[4] <= 129) {
-                if (features[1] <= 111) {
+            if (humidity_ratio <= 129) {
+                if (humidity <= 111) {
                     return 0;
                 } else {
-                    if (features[0] <= 232) {
-                        if (features[1] <= 112) {
-                            if (features[3] <= 102) {
+                    if (temperature <= 232) {
+                        if (humidity <= 112) {
+                            if (co2 <= 102) {
                                 return 1;
                             } else {
                                 return 0;
@@ -182,20 +187,20 @@ int predict_tree_0(unsigned short features[]) {
         }
     }
 }
-int predict_tree_1(unsigned short features[]) {
-    if (features[3] <= 33) {
-        if (features[3] <= 13) {
-            if (features[3] <= 11) {
-                if (features[2] <= 63) {
-                    if (features[3] <= 10) {
-                        if (features[0] <= 105) {
+int predict_tree_1(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 33) {
+        if (co2 <= 13) {
+            if (co2 <= 11) {
+                if (light <= 63) {
+                    if (co2 <= 10) {
+                        if (temperature <= 105) {
                             return 0;
                         } else {
-                            if (features[0] <= 107) {
-                                if (features[3] <= 7) {
+                            if (temperature <= 107) {
+                                if (co2 <= 7) {
                                     return 0;
                                 } else {
-                                    if (features[2] <= 29) {
+                                    if (light <= 29) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -206,16 +211,16 @@ int predict_tree_1(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[3] <= 10) {
+                        if (co2 <= 10) {
                             return 1;
                         } else {
                             return 0;
                         }
                     }
                 } else {
-                    if (features[3] <= 7) {
-                        if (features[4] <= 3) {
-                            if (features[2] <= 69) {
+                    if (co2 <= 7) {
+                        if (humidity_ratio <= 3) {
+                            if (light <= 69) {
                                 return 1;
                             } else {
                                 return 0;
@@ -224,7 +229,7 @@ int predict_tree_1(unsigned short features[]) {
                             return 0;
                         }
                     } else {
-                        if (features[3] <= 9) {
+                        if (co2 <= 9) {
                             return 1;
                         } else {
                             return 0;
@@ -232,45 +237,45 @@ int predict_tree_1(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[2] <= 67) {
+                if (light <= 67) {
                     return 0;
                 } else {
                     return 1;
                 }
             }
         } else {
-            if (features[2] <= 32) {
+            if (light <= 32) {
                 return 0;
             } else {
                 return 1;
             }
         }
     } else {
-        if (features[0] <= 113) {
-            if (features[4] <= 151) {
+        if (temperature <= 113) {
+            if (humidity_ratio <= 151) {
                 return 1;
             } else {
                 return 0;
             }
         } else {
-            if (features[1] <= 217) {
-                if (features[2] <= 31) {
+            if (humidity <= 217) {
+                if (light <= 31) {
                     return 0;
                 } else {
-                    if (features[0] <= 234) {
-                        if (features[3] <= 76) {
-                            if (features[3] <= 76) {
-                                if (features[1] <= 100) {
-                                    if (features[4] <= 41) {
-                                        if (features[0] <= 159) {
+                    if (temperature <= 234) {
+                        if (co2 <= 76) {
+                            if (co2 <= 76) {
+                                if (humidity <= 100) {
+                                    if (humidity_ratio <= 41) {
+                                        if (temperature <= 159) {
                                             return 1;
                                         } else {
-                                            if (features[1] <= 43) {
-                                                if (features[0] <= 163) {
+                                            if (humidity <= 43) {
+                                                if (temperature <= 163) {
                                                     return 0;
                                                 } else {
-                                                    if (features[2] <= 79) {
-                                                        if (features[3] <= 62) {
+                                                    if (light <= 79) {
+                                                        if (co2 <= 62) {
                                                             return 1;
                                                         } else {
                                                             return 0;
@@ -287,11 +292,11 @@ int predict_tree_1(unsigned short features[]) {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[2] <= 74) {
+                                    if (light <= 74) {
                                         return 1;
                                     } else {
-                                        if (features[3] <= 63) {
-                                            if (features[4] <= 111) {
+                                        if (co2 <= 63) {
+                                            if (humidity_ratio <= 111) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -302,19 +307,19 @@ int predict_tree_1(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[1] <= 81) {
+                                if (humidity <= 81) {
                                     return 1;
                                 } else {
                                     return 0;
                                 }
                             }
                         } else {
-                            if (features[0] <= 227) {
-                                if (features[3] <= 100) {
-                                    if (features[1] <= 112) {
+                            if (temperature <= 227) {
+                                if (co2 <= 100) {
+                                    if (humidity <= 112) {
                                         return 1;
                                     } else {
-                                        if (features[3] <= 99) {
+                                        if (co2 <= 99) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -324,17 +329,17 @@ int predict_tree_1(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[4] <= 124) {
+                                if (humidity_ratio <= 124) {
                                     return 0;
                                 } else {
-                                    if (features[1] <= 112) {
+                                    if (humidity <= 112) {
                                         return 1;
                                     } else {
-                                        if (features[2] <= 91) {
-                                            if (features[4] <= 127) {
+                                        if (light <= 91) {
+                                            if (humidity_ratio <= 127) {
                                                 return 0;
                                             } else {
-                                                if (features[3] <= 110) {
+                                                if (co2 <= 110) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -352,22 +357,22 @@ int predict_tree_1(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 204) {
-                    if (features[4] <= 216) {
-                        if (features[2] <= 39) {
+                if (co2 <= 204) {
+                    if (humidity_ratio <= 216) {
+                        if (light <= 39) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[2] <= 37) {
+                        if (light <= 37) {
                             return 0;
                         } else {
                             return 1;
                         }
                     }
                 } else {
-                    if (features[2] <= 27) {
+                    if (light <= 27) {
                         return 0;
                     } else {
                         return 1;
@@ -377,29 +382,29 @@ int predict_tree_1(unsigned short features[]) {
         }
     }
 }
-int predict_tree_2(unsigned short features[]) {
-    if (features[3] <= 28) {
-        if (features[1] <= 81) {
-            if (features[2] <= 63) {
-                if (features[2] <= 59) {
+int predict_tree_2(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 28) {
+        if (humidity <= 81) {
+            if (light <= 63) {
+                if (light <= 59) {
                     return 0;
                 } else {
-                    if (features[4] <= 35) {
+                    if (humidity_ratio <= 35) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[2] <= 70) {
-                    if (features[1] <= 24) {
-                        if (features[4] <= 3) {
+                if (light <= 70) {
+                    if (humidity <= 24) {
+                        if (humidity_ratio <= 3) {
                             return 1;
                         } else {
-                            if (features[0] <= 71) {
+                            if (temperature <= 71) {
                                 return 0;
                             } else {
-                                if (features[0] <= 73) {
+                                if (temperature <= 73) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -414,17 +419,17 @@ int predict_tree_2(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[0] <= 32) {
+            if (temperature <= 32) {
                 return 0;
             } else {
-                if (features[3] <= 9) {
+                if (co2 <= 9) {
                     return 0;
                 } else {
-                    if (features[2] <= 24) {
+                    if (light <= 24) {
                         return 0;
                     } else {
-                        if (features[0] <= 34) {
-                            if (features[4] <= 77) {
+                        if (temperature <= 34) {
+                            if (humidity_ratio <= 77) {
                                 return 1;
                             } else {
                                 return 0;
@@ -437,48 +442,48 @@ int predict_tree_2(unsigned short features[]) {
             }
         }
     } else {
-        if (features[1] <= 189) {
-            if (features[2] <= 31) {
-                if (features[4] <= 173) {
+        if (humidity <= 189) {
+            if (light <= 31) {
+                if (humidity_ratio <= 173) {
                     return 0;
                 } else {
-                    if (features[3] <= 131) {
+                    if (co2 <= 131) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[0] <= 227) {
-                    if (features[0] <= 200) {
-                        if (features[2] <= 76) {
+                if (temperature <= 227) {
+                    if (temperature <= 200) {
+                        if (light <= 76) {
                             return 1;
                         } else {
-                            if (features[2] <= 76) {
-                                if (features[1] <= 113) {
+                            if (light <= 76) {
+                                if (humidity <= 113) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 108) {
+                                    if (co2 <= 108) {
                                         return 0;
                                     } else {
                                         return 1;
                                     }
                                 }
                             } else {
-                                if (features[3] <= 64) {
-                                    if (features[1] <= 43) {
-                                        if (features[2] <= 79) {
-                                            if (features[2] <= 78) {
+                                if (co2 <= 64) {
+                                    if (humidity <= 43) {
+                                        if (light <= 79) {
+                                            if (light <= 78) {
                                                 return 1;
                                             } else {
                                                 return 0;
                                             }
                                         } else {
-                                            if (features[3] <= 38) {
-                                                if (features[3] <= 37) {
+                                            if (co2 <= 38) {
+                                                if (co2 <= 37) {
                                                     return 1;
                                                 } else {
-                                                    if (features[0] <= 153) {
+                                                    if (temperature <= 153) {
                                                         return 1;
                                                     } else {
                                                         return 0;
@@ -489,11 +494,11 @@ int predict_tree_2(unsigned short features[]) {
                                             }
                                         }
                                     } else {
-                                        if (features[1] <= 43) {
-                                            if (features[2] <= 79) {
+                                        if (humidity <= 43) {
+                                            if (light <= 79) {
                                                 return 1;
                                             } else {
-                                                if (features[3] <= 62) {
+                                                if (co2 <= 62) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -504,10 +509,10 @@ int predict_tree_2(unsigned short features[]) {
                                         }
                                     }
                                 } else {
-                                    if (features[1] <= 112) {
+                                    if (humidity <= 112) {
                                         return 1;
                                     } else {
-                                        if (features[3] <= 100) {
+                                        if (co2 <= 100) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -517,13 +522,13 @@ int predict_tree_2(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[3] <= 79) {
-                            if (features[4] <= 119) {
-                                if (features[2] <= 81) {
-                                    if (features[4] <= 111) {
+                        if (co2 <= 79) {
+                            if (humidity_ratio <= 119) {
+                                if (light <= 81) {
+                                    if (humidity_ratio <= 111) {
                                         return 0;
                                     } else {
-                                        if (features[3] <= 64) {
+                                        if (co2 <= 64) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -540,17 +545,17 @@ int predict_tree_2(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[2] <= 89) {
-                        if (features[0] <= 230) {
+                    if (light <= 89) {
+                        if (temperature <= 230) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[3] <= 110) {
+                        if (co2 <= 110) {
                             return 0;
                         } else {
-                            if (features[2] <= 91) {
+                            if (light <= 91) {
                                 return 0;
                             } else {
                                 return 1;
@@ -560,25 +565,25 @@ int predict_tree_2(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[0] <= 148) {
+            if (temperature <= 148) {
                 return 0;
             } else {
-                if (features[0] <= 181) {
-                    if (features[1] <= 229) {
-                        if (features[2] <= 37) {
+                if (temperature <= 181) {
+                    if (humidity <= 229) {
+                        if (light <= 37) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[2] <= 37) {
+                        if (light <= 37) {
                             return 0;
                         } else {
                             return 1;
                         }
                     }
                 } else {
-                    if (features[2] <= 27) {
+                    if (light <= 27) {
                         return 0;
                     } else {
                         return 1;
@@ -588,20 +593,20 @@ int predict_tree_2(unsigned short features[]) {
         }
     }
 }
-int predict_tree_3(unsigned short features[]) {
-    if (features[0] <= 113) {
-        if (features[0] <= 110) {
-            if (features[3] <= 11) {
-                if (features[2] <= 60) {
+int predict_tree_3(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (temperature <= 113) {
+        if (temperature <= 110) {
+            if (co2 <= 11) {
+                if (light <= 60) {
                     return 0;
                 } else {
-                    if (features[3] <= 7) {
+                    if (co2 <= 7) {
                         return 0;
                     } else {
-                        if (features[4] <= 3) {
+                        if (humidity_ratio <= 3) {
                             return 0;
                         } else {
-                            if (features[0] <= 91) {
+                            if (temperature <= 91) {
                                 return 1;
                             } else {
                                 return 0;
@@ -610,11 +615,11 @@ int predict_tree_3(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[2] <= 32) {
+                if (light <= 32) {
                     return 0;
                 } else {
-                    if (features[0] <= 36) {
-                        if (features[4] <= 77) {
+                    if (temperature <= 36) {
+                        if (humidity_ratio <= 77) {
                             return 1;
                         } else {
                             return 0;
@@ -625,27 +630,27 @@ int predict_tree_3(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 52) {
+            if (light <= 52) {
                 return 0;
             } else {
                 return 1;
             }
         }
     } else {
-        if (features[3] <= 27) {
-            if (features[1] <= 73) {
-                if (features[1] <= 72) {
-                    if (features[3] <= 26) {
+        if (co2 <= 27) {
+            if (humidity <= 73) {
+                if (humidity <= 72) {
+                    if (co2 <= 26) {
                         return 0;
                     } else {
-                        if (features[3] <= 26) {
+                        if (co2 <= 26) {
                             return 1;
                         } else {
                             return 0;
                         }
                     }
                 } else {
-                    if (features[4] <= 56) {
+                    if (humidity_ratio <= 56) {
                         return 1;
                     } else {
                         return 0;
@@ -655,42 +660,42 @@ int predict_tree_3(unsigned short features[]) {
                 return 1;
             }
         } else {
-            if (features[2] <= 28) {
-                if (features[3] <= 132) {
+            if (light <= 28) {
+                if (co2 <= 132) {
                     return 0;
                 } else {
-                    if (features[1] <= 205) {
+                    if (humidity <= 205) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[0] <= 227) {
-                    if (features[4] <= 115) {
-                        if (features[0] <= 204) {
-                            if (features[4] <= 115) {
-                                if (features[0] <= 201) {
-                                    if (features[4] <= 113) {
-                                        if (features[1] <= 30) {
-                                            if (features[1] <= 29) {
+                if (temperature <= 227) {
+                    if (humidity_ratio <= 115) {
+                        if (temperature <= 204) {
+                            if (humidity_ratio <= 115) {
+                                if (temperature <= 201) {
+                                    if (humidity_ratio <= 113) {
+                                        if (humidity <= 30) {
+                                            if (humidity <= 29) {
                                                 return 1;
                                             } else {
-                                                if (features[3] <= 38) {
+                                                if (co2 <= 38) {
                                                     return 0;
                                                 } else {
                                                     return 1;
                                                 }
                                             }
                                         } else {
-                                            if (features[2] <= 78) {
+                                            if (light <= 78) {
                                                 return 1;
                                             } else {
-                                                if (features[4] <= 40) {
-                                                    if (features[4] <= 40) {
+                                                if (humidity_ratio <= 40) {
+                                                    if (humidity_ratio <= 40) {
                                                         return 1;
                                                     } else {
-                                                        if (features[2] <= 79) {
+                                                        if (light <= 79) {
                                                             return 0;
                                                         } else {
                                                             return 1;
@@ -702,14 +707,14 @@ int predict_tree_3(unsigned short features[]) {
                                             }
                                         }
                                     } else {
-                                        if (features[0] <= 192) {
+                                        if (temperature <= 192) {
                                             return 0;
                                         } else {
                                             return 1;
                                         }
                                     }
                                 } else {
-                                    if (features[4] <= 108) {
+                                    if (humidity_ratio <= 108) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -719,9 +724,9 @@ int predict_tree_3(unsigned short features[]) {
                                 return 0;
                             }
                         } else {
-                            if (features[3] <= 76) {
-                                if (features[4] <= 111) {
-                                    if (features[4] <= 111) {
+                            if (co2 <= 76) {
+                                if (humidity_ratio <= 111) {
+                                    if (humidity_ratio <= 111) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -737,12 +742,12 @@ int predict_tree_3(unsigned short features[]) {
                         return 1;
                     }
                 } else {
-                    if (features[1] <= 116) {
-                        if (features[3] <= 92) {
+                    if (humidity <= 116) {
+                        if (co2 <= 92) {
                             return 1;
                         } else {
-                            if (features[2] <= 86) {
-                                if (features[1] <= 113) {
+                            if (light <= 86) {
+                                if (humidity <= 113) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -759,41 +764,41 @@ int predict_tree_3(unsigned short features[]) {
         }
     }
 }
-int predict_tree_4(unsigned short features[]) {
-    if (features[2] <= 62) {
-        if (features[0] <= 106) {
-            if (features[2] <= 48) {
+int predict_tree_4(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 62) {
+        if (temperature <= 106) {
+            if (light <= 48) {
                 return 0;
             } else {
-                if (features[4] <= 91) {
+                if (humidity_ratio <= 91) {
                     return 1;
                 } else {
                     return 0;
                 }
             }
         } else {
-            if (features[1] <= 63) {
+            if (humidity <= 63) {
                 return 0;
             } else {
-                if (features[4] <= 48) {
-                    if (features[3] <= 7) {
+                if (humidity_ratio <= 48) {
+                    if (co2 <= 7) {
                         return 0;
                     } else {
-                        if (features[3] <= 7) {
+                        if (co2 <= 7) {
                             return 1;
                         } else {
                             return 0;
                         }
                     }
                 } else {
-                    if (features[3] <= 67) {
+                    if (co2 <= 67) {
                         return 0;
                     } else {
-                        if (features[1] <= 94) {
+                        if (humidity <= 94) {
                             return 1;
                         } else {
-                            if (features[1] <= 189) {
-                                if (features[3] <= 129) {
+                            if (humidity <= 189) {
+                                if (co2 <= 129) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -807,46 +812,46 @@ int predict_tree_4(unsigned short features[]) {
             }
         }
     } else {
-        if (features[3] <= 7) {
+        if (co2 <= 7) {
             return 0;
         } else {
-            if (features[4] <= 3) {
+            if (humidity_ratio <= 3) {
                 return 0;
             } else {
-                if (features[2] <= 87) {
-                    if (features[0] <= 204) {
-                        if (features[0] <= 34) {
-                            if (features[1] <= 120) {
+                if (light <= 87) {
+                    if (temperature <= 204) {
+                        if (temperature <= 34) {
+                            if (humidity <= 120) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         } else {
-                            if (features[3] <= 10) {
-                                if (features[2] <= 70) {
+                            if (co2 <= 10) {
+                                if (light <= 70) {
                                     return 1;
                                 } else {
                                     return 0;
                                 }
                             } else {
-                                if (features[2] <= 75) {
+                                if (light <= 75) {
                                     return 1;
                                 } else {
-                                    if (features[2] <= 76) {
-                                        if (features[3] <= 58) {
-                                            if (features[2] <= 75) {
+                                    if (light <= 76) {
+                                        if (co2 <= 58) {
+                                            if (light <= 75) {
                                                 return 0;
                                             } else {
                                                 return 1;
                                             }
                                         } else {
-                                            if (features[2] <= 76) {
+                                            if (light <= 76) {
                                                 return 1;
                                             } else {
-                                                if (features[3] <= 97) {
+                                                if (co2 <= 97) {
                                                     return 1;
                                                 } else {
-                                                    if (features[3] <= 103) {
+                                                    if (co2 <= 103) {
                                                         return 0;
                                                     } else {
                                                         return 1;
@@ -855,13 +860,13 @@ int predict_tree_4(unsigned short features[]) {
                                             }
                                         }
                                     } else {
-                                        if (features[1] <= 43) {
-                                            if (features[3] <= 62) {
+                                        if (humidity <= 43) {
+                                            if (co2 <= 62) {
                                                 return 1;
                                             } else {
-                                                if (features[0] <= 171) {
-                                                    if (features[1] <= 43) {
-                                                        if (features[3] <= 62) {
+                                                if (temperature <= 171) {
+                                                    if (humidity <= 43) {
+                                                        if (co2 <= 62) {
                                                             return 0;
                                                         } else {
                                                             return 1;
@@ -874,13 +879,13 @@ int predict_tree_4(unsigned short features[]) {
                                                 }
                                             }
                                         } else {
-                                            if (features[0] <= 190) {
+                                            if (temperature <= 190) {
                                                 return 1;
                                             } else {
-                                                if (features[1] <= 112) {
+                                                if (humidity <= 112) {
                                                     return 1;
                                                 } else {
-                                                    if (features[0] <= 192) {
+                                                    if (temperature <= 192) {
                                                         return 0;
                                                     } else {
                                                         return 1;
@@ -893,13 +898,13 @@ int predict_tree_4(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[4] <= 114) {
-                            if (features[2] <= 73) {
+                        if (humidity_ratio <= 114) {
+                            if (light <= 73) {
                                 return 1;
                             } else {
-                                if (features[3] <= 87) {
-                                    if (features[3] <= 63) {
-                                        if (features[4] <= 111) {
+                                if (co2 <= 87) {
+                                    if (co2 <= 63) {
+                                        if (humidity_ratio <= 111) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -916,16 +921,16 @@ int predict_tree_4(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[2] <= 87) {
-                        if (features[1] <= 29) {
+                    if (light <= 87) {
+                        if (humidity <= 29) {
                             return 1;
                         } else {
                             return 0;
                         }
                     } else {
-                        if (features[1] <= 106) {
-                            if (features[4] <= 27) {
-                                if (features[3] <= 37) {
+                        if (humidity <= 106) {
+                            if (humidity_ratio <= 27) {
+                                if (co2 <= 37) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -934,17 +939,17 @@ int predict_tree_4(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[0] <= 230) {
-                                if (features[1] <= 109) {
+                            if (temperature <= 230) {
+                                if (humidity <= 109) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             } else {
-                                if (features[3] <= 110) {
+                                if (co2 <= 110) {
                                     return 0;
                                 } else {
-                                    if (features[2] <= 89) {
+                                    if (light <= 89) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -958,35 +963,35 @@ int predict_tree_4(unsigned short features[]) {
         }
     }
 }
-int predict_tree_5(unsigned short features[]) {
-    if (features[0] <= 139) {
-        if (features[3] <= 18) {
-            if (features[1] <= 29) {
-                if (features[3] <= 7) {
-                    if (features[2] <= 55) {
+int predict_tree_5(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (temperature <= 139) {
+        if (co2 <= 18) {
+            if (humidity <= 29) {
+                if (co2 <= 7) {
+                    if (light <= 55) {
                         return 0;
                     } else {
-                        if (features[3] <= 4) {
+                        if (co2 <= 4) {
                             return 1;
                         } else {
                             return 0;
                         }
                     }
                 } else {
-                    if (features[4] <= 6) {
+                    if (humidity_ratio <= 6) {
                         return 1;
                     } else {
-                        if (features[0] <= 77) {
-                            if (features[0] <= 73) {
+                        if (temperature <= 77) {
+                            if (temperature <= 73) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         } else {
-                            if (features[3] <= 13) {
+                            if (co2 <= 13) {
                                 return 0;
                             } else {
-                                if (features[2] <= 34) {
+                                if (light <= 34) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -996,14 +1001,14 @@ int predict_tree_5(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 13) {
-                    if (features[0] <= 105) {
-                        if (features[0] <= 32) {
+                if (co2 <= 13) {
+                    if (temperature <= 105) {
+                        if (temperature <= 32) {
                             return 0;
                         } else {
-                            if (features[0] <= 33) {
-                                if (features[4] <= 76) {
-                                    if (features[1] <= 117) {
+                            if (temperature <= 33) {
+                                if (humidity_ratio <= 76) {
+                                    if (humidity <= 117) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -1016,12 +1021,12 @@ int predict_tree_5(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[1] <= 55) {
+                        if (humidity <= 55) {
                             return 0;
                         } else {
-                            if (features[4] <= 47) {
-                                if (features[3] <= 7) {
-                                    if (features[3] <= 7) {
+                            if (humidity_ratio <= 47) {
+                                if (co2 <= 7) {
+                                    if (co2 <= 7) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -1035,7 +1040,7 @@ int predict_tree_5(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[1] <= 54) {
+                    if (humidity <= 54) {
                         return 0;
                     } else {
                         return 1;
@@ -1043,22 +1048,22 @@ int predict_tree_5(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 46) {
+            if (light <= 46) {
                 return 0;
             } else {
                 return 1;
             }
         }
     } else {
-        if (features[3] <= 31) {
+        if (co2 <= 31) {
             return 0;
         } else {
-            if (features[0] <= 227) {
-                if (features[0] <= 163) {
-                    if (features[1] <= 214) {
-                        if (features[4] <= 38) {
-                            if (features[1] <= 33) {
-                                if (features[0] <= 159) {
+            if (temperature <= 227) {
+                if (temperature <= 163) {
+                    if (humidity <= 214) {
+                        if (humidity_ratio <= 38) {
+                            if (humidity <= 33) {
+                                if (temperature <= 159) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -1067,16 +1072,16 @@ int predict_tree_5(unsigned short features[]) {
                                 return 0;
                             }
                         } else {
-                            if (features[4] <= 72) {
-                                if (features[1] <= 54) {
-                                    if (features[1] <= 46) {
+                            if (humidity_ratio <= 72) {
+                                if (humidity <= 54) {
+                                    if (humidity <= 46) {
                                         return 0;
                                     } else {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[3] <= 40) {
-                                        if (features[3] <= 36) {
+                                    if (co2 <= 40) {
+                                        if (co2 <= 36) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -1086,12 +1091,12 @@ int predict_tree_5(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[4] <= 176) {
-                                    if (features[4] <= 168) {
+                                if (humidity_ratio <= 176) {
+                                    if (humidity_ratio <= 168) {
                                         return 1;
                                     } else {
-                                        if (features[2] <= 41) {
-                                            if (features[3] <= 131) {
+                                        if (light <= 41) {
+                                            if (co2 <= 131) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -1109,14 +1114,14 @@ int predict_tree_5(unsigned short features[]) {
                         return 0;
                     }
                 } else {
-                    if (features[2] <= 26) {
+                    if (light <= 26) {
                         return 0;
                     } else {
-                        if (features[0] <= 200) {
-                            if (features[4] <= 42) {
-                                if (features[1] <= 43) {
-                                    if (features[2] <= 79) {
-                                        if (features[2] <= 78) {
+                        if (temperature <= 200) {
+                            if (humidity_ratio <= 42) {
+                                if (humidity <= 43) {
+                                    if (light <= 79) {
+                                        if (light <= 78) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -1128,15 +1133,15 @@ int predict_tree_5(unsigned short features[]) {
                                     return 0;
                                 }
                             } else {
-                                if (features[1] <= 112) {
+                                if (humidity <= 112) {
                                     return 1;
                                 } else {
-                                    if (features[2] <= 76) {
+                                    if (light <= 76) {
                                         return 1;
                                     } else {
-                                        if (features[4] <= 115) {
-                                            if (features[4] <= 115) {
-                                                if (features[3] <= 100) {
+                                        if (humidity_ratio <= 115) {
+                                            if (humidity_ratio <= 115) {
+                                                if (co2 <= 100) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -1151,13 +1156,13 @@ int predict_tree_5(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[0] <= 209) {
-                                if (features[3] <= 76) {
-                                    if (features[2] <= 73) {
+                            if (temperature <= 209) {
+                                if (co2 <= 76) {
+                                    if (light <= 73) {
                                         return 1;
                                     } else {
-                                        if (features[1] <= 106) {
-                                            if (features[4] <= 111) {
+                                        if (humidity <= 106) {
+                                            if (humidity_ratio <= 111) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -1176,13 +1181,13 @@ int predict_tree_5(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[1] <= 111) {
+                if (humidity <= 111) {
                     return 0;
                 } else {
-                    if (features[3] <= 110) {
-                        if (features[1] <= 112) {
-                            if (features[4] <= 124) {
-                                if (features[2] <= 86) {
+                    if (co2 <= 110) {
+                        if (humidity <= 112) {
+                            if (humidity_ratio <= 124) {
+                                if (light <= 86) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -1201,17 +1206,17 @@ int predict_tree_5(unsigned short features[]) {
         }
     }
 }
-int predict_tree_6(unsigned short features[]) {
-    if (features[2] <= 65) {
-        if (features[4] <= 247) {
-            if (features[0] <= 142) {
-                if (features[2] <= 56) {
+int predict_tree_6(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 65) {
+        if (humidity_ratio <= 247) {
+            if (temperature <= 142) {
+                if (light <= 56) {
                     return 0;
                 } else {
-                    if (features[2] <= 62) {
+                    if (light <= 62) {
                         return 1;
                     } else {
-                        if (features[4] <= 85) {
+                        if (humidity_ratio <= 85) {
                             return 0;
                         } else {
                             return 1;
@@ -1219,15 +1224,15 @@ int predict_tree_6(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 38) {
+                if (co2 <= 38) {
                     return 0;
                 } else {
-                    if (features[3] <= 40) {
+                    if (co2 <= 40) {
                         return 1;
                     } else {
-                        if (features[1] <= 189) {
-                            if (features[1] <= 188) {
-                                if (features[2] <= 27) {
+                        if (humidity <= 189) {
+                            if (humidity <= 188) {
+                                if (light <= 27) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -1245,38 +1250,38 @@ int predict_tree_6(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[3] <= 7) {
-            if (features[2] <= 68) {
+        if (co2 <= 7) {
+            if (light <= 68) {
                 return 1;
             } else {
                 return 0;
             }
         } else {
-            if (features[2] <= 111) {
-                if (features[1] <= 116) {
-                    if (features[3] <= 106) {
-                        if (features[4] <= 109) {
-                            if (features[0] <= 107) {
-                                if (features[0] <= 105) {
+            if (light <= 111) {
+                if (humidity <= 116) {
+                    if (co2 <= 106) {
+                        if (humidity_ratio <= 109) {
+                            if (temperature <= 107) {
+                                if (temperature <= 105) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 33) {
+                                    if (humidity_ratio <= 33) {
                                         return 1;
                                     } else {
                                         return 0;
                                     }
                                 }
                             } else {
-                                if (features[4] <= 41) {
-                                    if (features[3] <= 62) {
+                                if (humidity_ratio <= 41) {
+                                    if (co2 <= 62) {
                                         return 1;
                                     } else {
-                                        if (features[4] <= 41) {
-                                            if (features[4] <= 40) {
-                                                if (features[1] <= 41) {
+                                        if (humidity_ratio <= 41) {
+                                            if (humidity_ratio <= 40) {
+                                                if (humidity <= 41) {
                                                     return 1;
                                                 } else {
-                                                    if (features[2] <= 79) {
+                                                    if (light <= 79) {
                                                         return 0;
                                                     } else {
                                                         return 1;
@@ -1294,12 +1299,12 @@ int predict_tree_6(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[0] <= 200) {
-                                if (features[1] <= 113) {
+                            if (temperature <= 200) {
+                                if (humidity <= 113) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 100) {
-                                        if (features[4] <= 116) {
+                                    if (co2 <= 100) {
+                                        if (humidity_ratio <= 116) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -1309,15 +1314,15 @@ int predict_tree_6(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[1] <= 107) {
-                                    if (features[1] <= 106) {
-                                        if (features[0] <= 205) {
+                                if (humidity <= 107) {
+                                    if (humidity <= 106) {
+                                        if (temperature <= 205) {
                                             return 0;
                                         } else {
-                                            if (features[1] <= 105) {
+                                            if (humidity <= 105) {
                                                 return 1;
                                             } else {
-                                                if (features[3] <= 61) {
+                                                if (co2 <= 61) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -1325,25 +1330,25 @@ int predict_tree_6(unsigned short features[]) {
                                             }
                                         }
                                     } else {
-                                        if (features[2] <= 73) {
+                                        if (light <= 73) {
                                             return 1;
                                         } else {
                                             return 0;
                                         }
                                     }
                                 } else {
-                                    if (features[0] <= 228) {
-                                        if (features[0] <= 206) {
-                                            if (features[3] <= 76) {
+                                    if (temperature <= 228) {
+                                        if (temperature <= 206) {
+                                            if (co2 <= 76) {
                                                 return 0;
                                             } else {
                                                 return 1;
                                             }
                                         } else {
-                                            if (features[4] <= 124) {
+                                            if (humidity_ratio <= 124) {
                                                 return 1;
                                             } else {
-                                                if (features[2] <= 86) {
+                                                if (light <= 86) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -1357,10 +1362,10 @@ int predict_tree_6(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[4] <= 126) {
+                        if (humidity_ratio <= 126) {
                             return 1;
                         } else {
-                            if (features[0] <= 228) {
+                            if (temperature <= 228) {
                                 return 1;
                             } else {
                                 return 0;
@@ -1371,7 +1376,7 @@ int predict_tree_6(unsigned short features[]) {
                     return 1;
                 }
             } else {
-                if (features[1] <= 110) {
+                if (humidity <= 110) {
                     return 0;
                 } else {
                     return 1;
@@ -1380,39 +1385,39 @@ int predict_tree_6(unsigned short features[]) {
         }
     }
 }
-int predict_tree_7(unsigned short features[]) {
-    if (features[0] <= 113) {
-        if (features[2] <= 54) {
-            if (features[2] <= 48) {
+int predict_tree_7(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (temperature <= 113) {
+        if (light <= 54) {
+            if (light <= 48) {
                 return 0;
             } else {
-                if (features[3] <= 6) {
+                if (co2 <= 6) {
                     return 0;
                 } else {
                     return 1;
                 }
             }
         } else {
-            if (features[3] <= 7) {
-                if (features[2] <= 67) {
+            if (co2 <= 7) {
+                if (light <= 67) {
                     return 1;
                 } else {
                     return 0;
                 }
             } else {
-                if (features[2] <= 65) {
-                    if (features[2] <= 65) {
+                if (light <= 65) {
+                    if (light <= 65) {
                         return 1;
                     } else {
-                        if (features[4] <= 85) {
+                        if (humidity_ratio <= 85) {
                             return 0;
                         } else {
                             return 1;
                         }
                     }
                 } else {
-                    if (features[1] <= 23) {
-                        if (features[0] <= 71) {
+                    if (humidity <= 23) {
+                        if (temperature <= 71) {
                             return 0;
                         } else {
                             return 1;
@@ -1424,30 +1429,30 @@ int predict_tree_7(unsigned short features[]) {
             }
         }
     } else {
-        if (features[3] <= 26) {
-            if (features[2] <= 63) {
+        if (co2 <= 26) {
+            if (light <= 63) {
                 return 0;
             } else {
                 return 1;
             }
         } else {
-            if (features[2] <= 28) {
-                if (features[4] <= 174) {
+            if (light <= 28) {
+                if (humidity_ratio <= 174) {
                     return 0;
                 } else {
-                    if (features[4] <= 175) {
+                    if (humidity_ratio <= 175) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[1] <= 104) {
-                    if (features[2] <= 89) {
+                if (humidity <= 104) {
+                    if (light <= 89) {
                         return 1;
                     } else {
-                        if (features[4] <= 27) {
-                            if (features[3] <= 37) {
+                        if (humidity_ratio <= 27) {
+                            if (co2 <= 37) {
                                 return 1;
                             } else {
                                 return 0;
@@ -1457,13 +1462,13 @@ int predict_tree_7(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[1] <= 109) {
-                        if (features[3] <= 76) {
-                            if (features[0] <= 201) {
+                    if (humidity <= 109) {
+                        if (co2 <= 76) {
+                            if (temperature <= 201) {
                                 return 1;
                             } else {
-                                if (features[3] <= 63) {
-                                    if (features[3] <= 62) {
+                                if (co2 <= 63) {
+                                    if (co2 <= 62) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -1473,20 +1478,20 @@ int predict_tree_7(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[4] <= 122) {
+                            if (humidity_ratio <= 122) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         }
                     } else {
-                        if (features[2] <= 86) {
-                            if (features[4] <= 115) {
-                                if (features[1] <= 113) {
-                                    if (features[2] <= 77) {
+                        if (light <= 86) {
+                            if (humidity_ratio <= 115) {
+                                if (humidity <= 113) {
+                                    if (light <= 77) {
                                         return 1;
                                     } else {
-                                        if (features[1] <= 112) {
+                                        if (humidity <= 112) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -1499,12 +1504,12 @@ int predict_tree_7(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[0] <= 227) {
+                            if (temperature <= 227) {
                                 return 1;
                             } else {
-                                if (features[1] <= 114) {
-                                    if (features[0] <= 234) {
-                                        if (features[0] <= 232) {
+                                if (humidity <= 114) {
+                                    if (temperature <= 234) {
+                                        if (temperature <= 232) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -1513,7 +1518,7 @@ int predict_tree_7(unsigned short features[]) {
                                         return 0;
                                     }
                                 } else {
-                                    if (features[2] <= 91) {
+                                    if (light <= 91) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -1527,15 +1532,15 @@ int predict_tree_7(unsigned short features[]) {
         }
     }
 }
-int predict_tree_8(unsigned short features[]) {
-    if (features[2] <= 61) {
-        if (features[1] <= 246) {
-            if (features[3] <= 10) {
-                if (features[1] <= 65) {
-                    if (features[4] <= 45) {
+int predict_tree_8(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 61) {
+        if (humidity <= 246) {
+            if (co2 <= 10) {
+                if (humidity <= 65) {
+                    if (humidity_ratio <= 45) {
                         return 0;
                     } else {
-                        if (features[2] <= 29) {
+                        if (light <= 29) {
                             return 0;
                         } else {
                             return 1;
@@ -1545,11 +1550,11 @@ int predict_tree_8(unsigned short features[]) {
                     return 0;
                 }
             } else {
-                if (features[2] <= 31) {
-                    if (features[3] <= 132) {
+                if (light <= 31) {
+                    if (co2 <= 132) {
                         return 0;
                     } else {
-                        if (features[4] <= 184) {
+                        if (humidity_ratio <= 184) {
                             return 1;
                         } else {
                             return 0;
@@ -1563,18 +1568,18 @@ int predict_tree_8(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[0] <= 227) {
-            if (features[4] <= 14) {
-                if (features[3] <= 7) {
-                    if (features[0] <= 70) {
-                        if (features[0] <= 69) {
+        if (temperature <= 227) {
+            if (humidity_ratio <= 14) {
+                if (co2 <= 7) {
+                    if (temperature <= 70) {
+                        if (temperature <= 69) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[4] <= 3) {
-                            if (features[3] <= 4) {
+                        if (humidity_ratio <= 3) {
+                            if (co2 <= 4) {
                                 return 0;
                             } else {
                                 return 1;
@@ -1587,10 +1592,10 @@ int predict_tree_8(unsigned short features[]) {
                     return 1;
                 }
             } else {
-                if (features[0] <= 200) {
-                    if (features[2] <= 66) {
-                        if (features[1] <= 125) {
-                            if (features[4] <= 68) {
+                if (temperature <= 200) {
+                    if (light <= 66) {
+                        if (humidity <= 125) {
+                            if (humidity_ratio <= 68) {
                                 return 1;
                             } else {
                                 return 0;
@@ -1599,32 +1604,32 @@ int predict_tree_8(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[0] <= 162) {
+                        if (temperature <= 162) {
                             return 1;
                         } else {
-                            if (features[4] <= 27) {
-                                if (features[1] <= 29) {
+                            if (humidity_ratio <= 27) {
+                                if (humidity <= 29) {
                                     return 1;
                                 } else {
                                     return 0;
                                 }
                             } else {
-                                if (features[2] <= 76) {
+                                if (light <= 76) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 113) {
-                                        if (features[3] <= 64) {
-                                            if (features[2] <= 79) {
-                                                if (features[3] <= 63) {
-                                                    if (features[1] <= 42) {
-                                                        if (features[4] <= 39) {
+                                    if (humidity_ratio <= 113) {
+                                        if (co2 <= 64) {
+                                            if (light <= 79) {
+                                                if (co2 <= 63) {
+                                                    if (humidity <= 42) {
+                                                        if (humidity_ratio <= 39) {
                                                             return 1;
                                                         } else {
-                                                            if (features[4] <= 41) {
-                                                                if (features[2] <= 78) {
+                                                            if (humidity_ratio <= 41) {
+                                                                if (light <= 78) {
                                                                     return 1;
                                                                 } else {
-                                                                    if (features[2] <= 78) {
+                                                                    if (light <= 78) {
                                                                         return 0;
                                                                     } else {
                                                                         return 1;
@@ -1647,15 +1652,15 @@ int predict_tree_8(unsigned short features[]) {
                                             return 1;
                                         }
                                     } else {
-                                        if (features[2] <= 76) {
-                                            if (features[3] <= 103) {
+                                        if (light <= 76) {
+                                            if (co2 <= 103) {
                                                 return 0;
                                             } else {
                                                 return 1;
                                             }
                                         } else {
-                                            if (features[0] <= 192) {
-                                                if (features[3] <= 123) {
+                                            if (temperature <= 192) {
+                                                if (co2 <= 123) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -1670,9 +1675,9 @@ int predict_tree_8(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 79) {
-                        if (features[3] <= 63) {
-                            if (features[4] <= 111) {
+                    if (co2 <= 79) {
+                        if (co2 <= 63) {
+                            if (humidity_ratio <= 111) {
                                 return 0;
                             } else {
                                 return 1;
@@ -1686,21 +1691,21 @@ int predict_tree_8(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[4] <= 122) {
+            if (humidity_ratio <= 122) {
                 return 1;
             } else {
-                if (features[3] <= 111) {
-                    if (features[0] <= 228) {
-                        if (features[2] <= 86) {
+                if (co2 <= 111) {
+                    if (temperature <= 228) {
+                        if (light <= 86) {
                             return 1;
                         } else {
                             return 0;
                         }
                     } else {
-                        if (features[0] <= 232) {
+                        if (temperature <= 232) {
                             return 0;
                         } else {
-                            if (features[3] <= 97) {
+                            if (co2 <= 97) {
                                 return 0;
                             } else {
                                 return 1;
@@ -1714,21 +1719,21 @@ int predict_tree_8(unsigned short features[]) {
         }
     }
 }
-int predict_tree_9(unsigned short features[]) {
-    if (features[0] <= 111) {
-        if (features[0] <= 104) {
-            if (features[2] <= 47) {
+int predict_tree_9(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (temperature <= 111) {
+        if (temperature <= 104) {
+            if (light <= 47) {
                 return 0;
             } else {
-                if (features[1] <= 23) {
-                    if (features[0] <= 73) {
+                if (humidity <= 23) {
+                    if (temperature <= 73) {
                         return 1;
                     } else {
                         return 0;
                     }
                 } else {
-                    if (features[3] <= 12) {
-                        if (features[4] <= 77) {
+                    if (co2 <= 12) {
+                        if (humidity_ratio <= 77) {
                             return 1;
                         } else {
                             return 0;
@@ -1739,12 +1744,12 @@ int predict_tree_9(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[3] <= 9) {
-                if (features[3] <= 7) {
+            if (co2 <= 9) {
+                if (co2 <= 7) {
                     return 0;
                 } else {
-                    if (features[3] <= 7) {
-                        if (features[4] <= 48) {
+                    if (co2 <= 7) {
+                        if (humidity_ratio <= 48) {
                             return 1;
                         } else {
                             return 0;
@@ -1754,18 +1759,18 @@ int predict_tree_9(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[4] <= 161) {
-                    if (features[3] <= 20) {
-                        if (features[1] <= 31) {
+                if (humidity_ratio <= 161) {
+                    if (co2 <= 20) {
+                        if (humidity <= 31) {
                             return 0;
                         } else {
-                            if (features[2] <= 35) {
+                            if (light <= 35) {
                                 return 0;
                             } else {
-                                if (features[1] <= 48) {
+                                if (humidity <= 48) {
                                     return 1;
                                 } else {
-                                    if (features[0] <= 107) {
+                                    if (temperature <= 107) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -1782,15 +1787,15 @@ int predict_tree_9(unsigned short features[]) {
             }
         }
     } else {
-        if (features[3] <= 22) {
-            if (features[4] <= 58) {
-                if (features[1] <= 55) {
+        if (co2 <= 22) {
+            if (humidity_ratio <= 58) {
+                if (humidity <= 55) {
                     return 0;
                 } else {
-                    if (features[1] <= 69) {
+                    if (humidity <= 69) {
                         return 1;
                     } else {
-                        if (features[2] <= 33) {
+                        if (light <= 33) {
                             return 0;
                         } else {
                             return 1;
@@ -1801,18 +1806,18 @@ int predict_tree_9(unsigned short features[]) {
                 return 1;
             }
         } else {
-            if (features[1] <= 217) {
-                if (features[1] <= 108) {
-                    if (features[4] <= 111) {
-                        if (features[4] <= 37) {
-                            if (features[1] <= 35) {
-                                if (features[2] <= 35) {
+            if (humidity <= 217) {
+                if (humidity <= 108) {
+                    if (humidity_ratio <= 111) {
+                        if (humidity_ratio <= 37) {
+                            if (humidity <= 35) {
+                                if (light <= 35) {
                                     return 0;
                                 } else {
-                                    if (features[4] <= 27) {
+                                    if (humidity_ratio <= 27) {
                                         return 1;
                                     } else {
-                                        if (features[4] <= 28) {
+                                        if (humidity_ratio <= 28) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -1820,13 +1825,13 @@ int predict_tree_9(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[3] <= 54) {
-                                    if (features[4] <= 24) {
-                                        if (features[4] <= 23) {
-                                            if (features[4] <= 23) {
+                                if (co2 <= 54) {
+                                    if (humidity_ratio <= 24) {
+                                        if (humidity_ratio <= 23) {
+                                            if (humidity_ratio <= 23) {
                                                 return 1;
                                             } else {
-                                                if (features[3] <= 30) {
+                                                if (co2 <= 30) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -1836,14 +1841,14 @@ int predict_tree_9(unsigned short features[]) {
                                             return 1;
                                         }
                                     } else {
-                                        if (features[2] <= 43) {
+                                        if (light <= 43) {
                                             return 0;
                                         } else {
                                             return 1;
                                         }
                                     }
                                 } else {
-                                    if (features[4] <= 35) {
+                                    if (humidity_ratio <= 35) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -1851,10 +1856,10 @@ int predict_tree_9(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[3] <= 58) {
-                                if (features[4] <= 40) {
-                                    if (features[0] <= 156) {
-                                        if (features[3] <= 40) {
+                            if (co2 <= 58) {
+                                if (humidity_ratio <= 40) {
+                                    if (temperature <= 156) {
+                                        if (co2 <= 40) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -1863,20 +1868,20 @@ int predict_tree_9(unsigned short features[]) {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[4] <= 63) {
-                                        if (features[2] <= 36) {
+                                    if (humidity_ratio <= 63) {
+                                        if (light <= 36) {
                                             return 0;
                                         } else {
                                             return 1;
                                         }
                                     } else {
-                                        if (features[2] <= 34) {
+                                        if (light <= 34) {
                                             return 0;
                                         } else {
-                                            if (features[1] <= 95) {
+                                            if (humidity <= 95) {
                                                 return 1;
                                             } else {
-                                                if (features[4] <= 110) {
+                                                if (humidity_ratio <= 110) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -1886,18 +1891,18 @@ int predict_tree_9(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[2] <= 35) {
+                                if (light <= 35) {
                                     return 0;
                                 } else {
-                                    if (features[3] <= 64) {
-                                        if (features[0] <= 202) {
-                                            if (features[3] <= 64) {
-                                                if (features[1] <= 43) {
-                                                    if (features[4] <= 41) {
+                                    if (co2 <= 64) {
+                                        if (temperature <= 202) {
+                                            if (co2 <= 64) {
+                                                if (humidity <= 43) {
+                                                    if (humidity_ratio <= 41) {
                                                         return 1;
                                                     } else {
-                                                        if (features[2] <= 84) {
-                                                            if (features[3] <= 63) {
+                                                        if (light <= 84) {
+                                                            if (co2 <= 63) {
                                                                 return 1;
                                                             } else {
                                                                 return 0;
@@ -1913,7 +1918,7 @@ int predict_tree_9(unsigned short features[]) {
                                                 return 0;
                                             }
                                         } else {
-                                            if (features[4] <= 111) {
+                                            if (humidity_ratio <= 111) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -1926,14 +1931,14 @@ int predict_tree_9(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[0] <= 237) {
-                            if (features[3] <= 95) {
+                        if (temperature <= 237) {
+                            if (co2 <= 95) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         } else {
-                            if (features[4] <= 122) {
+                            if (humidity_ratio <= 122) {
                                 return 1;
                             } else {
                                 return 0;
@@ -1941,15 +1946,15 @@ int predict_tree_9(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 130) {
-                        if (features[1] <= 181) {
-                            if (features[0] <= 234) {
-                                if (features[0] <= 227) {
-                                    if (features[3] <= 100) {
-                                        if (features[4] <= 117) {
-                                            if (features[3] <= 100) {
-                                                if (features[0] <= 203) {
-                                                    if (features[1] <= 112) {
+                    if (co2 <= 130) {
+                        if (humidity <= 181) {
+                            if (temperature <= 234) {
+                                if (temperature <= 227) {
+                                    if (co2 <= 100) {
+                                        if (humidity_ratio <= 117) {
+                                            if (co2 <= 100) {
+                                                if (temperature <= 203) {
+                                                    if (humidity <= 112) {
                                                         return 1;
                                                     } else {
                                                         return 0;
@@ -1967,8 +1972,8 @@ int predict_tree_9(unsigned short features[]) {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[3] <= 108) {
-                                        if (features[3] <= 102) {
+                                    if (co2 <= 108) {
+                                        if (co2 <= 102) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -1981,14 +1986,14 @@ int predict_tree_9(unsigned short features[]) {
                                 return 0;
                             }
                         } else {
-                            if (features[3] <= 114) {
-                                if (features[1] <= 184) {
+                            if (co2 <= 114) {
+                                if (humidity <= 184) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             } else {
-                                if (features[4] <= 173) {
+                                if (humidity_ratio <= 173) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -2000,7 +2005,7 @@ int predict_tree_9(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[2] <= 27) {
+                if (light <= 27) {
                     return 0;
                 } else {
                     return 1;
@@ -2009,21 +2014,21 @@ int predict_tree_9(unsigned short features[]) {
         }
     }
 }
-int predict_tree_10(unsigned short features[]) {
-    if (features[0] <= 113) {
-        if (features[4] <= 115) {
-            if (features[1] <= 150) {
-                if (features[1] <= 148) {
-                    if (features[3] <= 13) {
-                        if (features[2] <= 53) {
+int predict_tree_10(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (temperature <= 113) {
+        if (humidity_ratio <= 115) {
+            if (humidity <= 150) {
+                if (humidity <= 148) {
+                    if (co2 <= 13) {
+                        if (light <= 53) {
                             return 0;
                         } else {
-                            if (features[1] <= 25) {
-                                if (features[3] <= 7) {
-                                    if (features[4] <= 3) {
-                                        if (features[4] <= 3) {
-                                            if (features[3] <= 5) {
-                                                if (features[2] <= 69) {
+                            if (humidity <= 25) {
+                                if (co2 <= 7) {
+                                    if (humidity_ratio <= 3) {
+                                        if (humidity_ratio <= 3) {
+                                            if (co2 <= 5) {
+                                                if (light <= 69) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -2041,7 +2046,7 @@ int predict_tree_10(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[4] <= 77) {
+                                if (humidity_ratio <= 77) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -2049,26 +2054,26 @@ int predict_tree_10(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[1] <= 79) {
-                            if (features[3] <= 13) {
+                        if (humidity <= 79) {
+                            if (co2 <= 13) {
                                 return 1;
                             } else {
-                                if (features[3] <= 19) {
-                                    if (features[1] <= 28) {
+                                if (co2 <= 19) {
+                                    if (humidity <= 28) {
                                         return 1;
                                     } else {
-                                        if (features[2] <= 34) {
+                                        if (light <= 34) {
                                             return 0;
                                         } else {
                                             return 1;
                                         }
                                     }
                                 } else {
-                                    if (features[1] <= 32) {
-                                        if (features[4] <= 18) {
+                                    if (humidity <= 32) {
+                                        if (humidity_ratio <= 18) {
                                             return 1;
                                         } else {
-                                            if (features[3] <= 22) {
+                                            if (co2 <= 22) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -2084,7 +2089,7 @@ int predict_tree_10(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[0] <= 63) {
+                    if (temperature <= 63) {
                         return 0;
                     } else {
                         return 1;
@@ -2094,29 +2099,29 @@ int predict_tree_10(unsigned short features[]) {
                 return 0;
             }
         } else {
-            if (features[2] <= 35) {
+            if (light <= 35) {
                 return 0;
             } else {
                 return 1;
             }
         }
     } else {
-        if (features[1] <= 40) {
-            if (features[3] <= 27) {
-                if (features[1] <= 34) {
+        if (humidity <= 40) {
+            if (co2 <= 27) {
+                if (humidity <= 34) {
                     return 0;
                 } else {
-                    if (features[2] <= 37) {
+                    if (light <= 37) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[4] <= 27) {
-                    if (features[1] <= 36) {
-                        if (features[1] <= 30) {
-                            if (features[1] <= 29) {
+                if (humidity_ratio <= 27) {
+                    if (humidity <= 36) {
+                        if (humidity <= 30) {
+                            if (humidity <= 29) {
                                 return 1;
                             } else {
                                 return 0;
@@ -2125,22 +2130,22 @@ int predict_tree_10(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[2] <= 37) {
+                        if (light <= 37) {
                             return 0;
                         } else {
                             return 1;
                         }
                     }
                 } else {
-                    if (features[0] <= 167) {
-                        if (features[1] <= 30) {
+                    if (temperature <= 167) {
+                        if (humidity <= 30) {
                             return 1;
                         } else {
                             return 0;
                         }
                     } else {
-                        if (features[3] <= 54) {
-                            if (features[3] <= 53) {
+                        if (co2 <= 54) {
+                            if (co2 <= 53) {
                                 return 1;
                             } else {
                                 return 0;
@@ -2152,21 +2157,21 @@ int predict_tree_10(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[3] <= 58) {
-                if (features[2] <= 33) {
+            if (co2 <= 58) {
+                if (light <= 33) {
                     return 0;
                 } else {
-                    if (features[4] <= 93) {
+                    if (humidity_ratio <= 93) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[0] <= 228) {
-                    if (features[2] <= 48) {
-                        if (features[4] <= 175) {
-                            if (features[1] <= 188) {
+                if (temperature <= 228) {
+                    if (light <= 48) {
+                        if (humidity_ratio <= 175) {
+                            if (humidity <= 188) {
                                 return 0;
                             } else {
                                 return 1;
@@ -2175,18 +2180,18 @@ int predict_tree_10(unsigned short features[]) {
                             return 0;
                         }
                     } else {
-                        if (features[4] <= 115) {
-                            if (features[1] <= 104) {
-                                if (features[1] <= 43) {
-                                    if (features[1] <= 43) {
-                                        if (features[1] <= 42) {
+                        if (humidity_ratio <= 115) {
+                            if (humidity <= 104) {
+                                if (humidity <= 43) {
+                                    if (humidity <= 43) {
+                                        if (humidity <= 42) {
                                             return 1;
                                         } else {
-                                            if (features[0] <= 170) {
-                                                if (features[3] <= 62) {
+                                            if (temperature <= 170) {
+                                                if (co2 <= 62) {
                                                     return 1;
                                                 } else {
-                                                    if (features[3] <= 62) {
+                                                    if (co2 <= 62) {
                                                         return 0;
                                                     } else {
                                                         return 1;
@@ -2197,10 +2202,10 @@ int predict_tree_10(unsigned short features[]) {
                                             }
                                         }
                                     } else {
-                                        if (features[2] <= 80) {
+                                        if (light <= 80) {
                                             return 1;
                                         } else {
-                                            if (features[3] <= 63) {
+                                            if (co2 <= 63) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -2211,13 +2216,13 @@ int predict_tree_10(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[1] <= 107) {
-                                    if (features[0] <= 198) {
+                                if (humidity <= 107) {
+                                    if (temperature <= 198) {
                                         return 1;
                                     } else {
-                                        if (features[3] <= 87) {
-                                            if (features[1] <= 106) {
-                                                if (features[1] <= 105) {
+                                        if (co2 <= 87) {
+                                            if (humidity <= 106) {
+                                                if (humidity <= 105) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -2230,18 +2235,18 @@ int predict_tree_10(unsigned short features[]) {
                                         }
                                     }
                                 } else {
-                                    if (features[0] <= 203) {
-                                        if (features[1] <= 112) {
+                                    if (temperature <= 203) {
+                                        if (humidity <= 112) {
                                             return 1;
                                         } else {
-                                            if (features[3] <= 99) {
+                                            if (co2 <= 99) {
                                                 return 0;
                                             } else {
                                                 return 1;
                                             }
                                         }
                                     } else {
-                                        if (features[2] <= 79) {
+                                        if (light <= 79) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -2254,25 +2259,25 @@ int predict_tree_10(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 110) {
-                        if (features[1] <= 105) {
-                            if (features[1] <= 104) {
+                    if (co2 <= 110) {
+                        if (humidity <= 105) {
+                            if (humidity <= 104) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         } else {
-                            if (features[2] <= 113) {
+                            if (light <= 113) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         }
                     } else {
-                        if (features[4] <= 129) {
+                        if (humidity_ratio <= 129) {
                             return 1;
                         } else {
-                            if (features[2] <= 89) {
+                            if (light <= 89) {
                                 return 1;
                             } else {
                                 return 0;
@@ -2284,31 +2289,31 @@ int predict_tree_10(unsigned short features[]) {
         }
     }
 }
-int predict_tree_11(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[0] <= 188) {
-            if (features[2] <= 48) {
+int predict_tree_11(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (temperature <= 188) {
+            if (light <= 48) {
                 return 0;
             } else {
-                if (features[2] <= 48) {
+                if (light <= 48) {
                     return 1;
                 } else {
                     return 0;
                 }
             }
         } else {
-            if (features[3] <= 90) {
-                if (features[1] <= 49) {
+            if (co2 <= 90) {
+                if (humidity <= 49) {
                     return 0;
                 } else {
-                    if (features[1] <= 95) {
+                    if (humidity <= 95) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[2] <= 28) {
+                if (light <= 28) {
                     return 0;
                 } else {
                     return 1;
@@ -2316,36 +2321,36 @@ int predict_tree_11(unsigned short features[]) {
             }
         }
     } else {
-        if (features[1] <= 24) {
-            if (features[2] <= 67) {
+        if (humidity <= 24) {
+            if (light <= 67) {
                 return 1;
             } else {
-                if (features[3] <= 7) {
+                if (co2 <= 7) {
                     return 0;
                 } else {
                     return 1;
                 }
             }
         } else {
-            if (features[0] <= 230) {
-                if (features[0] <= 200) {
-                    if (features[0] <= 34) {
-                        if (features[2] <= 67) {
+            if (temperature <= 230) {
+                if (temperature <= 200) {
+                    if (temperature <= 34) {
+                        if (light <= 67) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[1] <= 25) {
-                            if (features[0] <= 91) {
+                        if (humidity <= 25) {
+                            if (temperature <= 91) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         } else {
-                            if (features[1] <= 30) {
-                                if (features[0] <= 164) {
-                                    if (features[4] <= 26) {
+                            if (humidity <= 30) {
+                                if (temperature <= 164) {
+                                    if (humidity_ratio <= 26) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -2354,15 +2359,15 @@ int predict_tree_11(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[3] <= 10) {
+                                if (co2 <= 10) {
                                     return 0;
                                 } else {
-                                    if (features[2] <= 76) {
+                                    if (light <= 76) {
                                         return 1;
                                     } else {
-                                        if (features[2] <= 76) {
-                                            if (features[1] <= 150) {
-                                                if (features[4] <= 111) {
+                                        if (light <= 76) {
+                                            if (humidity <= 150) {
+                                                if (humidity_ratio <= 111) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -2371,14 +2376,14 @@ int predict_tree_11(unsigned short features[]) {
                                                 return 1;
                                             }
                                         } else {
-                                            if (features[4] <= 40) {
-                                                if (features[1] <= 41) {
+                                            if (humidity_ratio <= 40) {
+                                                if (humidity <= 41) {
                                                     return 1;
                                                 } else {
-                                                    if (features[4] <= 40) {
+                                                    if (humidity_ratio <= 40) {
                                                         return 1;
                                                     } else {
-                                                        if (features[3] <= 62) {
+                                                        if (co2 <= 62) {
                                                             return 1;
                                                         } else {
                                                             return 0;
@@ -2395,18 +2400,18 @@ int predict_tree_11(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[4] <= 114) {
-                        if (features[3] <= 76) {
+                    if (humidity_ratio <= 114) {
+                        if (co2 <= 76) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[0] <= 227) {
+                        if (temperature <= 227) {
                             return 1;
                         } else {
-                            if (features[3] <= 107) {
-                                if (features[2] <= 104) {
+                            if (co2 <= 107) {
+                                if (light <= 104) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -2418,10 +2423,10 @@ int predict_tree_11(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[0] <= 240) {
-                    if (features[0] <= 232) {
-                        if (features[2] <= 89) {
-                            if (features[1] <= 115) {
+                if (temperature <= 240) {
+                    if (temperature <= 232) {
+                        if (light <= 89) {
+                            if (humidity <= 115) {
                                 return 0;
                             } else {
                                 return 1;
@@ -2439,21 +2444,21 @@ int predict_tree_11(unsigned short features[]) {
         }
     }
 }
-int predict_tree_12(unsigned short features[]) {
-    if (features[2] <= 62) {
-        if (features[2] <= 35) {
+int predict_tree_12(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 62) {
+        if (light <= 35) {
             return 0;
         } else {
-            if (features[3] <= 24) {
+            if (co2 <= 24) {
                 return 0;
             } else {
                 return 1;
             }
         }
     } else {
-        if (features[1] <= 25) {
-            if (features[2] <= 69) {
-                if (features[3] <= 7) {
+        if (humidity <= 25) {
+            if (light <= 69) {
+                if (co2 <= 7) {
                     return 0;
                 } else {
                     return 1;
@@ -2462,13 +2467,13 @@ int predict_tree_12(unsigned short features[]) {
                 return 0;
             }
         } else {
-            if (features[1] <= 116) {
-                if (features[0] <= 200) {
-                    if (features[1] <= 112) {
-                        if (features[1] <= 42) {
-                            if (features[3] <= 62) {
-                                if (features[0] <= 163) {
-                                    if (features[4] <= 27) {
+            if (humidity <= 116) {
+                if (temperature <= 200) {
+                    if (humidity <= 112) {
+                        if (humidity <= 42) {
+                            if (co2 <= 62) {
+                                if (temperature <= 163) {
+                                    if (humidity_ratio <= 27) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -2477,8 +2482,8 @@ int predict_tree_12(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[2] <= 79) {
-                                    if (features[0] <= 171) {
+                                if (light <= 79) {
+                                    if (temperature <= 171) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -2488,8 +2493,8 @@ int predict_tree_12(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[3] <= 11) {
-                                if (features[1] <= 66) {
+                            if (co2 <= 11) {
+                                if (humidity <= 66) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -2499,11 +2504,11 @@ int predict_tree_12(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[0] <= 192) {
+                        if (temperature <= 192) {
                             return 0;
                         } else {
-                            if (features[4] <= 115) {
-                                if (features[4] <= 115) {
+                            if (humidity_ratio <= 115) {
+                                if (humidity_ratio <= 115) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -2514,13 +2519,13 @@ int predict_tree_12(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[2] <= 73) {
+                    if (light <= 73) {
                         return 1;
                     } else {
-                        if (features[1] <= 110) {
-                            if (features[0] <= 223) {
-                                if (features[3] <= 63) {
-                                    if (features[1] <= 105) {
+                        if (humidity <= 110) {
+                            if (temperature <= 223) {
+                                if (co2 <= 63) {
+                                    if (humidity <= 105) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -2529,27 +2534,27 @@ int predict_tree_12(unsigned short features[]) {
                                     return 0;
                                 }
                             } else {
-                                if (features[1] <= 106) {
+                                if (humidity <= 106) {
                                     return 1;
                                 } else {
                                     return 0;
                                 }
                             }
                         } else {
-                            if (features[0] <= 227) {
+                            if (temperature <= 227) {
                                 return 1;
                             } else {
-                                if (features[3] <= 108) {
-                                    if (features[3] <= 101) {
+                                if (co2 <= 108) {
+                                    if (co2 <= 101) {
                                         return 1;
                                     } else {
                                         return 0;
                                     }
                                 } else {
-                                    if (features[4] <= 129) {
+                                    if (humidity_ratio <= 129) {
                                         return 1;
                                     } else {
-                                        if (features[3] <= 110) {
+                                        if (co2 <= 110) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -2566,28 +2571,28 @@ int predict_tree_12(unsigned short features[]) {
         }
     }
 }
-int predict_tree_13(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[3] <= 231) {
-            if (features[4] <= 85) {
-                if (features[2] <= 59) {
+int predict_tree_13(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (co2 <= 231) {
+            if (humidity_ratio <= 85) {
+                if (light <= 59) {
                     return 0;
                 } else {
-                    if (features[2] <= 59) {
+                    if (light <= 59) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[1] <= 105) {
+                if (humidity <= 105) {
                     return 1;
                 } else {
-                    if (features[0] <= 153) {
+                    if (temperature <= 153) {
                         return 0;
                     } else {
-                        if (features[0] <= 157) {
-                            if (features[4] <= 175) {
+                        if (temperature <= 157) {
+                            if (humidity_ratio <= 175) {
                                 return 1;
                             } else {
                                 return 0;
@@ -2602,14 +2607,14 @@ int predict_tree_13(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[1] <= 25) {
-            if (features[2] <= 70) {
-                if (features[4] <= 5) {
-                    if (features[1] <= 22) {
+        if (humidity <= 25) {
+            if (light <= 70) {
+                if (humidity_ratio <= 5) {
+                    if (humidity <= 22) {
                         return 1;
                     } else {
-                        if (features[1] <= 22) {
-                            if (features[2] <= 69) {
+                        if (humidity <= 22) {
+                            if (light <= 69) {
                                 return 0;
                             } else {
                                 return 1;
@@ -2625,11 +2630,11 @@ int predict_tree_13(unsigned short features[]) {
                 return 0;
             }
         } else {
-            if (features[2] <= 94) {
-                if (features[3] <= 12) {
-                    if (features[1] <= 120) {
-                        if (features[4] <= 48) {
-                            if (features[0] <= 91) {
+            if (light <= 94) {
+                if (co2 <= 12) {
+                    if (humidity <= 120) {
+                        if (humidity_ratio <= 48) {
+                            if (temperature <= 91) {
                                 return 1;
                             } else {
                                 return 0;
@@ -2641,14 +2646,14 @@ int predict_tree_13(unsigned short features[]) {
                         return 0;
                     }
                 } else {
-                    if (features[0] <= 227) {
-                        if (features[0] <= 204) {
-                            if (features[2] <= 74) {
+                    if (temperature <= 227) {
+                        if (temperature <= 204) {
+                            if (light <= 74) {
                                 return 1;
                             } else {
-                                if (features[4] <= 109) {
-                                    if (features[4] <= 41) {
-                                        if (features[4] <= 41) {
+                                if (humidity_ratio <= 109) {
+                                    if (humidity_ratio <= 41) {
+                                        if (humidity_ratio <= 41) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -2657,18 +2662,18 @@ int predict_tree_13(unsigned short features[]) {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[1] <= 106) {
+                                    if (humidity <= 106) {
                                         return 0;
                                     } else {
-                                        if (features[4] <= 115) {
-                                            if (features[4] <= 115) {
-                                                if (features[2] <= 77) {
+                                        if (humidity_ratio <= 115) {
+                                            if (humidity_ratio <= 115) {
+                                                if (light <= 77) {
                                                     return 1;
                                                 } else {
-                                                    if (features[1] <= 112) {
+                                                    if (humidity <= 112) {
                                                         return 1;
                                                     } else {
-                                                        if (features[4] <= 114) {
+                                                        if (humidity_ratio <= 114) {
                                                             return 0;
                                                         } else {
                                                             return 1;
@@ -2685,13 +2690,13 @@ int predict_tree_13(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[4] <= 114) {
-                                if (features[4] <= 108) {
+                            if (humidity_ratio <= 114) {
+                                if (humidity_ratio <= 108) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 76) {
-                                        if (features[3] <= 63) {
-                                            if (features[3] <= 61) {
+                                    if (co2 <= 76) {
+                                        if (co2 <= 63) {
+                                            if (co2 <= 61) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -2708,16 +2713,16 @@ int predict_tree_13(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[0] <= 230) {
+                        if (temperature <= 230) {
                             return 0;
                         } else {
-                            if (features[1] <= 109) {
+                            if (humidity <= 109) {
                                 return 1;
                             } else {
-                                if (features[4] <= 128) {
+                                if (humidity_ratio <= 128) {
                                     return 0;
                                 } else {
-                                    if (features[3] <= 110) {
+                                    if (co2 <= 110) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -2728,17 +2733,17 @@ int predict_tree_13(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 97) {
-                    if (features[0] <= 199) {
+                if (co2 <= 97) {
+                    if (temperature <= 199) {
                         return 1;
                     } else {
                         return 0;
                     }
                 } else {
-                    if (features[3] <= 109) {
+                    if (co2 <= 109) {
                         return 1;
                     } else {
-                        if (features[2] <= 102) {
+                        if (light <= 102) {
                             return 0;
                         } else {
                             return 1;
@@ -2749,18 +2754,18 @@ int predict_tree_13(unsigned short features[]) {
         }
     }
 }
-int predict_tree_14(unsigned short features[]) {
-    if (features[4] <= 115) {
-        if (features[3] <= 13) {
-            if (features[3] <= 10) {
-                if (features[2] <= 63) {
-                    if (features[0] <= 105) {
+int predict_tree_14(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (humidity_ratio <= 115) {
+        if (co2 <= 13) {
+            if (co2 <= 10) {
+                if (light <= 63) {
+                    if (temperature <= 105) {
                         return 0;
                     } else {
-                        if (features[2] <= 59) {
+                        if (light <= 59) {
                             return 0;
                         } else {
-                            if (features[2] <= 59) {
+                            if (light <= 59) {
                                 return 1;
                             } else {
                                 return 0;
@@ -2768,11 +2773,11 @@ int predict_tree_14(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[0] <= 91) {
-                        if (features[2] <= 69) {
+                    if (temperature <= 91) {
+                        if (light <= 69) {
                             return 1;
                         } else {
-                            if (features[3] <= 7) {
+                            if (co2 <= 7) {
                                 return 0;
                             } else {
                                 return 1;
@@ -2783,8 +2788,8 @@ int predict_tree_14(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[2] <= 67) {
-                    if (features[3] <= 10) {
+                if (light <= 67) {
+                    if (co2 <= 10) {
                         return 1;
                     } else {
                         return 0;
@@ -2794,18 +2799,18 @@ int predict_tree_14(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[3] <= 54) {
-                if (features[1] <= 79) {
-                    if (features[1] <= 36) {
-                        if (features[2] <= 29) {
+            if (co2 <= 54) {
+                if (humidity <= 79) {
+                    if (humidity <= 36) {
+                        if (light <= 29) {
                             return 0;
                         } else {
-                            if (features[2] <= 89) {
-                                if (features[2] <= 87) {
+                            if (light <= 89) {
+                                if (light <= 87) {
                                     return 1;
                                 } else {
-                                    if (features[2] <= 87) {
-                                        if (features[1] <= 30) {
+                                    if (light <= 87) {
+                                        if (humidity <= 30) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -2815,7 +2820,7 @@ int predict_tree_14(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[2] <= 89) {
+                                if (light <= 89) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -2823,7 +2828,7 @@ int predict_tree_14(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[2] <= 40) {
+                        if (light <= 40) {
                             return 0;
                         } else {
                             return 1;
@@ -2833,20 +2838,20 @@ int predict_tree_14(unsigned short features[]) {
                     return 1;
                 }
             } else {
-                if (features[1] <= 104) {
-                    if (features[1] <= 45) {
-                        if (features[4] <= 36) {
+                if (humidity <= 104) {
+                    if (humidity <= 45) {
+                        if (humidity_ratio <= 36) {
                             return 0;
                         } else {
-                            if (features[0] <= 164) {
+                            if (temperature <= 164) {
                                 return 0;
                             } else {
-                                if (features[2] <= 81) {
-                                    if (features[3] <= 64) {
-                                        if (features[1] <= 43) {
-                                            if (features[2] <= 78) {
-                                                if (features[1] <= 42) {
-                                                    if (features[3] <= 61) {
+                                if (light <= 81) {
+                                    if (co2 <= 64) {
+                                        if (humidity <= 43) {
+                                            if (light <= 78) {
+                                                if (humidity <= 42) {
+                                                    if (co2 <= 61) {
                                                         return 1;
                                                     } else {
                                                         return 0;
@@ -2858,7 +2863,7 @@ int predict_tree_14(unsigned short features[]) {
                                                 return 1;
                                             }
                                         } else {
-                                            if (features[2] <= 81) {
+                                            if (light <= 81) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -2873,12 +2878,12 @@ int predict_tree_14(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[1] <= 69) {
-                            if (features[3] <= 58) {
-                                if (features[4] <= 46) {
+                        if (humidity <= 69) {
+                            if (co2 <= 58) {
+                                if (humidity_ratio <= 46) {
                                     return 1;
                                 } else {
-                                    if (features[2] <= 36) {
+                                    if (light <= 36) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -2888,10 +2893,10 @@ int predict_tree_14(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[1] <= 82) {
+                            if (humidity <= 82) {
                                 return 0;
                             } else {
-                                if (features[2] <= 35) {
+                                if (light <= 35) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -2900,12 +2905,12 @@ int predict_tree_14(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 86) {
-                        if (features[3] <= 63) {
-                            if (features[2] <= 74) {
+                    if (co2 <= 86) {
+                        if (co2 <= 63) {
+                            if (light <= 74) {
                                 return 1;
                             } else {
-                                if (features[1] <= 105) {
+                                if (humidity <= 105) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -2915,11 +2920,11 @@ int predict_tree_14(unsigned short features[]) {
                             return 0;
                         }
                     } else {
-                        if (features[4] <= 113) {
+                        if (humidity_ratio <= 113) {
                             return 1;
                         } else {
-                            if (features[3] <= 100) {
-                                if (features[2] <= 76) {
+                            if (co2 <= 100) {
+                                if (light <= 76) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -2933,12 +2938,12 @@ int predict_tree_14(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 41) {
-            if (features[2] <= 5) {
+        if (light <= 41) {
+            if (light <= 5) {
                 return 0;
             } else {
-                if (features[2] <= 5) {
-                    if (features[3] <= 110) {
+                if (light <= 5) {
+                    if (co2 <= 110) {
                         return 0;
                     } else {
                         return 1;
@@ -2948,14 +2953,14 @@ int predict_tree_14(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[0] <= 227) {
+            if (temperature <= 227) {
                 return 1;
             } else {
-                if (features[2] <= 102) {
-                    if (features[3] <= 92) {
+                if (light <= 102) {
+                    if (co2 <= 92) {
                         return 1;
                     } else {
-                        if (features[3] <= 110) {
+                        if (co2 <= 110) {
                             return 0;
                         } else {
                             return 1;
@@ -2968,31 +2973,31 @@ int predict_tree_14(unsigned short features[]) {
         }
     }
 }
-int predict_tree_15(unsigned short features[]) {
-    if (features[3] <= 27) {
-        if (features[2] <= 62) {
-            if (features[2] <= 59) {
-                if (features[1] <= 117) {
+int predict_tree_15(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 27) {
+        if (light <= 62) {
+            if (light <= 59) {
+                if (humidity <= 117) {
                     return 0;
                 } else {
-                    if (features[1] <= 118) {
+                    if (humidity <= 118) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[4] <= 35) {
+                if (humidity_ratio <= 35) {
                     return 0;
                 } else {
                     return 1;
                 }
             }
         } else {
-            if (features[1] <= 25) {
-                if (features[1] <= 24) {
-                    if (features[1] <= 22) {
-                        if (features[2] <= 69) {
+            if (humidity <= 25) {
+                if (humidity <= 24) {
+                    if (humidity <= 22) {
+                        if (light <= 69) {
                             return 1;
                         } else {
                             return 0;
@@ -3001,15 +3006,15 @@ int predict_tree_15(unsigned short features[]) {
                         return 0;
                     }
                 } else {
-                    if (features[4] <= 9) {
+                    if (humidity_ratio <= 9) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[3] <= 13) {
-                    if (features[2] <= 67) {
+                if (co2 <= 13) {
+                    if (light <= 67) {
                         return 0;
                     } else {
                         return 1;
@@ -3020,19 +3025,19 @@ int predict_tree_15(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 31) {
+        if (light <= 31) {
             return 0;
         } else {
-            if (features[1] <= 116) {
-                if (features[0] <= 200) {
-                    if (features[3] <= 99) {
-                        if (features[2] <= 79) {
+            if (humidity <= 116) {
+                if (temperature <= 200) {
+                    if (co2 <= 99) {
+                        if (light <= 79) {
                             return 1;
                         } else {
-                            if (features[0] <= 170) {
-                                if (features[1] <= 43) {
-                                    if (features[1] <= 30) {
-                                        if (features[0] <= 164) {
+                            if (temperature <= 170) {
+                                if (humidity <= 43) {
+                                    if (humidity <= 30) {
+                                        if (temperature <= 164) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -3041,8 +3046,8 @@ int predict_tree_15(unsigned short features[]) {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[3] <= 65) {
-                                        if (features[4] <= 42) {
+                                    if (co2 <= 65) {
+                                        if (humidity_ratio <= 42) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -3056,13 +3061,13 @@ int predict_tree_15(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[3] <= 99) {
+                        if (co2 <= 99) {
                             return 0;
                         } else {
-                            if (features[4] <= 115) {
-                                if (features[4] <= 115) {
-                                    if (features[0] <= 191) {
-                                        if (features[0] <= 190) {
+                            if (humidity_ratio <= 115) {
+                                if (humidity_ratio <= 115) {
+                                    if (temperature <= 191) {
+                                        if (temperature <= 190) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -3079,12 +3084,12 @@ int predict_tree_15(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 77) {
-                        if (features[4] <= 111) {
-                            if (features[3] <= 61) {
+                    if (co2 <= 77) {
+                        if (humidity_ratio <= 111) {
+                            if (co2 <= 61) {
                                 return 0;
                             } else {
-                                if (features[3] <= 63) {
+                                if (co2 <= 63) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -3094,9 +3099,9 @@ int predict_tree_15(unsigned short features[]) {
                             return 0;
                         }
                     } else {
-                        if (features[4] <= 123) {
-                            if (features[3] <= 93) {
-                                if (features[1] <= 105) {
+                        if (humidity_ratio <= 123) {
+                            if (co2 <= 93) {
+                                if (humidity <= 105) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -3105,11 +3110,11 @@ int predict_tree_15(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[3] <= 98) {
+                            if (co2 <= 98) {
                                 return 0;
                             } else {
-                                if (features[2] <= 91) {
-                                    if (features[4] <= 124) {
+                                if (light <= 91) {
+                                    if (humidity_ratio <= 124) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -3127,20 +3132,20 @@ int predict_tree_15(unsigned short features[]) {
         }
     }
 }
-int predict_tree_16(unsigned short features[]) {
-    if (features[3] <= 27) {
-        if (features[0] <= 102) {
-            if (features[4] <= 81) {
-                if (features[3] <= 10) {
-                    if (features[4] <= 6) {
-                        if (features[0] <= 69) {
+int predict_tree_16(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 27) {
+        if (temperature <= 102) {
+            if (humidity_ratio <= 81) {
+                if (co2 <= 10) {
+                    if (humidity_ratio <= 6) {
+                        if (temperature <= 69) {
                             return 0;
                         } else {
-                            if (features[2] <= 68) {
+                            if (light <= 68) {
                                 return 0;
                             } else {
-                                if (features[4] <= 4) {
-                                    if (features[0] <= 73) {
+                                if (humidity_ratio <= 4) {
+                                    if (temperature <= 73) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -3151,10 +3156,10 @@ int predict_tree_16(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[3] <= 10) {
+                        if (co2 <= 10) {
                             return 0;
                         } else {
-                            if (features[2] <= 24) {
+                            if (light <= 24) {
                                 return 0;
                             } else {
                                 return 1;
@@ -3162,10 +3167,10 @@ int predict_tree_16(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[4] <= 11) {
+                    if (humidity_ratio <= 11) {
                         return 1;
                     } else {
-                        if (features[2] <= 67) {
+                        if (light <= 67) {
                             return 0;
                         } else {
                             return 1;
@@ -3173,10 +3178,10 @@ int predict_tree_16(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 10) {
+                if (co2 <= 10) {
                     return 0;
                 } else {
-                    if (features[1] <= 159) {
+                    if (humidity <= 159) {
                         return 1;
                     } else {
                         return 0;
@@ -3184,15 +3189,15 @@ int predict_tree_16(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[3] <= 17) {
-                if (features[1] <= 55) {
+            if (co2 <= 17) {
+                if (humidity <= 55) {
                     return 0;
                 } else {
-                    if (features[2] <= 51) {
+                    if (light <= 51) {
                         return 0;
                     } else {
-                        if (features[0] <= 107) {
-                            if (features[4] <= 48) {
+                        if (temperature <= 107) {
+                            if (humidity_ratio <= 48) {
                                 return 1;
                             } else {
                                 return 0;
@@ -3203,17 +3208,17 @@ int predict_tree_16(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[1] <= 33) {
-                    if (features[4] <= 18) {
-                        if (features[3] <= 19) {
+                if (humidity <= 33) {
+                    if (humidity_ratio <= 18) {
+                        if (co2 <= 19) {
                             return 1;
                         } else {
                             return 0;
                         }
                     } else {
-                        if (features[0] <= 118) {
-                            if (features[3] <= 19) {
-                                if (features[2] <= 35) {
+                        if (temperature <= 118) {
+                            if (co2 <= 19) {
+                                if (light <= 35) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -3226,7 +3231,7 @@ int predict_tree_16(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[2] <= 33) {
+                    if (light <= 33) {
                         return 0;
                     } else {
                         return 1;
@@ -3235,14 +3240,14 @@ int predict_tree_16(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 38) {
-            if (features[2] <= 5) {
+        if (light <= 38) {
+            if (light <= 5) {
                 return 0;
             } else {
-                if (features[4] <= 146) {
+                if (humidity_ratio <= 146) {
                     return 0;
                 } else {
-                    if (features[3] <= 131) {
+                    if (co2 <= 131) {
                         return 0;
                     } else {
                         return 1;
@@ -3250,24 +3255,24 @@ int predict_tree_16(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[0] <= 227) {
-                if (features[1] <= 113) {
-                    if (features[2] <= 75) {
-                        if (features[2] <= 74) {
+            if (temperature <= 227) {
+                if (humidity <= 113) {
+                    if (light <= 75) {
+                        if (light <= 74) {
                             return 1;
                         } else {
-                            if (features[0] <= 201) {
+                            if (temperature <= 201) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         }
                     } else {
-                        if (features[4] <= 108) {
-                            if (features[0] <= 170) {
-                                if (features[1] <= 30) {
-                                    if (features[0] <= 163) {
-                                        if (features[4] <= 26) {
+                        if (humidity_ratio <= 108) {
+                            if (temperature <= 170) {
+                                if (humidity <= 30) {
+                                    if (temperature <= 163) {
+                                        if (humidity_ratio <= 26) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -3276,8 +3281,8 @@ int predict_tree_16(unsigned short features[]) {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[1] <= 43) {
-                                        if (features[4] <= 41) {
+                                    if (humidity <= 43) {
+                                        if (humidity_ratio <= 41) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -3290,9 +3295,9 @@ int predict_tree_16(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[3] <= 76) {
-                                if (features[2] <= 75) {
-                                    if (features[4] <= 111) {
+                            if (co2 <= 76) {
+                                if (light <= 75) {
+                                    if (humidity_ratio <= 111) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -3301,15 +3306,15 @@ int predict_tree_16(unsigned short features[]) {
                                     return 0;
                                 }
                             } else {
-                                if (features[0] <= 191) {
-                                    if (features[0] <= 190) {
+                                if (temperature <= 191) {
+                                    if (temperature <= 190) {
                                         return 1;
                                     } else {
                                         return 0;
                                     }
                                 } else {
-                                    if (features[2] <= 76) {
-                                        if (features[1] <= 113) {
+                                    if (light <= 76) {
+                                        if (humidity <= 113) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -3325,16 +3330,16 @@ int predict_tree_16(unsigned short features[]) {
                     return 1;
                 }
             } else {
-                if (features[4] <= 123) {
+                if (humidity_ratio <= 123) {
                     return 1;
                 } else {
-                    if (features[1] <= 116) {
-                        if (features[4] <= 125) {
-                            if (features[3] <= 96) {
+                    if (humidity <= 116) {
+                        if (humidity_ratio <= 125) {
+                            if (co2 <= 96) {
                                 return 0;
                             } else {
-                                if (features[0] <= 229) {
-                                    if (features[2] <= 86) {
+                                if (temperature <= 229) {
+                                    if (light <= 86) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -3354,21 +3359,21 @@ int predict_tree_16(unsigned short features[]) {
         }
     }
 }
-int predict_tree_17(unsigned short features[]) {
-    if (features[3] <= 27) {
-        if (features[0] <= 36) {
-            if (features[2] <= 69) {
+int predict_tree_17(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 27) {
+        if (temperature <= 36) {
+            if (light <= 69) {
                 return 0;
             } else {
                 return 1;
             }
         } else {
-            if (features[2] <= 62) {
-                if (features[3] <= 7) {
+            if (light <= 62) {
+                if (co2 <= 7) {
                     return 0;
                 } else {
-                    if (features[3] <= 7) {
-                        if (features[2] <= 58) {
+                    if (co2 <= 7) {
+                        if (light <= 58) {
                             return 0;
                         } else {
                             return 1;
@@ -3378,14 +3383,14 @@ int predict_tree_17(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 7) {
-                    if (features[4] <= 3) {
+                if (co2 <= 7) {
+                    if (humidity_ratio <= 3) {
                         return 1;
                     } else {
                         return 0;
                     }
                 } else {
-                    if (features[2] <= 70) {
+                    if (light <= 70) {
                         return 1;
                     } else {
                         return 0;
@@ -3394,23 +3399,23 @@ int predict_tree_17(unsigned short features[]) {
             }
         }
     } else {
-        if (features[0] <= 113) {
-            if (features[4] <= 150) {
+        if (temperature <= 113) {
+            if (humidity_ratio <= 150) {
                 return 1;
             } else {
                 return 0;
             }
         } else {
-            if (features[3] <= 58) {
-                if (features[4] <= 27) {
-                    if (features[1] <= 35) {
-                        if (features[2] <= 46) {
+            if (co2 <= 58) {
+                if (humidity_ratio <= 27) {
+                    if (humidity <= 35) {
+                        if (light <= 46) {
                             return 0;
                         } else {
-                            if (features[2] <= 89) {
+                            if (light <= 89) {
                                 return 1;
                             } else {
-                                if (features[1] <= 28) {
+                                if (humidity <= 28) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -3421,14 +3426,14 @@ int predict_tree_17(unsigned short features[]) {
                         return 0;
                     }
                 } else {
-                    if (features[1] <= 80) {
-                        if (features[2] <= 38) {
+                    if (humidity <= 80) {
+                        if (light <= 38) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[4] <= 93) {
+                        if (humidity_ratio <= 93) {
                             return 1;
                         } else {
                             return 0;
@@ -3436,12 +3441,12 @@ int predict_tree_17(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[2] <= 37) {
-                    if (features[2] <= 5) {
+                if (light <= 37) {
+                    if (light <= 5) {
                         return 0;
                     } else {
-                        if (features[0] <= 182) {
-                            if (features[3] <= 131) {
+                        if (temperature <= 182) {
+                            if (co2 <= 131) {
                                 return 0;
                             } else {
                                 return 1;
@@ -3451,16 +3456,16 @@ int predict_tree_17(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[2] <= 87) {
-                        if (features[0] <= 204) {
-                            if (features[0] <= 190) {
-                                if (features[1] <= 43) {
-                                    if (features[2] <= 79) {
-                                        if (features[4] <= 41) {
+                    if (light <= 87) {
+                        if (temperature <= 204) {
+                            if (temperature <= 190) {
+                                if (humidity <= 43) {
+                                    if (light <= 79) {
+                                        if (humidity_ratio <= 41) {
                                             return 1;
                                         } else {
-                                            if (features[4] <= 41) {
-                                                if (features[3] <= 61) {
+                                            if (humidity_ratio <= 41) {
+                                                if (co2 <= 61) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -3476,13 +3481,13 @@ int predict_tree_17(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[3] <= 100) {
-                                    if (features[3] <= 100) {
-                                        if (features[1] <= 112) {
+                                if (co2 <= 100) {
+                                    if (co2 <= 100) {
+                                        if (humidity <= 112) {
                                             return 1;
                                         } else {
-                                            if (features[1] <= 113) {
-                                                if (features[3] <= 99) {
+                                            if (humidity <= 113) {
+                                                if (co2 <= 99) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -3499,13 +3504,13 @@ int predict_tree_17(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[1] <= 107) {
-                                if (features[1] <= 104) {
+                            if (humidity <= 107) {
+                                if (humidity <= 104) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 83) {
-                                        if (features[3] <= 63) {
-                                            if (features[3] <= 62) {
+                                    if (co2 <= 83) {
+                                        if (co2 <= 63) {
+                                            if (co2 <= 62) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -3522,13 +3527,13 @@ int predict_tree_17(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[0] <= 230) {
-                            if (features[2] <= 87) {
+                        if (temperature <= 230) {
+                            if (light <= 87) {
                                 return 0;
                             } else {
-                                if (features[4] <= 117) {
-                                    if (features[2] <= 93) {
-                                        if (features[0] <= 203) {
+                                if (humidity_ratio <= 117) {
+                                    if (light <= 93) {
+                                        if (temperature <= 203) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -3541,8 +3546,8 @@ int predict_tree_17(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[3] <= 112) {
-                                if (features[4] <= 125) {
+                            if (co2 <= 112) {
+                                if (humidity_ratio <= 125) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -3557,57 +3562,57 @@ int predict_tree_17(unsigned short features[]) {
         }
     }
 }
-int predict_tree_18(unsigned short features[]) {
-    if (features[4] <= 115) {
-        if (features[2] <= 61) {
-            if (features[2] <= 59) {
-                if (features[3] <= 39) {
+int predict_tree_18(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (humidity_ratio <= 115) {
+        if (light <= 61) {
+            if (light <= 59) {
+                if (co2 <= 39) {
                     return 0;
                 } else {
-                    if (features[2] <= 35) {
+                    if (light <= 35) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[0] <= 156) {
+                if (temperature <= 156) {
                     return 1;
                 } else {
                     return 0;
                 }
             }
         } else {
-            if (features[3] <= 7) {
+            if (co2 <= 7) {
                 return 0;
             } else {
-                if (features[4] <= 111) {
-                    if (features[4] <= 3) {
+                if (humidity_ratio <= 111) {
+                    if (humidity_ratio <= 3) {
                         return 0;
                     } else {
-                        if (features[0] <= 201) {
-                            if (features[0] <= 36) {
-                                if (features[0] <= 34) {
+                        if (temperature <= 201) {
+                            if (temperature <= 36) {
+                                if (temperature <= 34) {
                                     return 1;
                                 } else {
                                     return 0;
                                 }
                             } else {
-                                if (features[4] <= 48) {
-                                    if (features[4] <= 48) {
-                                        if (features[2] <= 78) {
+                                if (humidity_ratio <= 48) {
+                                    if (humidity_ratio <= 48) {
+                                        if (light <= 78) {
                                             return 1;
                                         } else {
-                                            if (features[0] <= 170) {
-                                                if (features[3] <= 65) {
-                                                    if (features[3] <= 62) {
-                                                        if (features[2] <= 86) {
+                                            if (temperature <= 170) {
+                                                if (co2 <= 65) {
+                                                    if (co2 <= 62) {
+                                                        if (light <= 86) {
                                                             return 1;
                                                         } else {
-                                                            if (features[3] <= 37) {
+                                                            if (co2 <= 37) {
                                                                 return 1;
                                                             } else {
-                                                                if (features[1] <= 30) {
+                                                                if (humidity <= 30) {
                                                                     return 0;
                                                                 } else {
                                                                     return 1;
@@ -3615,7 +3620,7 @@ int predict_tree_18(unsigned short features[]) {
                                                             }
                                                         }
                                                     } else {
-                                                        if (features[2] <= 83) {
+                                                        if (light <= 83) {
                                                             return 0;
                                                         } else {
                                                             return 1;
@@ -3636,14 +3641,14 @@ int predict_tree_18(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[2] <= 74) {
+                            if (light <= 74) {
                                 return 1;
                             } else {
-                                if (features[4] <= 110) {
+                                if (humidity_ratio <= 110) {
                                     return 0;
                                 } else {
-                                    if (features[1] <= 105) {
-                                        if (features[2] <= 81) {
+                                    if (humidity <= 105) {
+                                        if (light <= 81) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -3656,18 +3661,18 @@ int predict_tree_18(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[1] <= 107) {
-                        if (features[3] <= 89) {
+                    if (humidity <= 107) {
+                        if (co2 <= 89) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[2] <= 80) {
-                            if (features[2] <= 76) {
+                        if (light <= 80) {
+                            if (light <= 76) {
                                 return 1;
                             } else {
-                                if (features[1] <= 113) {
+                                if (humidity <= 113) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -3681,12 +3686,12 @@ int predict_tree_18(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 41) {
-            if (features[1] <= 189) {
-                if (features[0] <= 154) {
+        if (light <= 41) {
+            if (humidity <= 189) {
+                if (temperature <= 154) {
                     return 0;
                 } else {
-                    if (features[0] <= 187) {
+                    if (temperature <= 187) {
                         return 1;
                     } else {
                         return 0;
@@ -3696,14 +3701,14 @@ int predict_tree_18(unsigned short features[]) {
                 return 0;
             }
         } else {
-            if (features[2] <= 93) {
-                if (features[0] <= 229) {
+            if (light <= 93) {
+                if (temperature <= 229) {
                     return 1;
                 } else {
-                    if (features[4] <= 128) {
+                    if (humidity_ratio <= 128) {
                         return 1;
                     } else {
-                        if (features[2] <= 89) {
+                        if (light <= 89) {
                             return 1;
                         } else {
                             return 0;
@@ -3711,7 +3716,7 @@ int predict_tree_18(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 97) {
+                if (co2 <= 97) {
                     return 0;
                 } else {
                     return 1;
@@ -3720,20 +3725,20 @@ int predict_tree_18(unsigned short features[]) {
         }
     }
 }
-int predict_tree_19(unsigned short features[]) {
-    if (features[4] <= 115) {
-        if (features[2] <= 62) {
-            if (features[4] <= 47) {
+int predict_tree_19(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (humidity_ratio <= 115) {
+        if (light <= 62) {
+            if (humidity_ratio <= 47) {
                 return 0;
             } else {
-                if (features[3] <= 10) {
-                    if (features[2] <= 54) {
+                if (co2 <= 10) {
+                    if (light <= 54) {
                         return 0;
                     } else {
                         return 1;
                     }
                 } else {
-                    if (features[1] <= 117) {
+                    if (humidity <= 117) {
                         return 0;
                     } else {
                         return 1;
@@ -3741,11 +3746,11 @@ int predict_tree_19(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[4] <= 109) {
-                if (features[3] <= 7) {
-                    if (features[3] <= 7) {
-                        if (features[3] <= 4) {
-                            if (features[4] <= 3) {
+            if (humidity_ratio <= 109) {
+                if (co2 <= 7) {
+                    if (co2 <= 7) {
+                        if (co2 <= 4) {
+                            if (humidity_ratio <= 3) {
                                 return 0;
                             } else {
                                 return 1;
@@ -3754,19 +3759,19 @@ int predict_tree_19(unsigned short features[]) {
                             return 0;
                         }
                     } else {
-                        if (features[3] <= 7) {
+                        if (co2 <= 7) {
                             return 1;
                         } else {
                             return 0;
                         }
                     }
                 } else {
-                    if (features[4] <= 28) {
-                        if (features[4] <= 27) {
-                            if (features[2] <= 89) {
+                    if (humidity_ratio <= 28) {
+                        if (humidity_ratio <= 27) {
+                            if (light <= 89) {
                                 return 1;
                             } else {
-                                if (features[0] <= 163) {
+                                if (temperature <= 163) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -3776,18 +3781,18 @@ int predict_tree_19(unsigned short features[]) {
                             return 0;
                         }
                     } else {
-                        if (features[0] <= 34) {
-                            if (features[2] <= 67) {
+                        if (temperature <= 34) {
+                            if (light <= 67) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         } else {
-                            if (features[1] <= 43) {
-                                if (features[0] <= 170) {
-                                    if (features[1] <= 43) {
-                                        if (features[2] <= 78) {
-                                            if (features[3] <= 62) {
+                            if (humidity <= 43) {
+                                if (temperature <= 170) {
+                                    if (humidity <= 43) {
+                                        if (light <= 78) {
+                                            if (co2 <= 62) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -3796,7 +3801,7 @@ int predict_tree_19(unsigned short features[]) {
                                             return 1;
                                         }
                                     } else {
-                                        if (features[0] <= 169) {
+                                        if (temperature <= 169) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -3812,16 +3817,16 @@ int predict_tree_19(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 85) {
-                    if (features[3] <= 54) {
+                if (co2 <= 85) {
+                    if (co2 <= 54) {
                         return 1;
                     } else {
-                        if (features[4] <= 114) {
-                            if (features[2] <= 75) {
+                        if (humidity_ratio <= 114) {
+                            if (light <= 75) {
                                 return 0;
                             } else {
-                                if (features[3] <= 64) {
-                                    if (features[3] <= 61) {
+                                if (co2 <= 64) {
+                                    if (co2 <= 61) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -3835,10 +3840,10 @@ int predict_tree_19(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[1] <= 113) {
+                    if (humidity <= 113) {
                         return 1;
                     } else {
-                        if (features[3] <= 100) {
+                        if (co2 <= 100) {
                             return 0;
                         } else {
                             return 1;
@@ -3848,34 +3853,34 @@ int predict_tree_19(unsigned short features[]) {
             }
         }
     } else {
-        if (features[0] <= 111) {
-            if (features[4] <= 147) {
+        if (temperature <= 111) {
+            if (humidity_ratio <= 147) {
                 return 1;
             } else {
                 return 0;
             }
         } else {
-            if (features[1] <= 109) {
-                if (features[0] <= 240) {
+            if (humidity <= 109) {
+                if (temperature <= 240) {
                     return 0;
                 } else {
-                    if (features[2] <= 92) {
+                    if (light <= 92) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[2] <= 41) {
+                if (light <= 41) {
                     return 0;
                 } else {
-                    if (features[1] <= 116) {
-                        if (features[0] <= 229) {
+                    if (humidity <= 116) {
+                        if (temperature <= 229) {
                             return 1;
                         } else {
-                            if (features[3] <= 112) {
-                                if (features[1] <= 112) {
-                                    if (features[0] <= 237) {
+                            if (co2 <= 112) {
+                                if (humidity <= 112) {
+                                    if (temperature <= 237) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -3895,21 +3900,21 @@ int predict_tree_19(unsigned short features[]) {
         }
     }
 }
-int predict_tree_20(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[1] <= 247) {
-            if (features[2] <= 56) {
-                if (features[2] <= 35) {
+int predict_tree_20(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (humidity <= 247) {
+            if (light <= 56) {
+                if (light <= 35) {
                     return 0;
                 } else {
-                    if (features[2] <= 35) {
+                    if (light <= 35) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[4] <= 72) {
+                if (humidity_ratio <= 72) {
                     return 0;
                 } else {
                     return 1;
@@ -3919,27 +3924,27 @@ int predict_tree_20(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[1] <= 24) {
-            if (features[2] <= 67) {
+        if (humidity <= 24) {
+            if (light <= 67) {
                 return 1;
             } else {
-                if (features[3] <= 7) {
+                if (co2 <= 7) {
                     return 0;
                 } else {
                     return 1;
                 }
             }
         } else {
-            if (features[1] <= 116) {
-                if (features[2] <= 94) {
-                    if (features[1] <= 104) {
-                        if (features[1] <= 43) {
-                            if (features[3] <= 62) {
+            if (humidity <= 116) {
+                if (light <= 94) {
+                    if (humidity <= 104) {
+                        if (humidity <= 43) {
+                            if (co2 <= 62) {
                                 return 1;
                             } else {
-                                if (features[1] <= 43) {
-                                    if (features[0] <= 169) {
-                                        if (features[2] <= 79) {
+                                if (humidity <= 43) {
+                                    if (temperature <= 169) {
+                                        if (light <= 79) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -3948,7 +3953,7 @@ int predict_tree_20(unsigned short features[]) {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[2] <= 80) {
+                                    if (light <= 80) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -3956,9 +3961,9 @@ int predict_tree_20(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[2] <= 70) {
-                                if (features[3] <= 10) {
-                                    if (features[1] <= 66) {
+                            if (light <= 70) {
+                                if (co2 <= 10) {
+                                    if (humidity <= 66) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -3971,11 +3976,11 @@ int predict_tree_20(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[3] <= 74) {
-                            if (features[1] <= 107) {
-                                if (features[2] <= 80) {
-                                    if (features[1] <= 106) {
-                                        if (features[1] <= 105) {
+                        if (co2 <= 74) {
+                            if (humidity <= 107) {
+                                if (light <= 80) {
+                                    if (humidity <= 106) {
+                                        if (humidity <= 105) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -3984,7 +3989,7 @@ int predict_tree_20(unsigned short features[]) {
                                         return 0;
                                     }
                                 } else {
-                                    if (features[3] <= 67) {
+                                    if (co2 <= 67) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -3994,10 +3999,10 @@ int predict_tree_20(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[4] <= 124) {
+                            if (humidity_ratio <= 124) {
                                 return 1;
                             } else {
-                                if (features[2] <= 91) {
+                                if (light <= 91) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -4006,9 +4011,9 @@ int predict_tree_20(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 97) {
-                        if (features[3] <= 62) {
-                            if (features[2] <= 167) {
+                    if (co2 <= 97) {
+                        if (co2 <= 62) {
+                            if (light <= 167) {
                                 return 1;
                             } else {
                                 return 0;
@@ -4017,10 +4022,10 @@ int predict_tree_20(unsigned short features[]) {
                             return 0;
                         }
                     } else {
-                        if (features[0] <= 230) {
+                        if (temperature <= 230) {
                             return 1;
                         } else {
-                            if (features[4] <= 126) {
+                            if (humidity_ratio <= 126) {
                                 return 1;
                             } else {
                                 return 0;
@@ -4034,30 +4039,30 @@ int predict_tree_20(unsigned short features[]) {
         }
     }
 }
-int predict_tree_21(unsigned short features[]) {
-    if (features[0] <= 138) {
-        if (features[2] <= 55) {
+int predict_tree_21(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (temperature <= 138) {
+        if (light <= 55) {
             return 0;
         } else {
-            if (features[3] <= 7) {
-                if (features[2] <= 67) {
+            if (co2 <= 7) {
+                if (light <= 67) {
                     return 1;
                 } else {
                     return 0;
                 }
             } else {
-                if (features[0] <= 36) {
-                    if (features[1] <= 120) {
+                if (temperature <= 36) {
+                    if (humidity <= 120) {
                         return 1;
                     } else {
                         return 0;
                     }
                 } else {
-                    if (features[3] <= 10) {
-                        if (features[1] <= 46) {
+                    if (co2 <= 10) {
+                        if (humidity <= 46) {
                             return 1;
                         } else {
-                            if (features[4] <= 48) {
+                            if (humidity_ratio <= 48) {
                                 return 0;
                             } else {
                                 return 1;
@@ -4070,18 +4075,18 @@ int predict_tree_21(unsigned short features[]) {
             }
         }
     } else {
-        if (features[3] <= 31) {
+        if (co2 <= 31) {
             return 0;
         } else {
-            if (features[3] <= 58) {
-                if (features[2] <= 46) {
+            if (co2 <= 58) {
+                if (light <= 46) {
                     return 0;
                 } else {
-                    if (features[4] <= 93) {
-                        if (features[2] <= 89) {
+                    if (humidity_ratio <= 93) {
+                        if (light <= 89) {
                             return 1;
                         } else {
-                            if (features[0] <= 165) {
+                            if (temperature <= 165) {
                                 return 0;
                             } else {
                                 return 1;
@@ -4092,26 +4097,26 @@ int predict_tree_21(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[2] <= 27) {
-                    if (features[2] <= 5) {
+                if (light <= 27) {
+                    if (light <= 5) {
                         return 0;
                     } else {
-                        if (features[3] <= 131) {
+                        if (co2 <= 131) {
                             return 0;
                         } else {
                             return 1;
                         }
                     }
                 } else {
-                    if (features[0] <= 204) {
-                        if (features[3] <= 99) {
+                    if (temperature <= 204) {
+                        if (co2 <= 99) {
                             return 1;
                         } else {
-                            if (features[3] <= 99) {
-                                if (features[0] <= 192) {
+                            if (co2 <= 99) {
+                                if (temperature <= 192) {
                                     return 0;
                                 } else {
-                                    if (features[1] <= 112) {
+                                    if (humidity <= 112) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -4122,13 +4127,13 @@ int predict_tree_21(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[0] <= 207) {
-                            if (features[3] <= 82) {
-                                if (features[3] <= 63) {
-                                    if (features[0] <= 205) {
+                        if (temperature <= 207) {
+                            if (co2 <= 82) {
+                                if (co2 <= 63) {
+                                    if (temperature <= 205) {
                                         return 0;
                                     } else {
-                                        if (features[4] <= 110) {
+                                        if (humidity_ratio <= 110) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -4141,12 +4146,12 @@ int predict_tree_21(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[0] <= 230) {
-                                if (features[0] <= 227) {
+                            if (temperature <= 230) {
+                                if (temperature <= 227) {
                                     return 1;
                                 } else {
-                                    if (features[0] <= 229) {
-                                        if (features[3] <= 102) {
+                                    if (temperature <= 229) {
+                                        if (co2 <= 102) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -4156,18 +4161,18 @@ int predict_tree_21(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[2] <= 86) {
+                                if (light <= 86) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 130) {
-                                        if (features[0] <= 234) {
-                                            if (features[1] <= 112) {
+                                    if (humidity_ratio <= 130) {
+                                        if (temperature <= 234) {
+                                            if (humidity <= 112) {
                                                 return 1;
                                             } else {
-                                                if (features[3] <= 110) {
+                                                if (co2 <= 110) {
                                                     return 0;
                                                 } else {
-                                                    if (features[2] <= 89) {
+                                                    if (light <= 89) {
                                                         return 1;
                                                     } else {
                                                         return 0;
@@ -4189,19 +4194,19 @@ int predict_tree_21(unsigned short features[]) {
         }
     }
 }
-int predict_tree_22(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[1] <= 246) {
-            if (features[4] <= 175) {
-                if (features[2] <= 59) {
-                    if (features[0] <= 188) {
-                        if (features[1] <= 117) {
+int predict_tree_22(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (humidity <= 246) {
+            if (humidity_ratio <= 175) {
+                if (light <= 59) {
+                    if (temperature <= 188) {
+                        if (humidity <= 117) {
                             return 0;
                         } else {
-                            if (features[2] <= 47) {
+                            if (light <= 47) {
                                 return 0;
                             } else {
-                                if (features[1] <= 133) {
+                                if (humidity <= 133) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -4209,10 +4214,10 @@ int predict_tree_22(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[3] <= 38) {
+                        if (co2 <= 38) {
                             return 0;
                         } else {
-                            if (features[4] <= 99) {
+                            if (humidity_ratio <= 99) {
                                 return 1;
                             } else {
                                 return 0;
@@ -4220,14 +4225,14 @@ int predict_tree_22(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[1] <= 38) {
+                    if (humidity <= 38) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[1] <= 189) {
+                if (humidity <= 189) {
                     return 1;
                 } else {
                     return 0;
@@ -4237,9 +4242,9 @@ int predict_tree_22(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[3] <= 7) {
-            if (features[1] <= 22) {
-                if (features[2] <= 69) {
+        if (co2 <= 7) {
+            if (humidity <= 22) {
+                if (light <= 69) {
                     return 1;
                 } else {
                     return 0;
@@ -4248,12 +4253,12 @@ int predict_tree_22(unsigned short features[]) {
                 return 0;
             }
         } else {
-            if (features[0] <= 234) {
-                if (features[0] <= 204) {
-                    if (features[3] <= 13) {
-                        if (features[4] <= 77) {
-                            if (features[2] <= 68) {
-                                if (features[0] <= 74) {
+            if (temperature <= 234) {
+                if (temperature <= 204) {
+                    if (co2 <= 13) {
+                        if (humidity_ratio <= 77) {
+                            if (light <= 68) {
+                                if (temperature <= 74) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -4265,29 +4270,29 @@ int predict_tree_22(unsigned short features[]) {
                             return 0;
                         }
                     } else {
-                        if (features[0] <= 162) {
+                        if (temperature <= 162) {
                             return 1;
                         } else {
-                            if (features[2] <= 76) {
+                            if (light <= 76) {
                                 return 1;
                             } else {
-                                if (features[1] <= 112) {
-                                    if (features[0] <= 163) {
-                                        if (features[4] <= 36) {
+                                if (humidity <= 112) {
+                                    if (temperature <= 163) {
+                                        if (humidity_ratio <= 36) {
                                             return 0;
                                         } else {
                                             return 1;
                                         }
                                     } else {
-                                        if (features[4] <= 42) {
-                                            if (features[1] <= 43) {
-                                                if (features[1] <= 42) {
+                                        if (humidity_ratio <= 42) {
+                                            if (humidity <= 43) {
+                                                if (humidity <= 42) {
                                                     return 1;
                                                 } else {
-                                                    if (features[3] <= 62) {
+                                                    if (co2 <= 62) {
                                                         return 1;
                                                     } else {
-                                                        if (features[2] <= 79) {
+                                                        if (light <= 79) {
                                                             return 0;
                                                         } else {
                                                             return 1;
@@ -4302,11 +4307,11 @@ int predict_tree_22(unsigned short features[]) {
                                         }
                                     }
                                 } else {
-                                    if (features[2] <= 76) {
+                                    if (light <= 76) {
                                         return 0;
                                     } else {
-                                        if (features[3] <= 100) {
-                                            if (features[0] <= 197) {
+                                        if (co2 <= 100) {
+                                            if (temperature <= 197) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -4320,27 +4325,27 @@ int predict_tree_22(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[0] <= 206) {
-                        if (features[2] <= 74) {
+                    if (temperature <= 206) {
+                        if (light <= 74) {
                             return 1;
                         } else {
-                            if (features[3] <= 87) {
+                            if (co2 <= 87) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         }
                     } else {
-                        if (features[0] <= 227) {
-                            if (features[4] <= 113) {
+                        if (temperature <= 227) {
+                            if (humidity_ratio <= 113) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         } else {
-                            if (features[2] <= 91) {
-                                if (features[0] <= 228) {
-                                    if (features[2] <= 86) {
+                            if (light <= 91) {
+                                if (temperature <= 228) {
+                                    if (light <= 86) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -4349,10 +4354,10 @@ int predict_tree_22(unsigned short features[]) {
                                     return 0;
                                 }
                             } else {
-                                if (features[1] <= 115) {
+                                if (humidity <= 115) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 128) {
+                                    if (humidity_ratio <= 128) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -4363,7 +4368,7 @@ int predict_tree_22(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[4] <= 122) {
+                if (humidity_ratio <= 122) {
                     return 1;
                 } else {
                     return 0;
@@ -4372,18 +4377,18 @@ int predict_tree_22(unsigned short features[]) {
         }
     }
 }
-int predict_tree_23(unsigned short features[]) {
-    if (features[2] <= 65) {
-        if (features[1] <= 247) {
-            if (features[3] <= 18) {
-                if (features[3] <= 7) {
+int predict_tree_23(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 65) {
+        if (humidity <= 247) {
+            if (co2 <= 18) {
+                if (co2 <= 7) {
                     return 0;
                 } else {
-                    if (features[3] <= 7) {
-                        if (features[0] <= 103) {
+                    if (co2 <= 7) {
+                        if (temperature <= 103) {
                             return 0;
                         } else {
-                            if (features[2] <= 58) {
+                            if (light <= 58) {
                                 return 0;
                             } else {
                                 return 1;
@@ -4394,17 +4399,17 @@ int predict_tree_23(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 18) {
+                if (co2 <= 18) {
                     return 1;
                 } else {
-                    if (features[0] <= 68) {
+                    if (temperature <= 68) {
                         return 1;
                     } else {
-                        if (features[2] <= 31) {
-                            if (features[3] <= 131) {
+                        if (light <= 31) {
+                            if (co2 <= 131) {
                                 return 0;
                             } else {
-                                if (features[2] <= 3) {
+                                if (light <= 3) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -4420,31 +4425,31 @@ int predict_tree_23(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[1] <= 24) {
+        if (humidity <= 24) {
             return 0;
         } else {
-            if (features[4] <= 128) {
-                if (features[4] <= 109) {
-                    if (features[0] <= 36) {
-                        if (features[1] <= 121) {
+            if (humidity_ratio <= 128) {
+                if (humidity_ratio <= 109) {
+                    if (temperature <= 36) {
+                        if (humidity <= 121) {
                             return 1;
                         } else {
                             return 0;
                         }
                     } else {
-                        if (features[2] <= 87) {
-                            if (features[0] <= 107) {
-                                if (features[2] <= 70) {
+                        if (light <= 87) {
+                            if (temperature <= 107) {
+                                if (light <= 70) {
                                     return 1;
                                 } else {
                                     return 0;
                                 }
                             } else {
-                                if (features[3] <= 62) {
-                                    if (features[2] <= 78) {
+                                if (co2 <= 62) {
+                                    if (light <= 78) {
                                         return 1;
                                     } else {
-                                        if (features[2] <= 79) {
+                                        if (light <= 79) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -4455,8 +4460,8 @@ int predict_tree_23(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[0] <= 164) {
-                                if (features[1] <= 30) {
+                            if (temperature <= 164) {
+                                if (humidity <= 30) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -4467,34 +4472,34 @@ int predict_tree_23(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[1] <= 107) {
-                        if (features[2] <= 74) {
-                            if (features[3] <= 83) {
+                    if (humidity <= 107) {
+                        if (light <= 74) {
+                            if (co2 <= 83) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         } else {
-                            if (features[0] <= 197) {
+                            if (temperature <= 197) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         }
                     } else {
-                        if (features[0] <= 227) {
-                            if (features[2] <= 76) {
+                        if (temperature <= 227) {
+                            if (light <= 76) {
                                 return 1;
                             } else {
-                                if (features[4] <= 115) {
-                                    if (features[2] <= 76) {
+                                if (humidity_ratio <= 115) {
+                                    if (light <= 76) {
                                         return 0;
                                     } else {
-                                        if (features[2] <= 83) {
-                                            if (features[1] <= 112) {
+                                        if (light <= 83) {
+                                            if (humidity <= 112) {
                                                 return 1;
                                             } else {
-                                                if (features[3] <= 100) {
+                                                if (co2 <= 100) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -4509,17 +4514,17 @@ int predict_tree_23(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[3] <= 101) {
-                                if (features[0] <= 234) {
+                            if (co2 <= 101) {
+                                if (temperature <= 234) {
                                     return 1;
                                 } else {
                                     return 0;
                                 }
                             } else {
-                                if (features[2] <= 90) {
+                                if (light <= 90) {
                                     return 0;
                                 } else {
-                                    if (features[2] <= 96) {
+                                    if (light <= 96) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -4535,18 +4540,18 @@ int predict_tree_23(unsigned short features[]) {
         }
     }
 }
-int predict_tree_24(unsigned short features[]) {
-    if (features[2] <= 62) {
-        if (features[1] <= 247) {
-            if (features[3] <= 40) {
-                if (features[3] <= 7) {
+int predict_tree_24(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 62) {
+        if (humidity <= 247) {
+            if (co2 <= 40) {
+                if (co2 <= 7) {
                     return 0;
                 } else {
-                    if (features[2] <= 59) {
-                        if (features[1] <= 117) {
+                    if (light <= 59) {
+                        if (humidity <= 117) {
                             return 0;
                         } else {
-                            if (features[2] <= 24) {
+                            if (light <= 24) {
                                 return 0;
                             } else {
                                 return 1;
@@ -4557,20 +4562,20 @@ int predict_tree_24(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[0] <= 236) {
-                    if (features[4] <= 28) {
-                        if (features[1] <= 34) {
+                if (temperature <= 236) {
+                    if (humidity_ratio <= 28) {
+                        if (humidity <= 34) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[1] <= 189) {
-                            if (features[3] <= 131) {
-                                if (features[1] <= 82) {
+                        if (humidity <= 189) {
+                            if (co2 <= 131) {
+                                if (humidity <= 82) {
                                     return 0;
                                 } else {
-                                    if (features[4] <= 85) {
+                                    if (humidity_ratio <= 85) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -4591,16 +4596,16 @@ int predict_tree_24(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[2] <= 86) {
-            if (features[3] <= 7) {
+        if (light <= 86) {
+            if (co2 <= 7) {
                 return 0;
             } else {
-                if (features[3] <= 13) {
-                    if (features[2] <= 67) {
+                if (co2 <= 13) {
+                    if (light <= 67) {
                         return 0;
                     } else {
-                        if (features[3] <= 10) {
-                            if (features[2] <= 70) {
+                        if (co2 <= 10) {
+                            if (light <= 70) {
                                 return 1;
                             } else {
                                 return 0;
@@ -4610,18 +4615,18 @@ int predict_tree_24(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 76) {
-                        if (features[3] <= 76) {
-                            if (features[0] <= 200) {
-                                if (features[1] <= 43) {
-                                    if (features[3] <= 62) {
+                    if (co2 <= 76) {
+                        if (co2 <= 76) {
+                            if (temperature <= 200) {
+                                if (humidity <= 43) {
+                                    if (co2 <= 62) {
                                         return 1;
                                     } else {
-                                        if (features[0] <= 171) {
-                                            if (features[3] <= 62) {
+                                        if (temperature <= 171) {
+                                            if (co2 <= 62) {
                                                 return 0;
                                             } else {
-                                                if (features[1] <= 43) {
+                                                if (humidity <= 43) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -4635,8 +4640,8 @@ int predict_tree_24(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[3] <= 63) {
-                                    if (features[4] <= 111) {
+                                if (co2 <= 63) {
+                                    if (humidity_ratio <= 111) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -4646,21 +4651,21 @@ int predict_tree_24(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[0] <= 202) {
+                            if (temperature <= 202) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         }
                     } else {
-                        if (features[4] <= 115) {
-                            if (features[4] <= 115) {
-                                if (features[1] <= 112) {
+                        if (humidity_ratio <= 115) {
+                            if (humidity_ratio <= 115) {
+                                if (humidity <= 112) {
                                     return 1;
                                 } else {
-                                    if (features[1] <= 113) {
-                                        if (features[2] <= 77) {
-                                            if (features[3] <= 99) {
+                                    if (humidity <= 113) {
+                                        if (light <= 77) {
+                                            if (co2 <= 99) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -4682,12 +4687,12 @@ int predict_tree_24(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[1] <= 80) {
-                if (features[4] <= 18) {
+            if (humidity <= 80) {
+                if (humidity_ratio <= 18) {
                     return 0;
                 } else {
-                    if (features[1] <= 29) {
-                        if (features[0] <= 163) {
+                    if (humidity <= 29) {
+                        if (temperature <= 163) {
                             return 0;
                         } else {
                             return 1;
@@ -4697,25 +4702,25 @@ int predict_tree_24(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[0] <= 227) {
-                    if (features[3] <= 85) {
+                if (temperature <= 227) {
+                    if (co2 <= 85) {
                         return 0;
                     } else {
                         return 1;
                     }
                 } else {
-                    if (features[3] <= 110) {
-                        if (features[2] <= 113) {
+                    if (co2 <= 110) {
+                        if (light <= 113) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[4] <= 129) {
-                            if (features[0] <= 230) {
+                        if (humidity_ratio <= 129) {
+                            if (temperature <= 230) {
                                 return 1;
                             } else {
-                                if (features[3] <= 110) {
+                                if (co2 <= 110) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -4730,19 +4735,19 @@ int predict_tree_24(unsigned short features[]) {
         }
     }
 }
-int predict_tree_25(unsigned short features[]) {
-    if (features[4] <= 115) {
-        if (features[0] <= 138) {
-            if (features[2] <= 48) {
+int predict_tree_25(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (humidity_ratio <= 115) {
+        if (temperature <= 138) {
+            if (light <= 48) {
                 return 0;
             } else {
-                if (features[3] <= 13) {
-                    if (features[1] <= 25) {
+                if (co2 <= 13) {
+                    if (humidity <= 25) {
                         return 0;
                     } else {
-                        if (features[4] <= 77) {
-                            if (features[1] <= 66) {
-                                if (features[2] <= 69) {
+                        if (humidity_ratio <= 77) {
+                            if (humidity <= 66) {
+                                if (light <= 69) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -4759,22 +4764,22 @@ int predict_tree_25(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[3] <= 33) {
+            if (co2 <= 33) {
                 return 0;
             } else {
-                if (features[0] <= 204) {
-                    if (features[2] <= 28) {
+                if (temperature <= 204) {
+                    if (light <= 28) {
                         return 0;
                     } else {
-                        if (features[0] <= 200) {
-                            if (features[1] <= 112) {
-                                if (features[3] <= 64) {
-                                    if (features[3] <= 63) {
-                                        if (features[3] <= 62) {
-                                            if (features[3] <= 38) {
-                                                if (features[2] <= 90) {
-                                                    if (features[1] <= 30) {
-                                                        if (features[1] <= 29) {
+                        if (temperature <= 200) {
+                            if (humidity <= 112) {
+                                if (co2 <= 64) {
+                                    if (co2 <= 63) {
+                                        if (co2 <= 62) {
+                                            if (co2 <= 38) {
+                                                if (light <= 90) {
+                                                    if (humidity <= 30) {
+                                                        if (humidity <= 29) {
                                                             return 1;
                                                         } else {
                                                             return 0;
@@ -4789,8 +4794,8 @@ int predict_tree_25(unsigned short features[]) {
                                                 return 1;
                                             }
                                         } else {
-                                            if (features[3] <= 62) {
-                                                if (features[0] <= 171) {
+                                            if (co2 <= 62) {
+                                                if (temperature <= 171) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -4806,14 +4811,14 @@ int predict_tree_25(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[2] <= 76) {
+                                if (light <= 76) {
                                     return 1;
                                 } else {
                                     return 0;
                                 }
                             }
                         } else {
-                            if (features[2] <= 73) {
+                            if (light <= 73) {
                                 return 1;
                             } else {
                                 return 0;
@@ -4821,20 +4826,20 @@ int predict_tree_25(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[4] <= 109) {
+                    if (humidity_ratio <= 109) {
                         return 1;
                     } else {
-                        if (features[3] <= 91) {
-                            if (features[2] <= 75) {
+                        if (co2 <= 91) {
+                            if (light <= 75) {
                                 return 0;
                             } else {
-                                if (features[2] <= 75) {
+                                if (light <= 75) {
                                     return 1;
                                 } else {
-                                    if (features[1] <= 107) {
+                                    if (humidity <= 107) {
                                         return 0;
                                     } else {
-                                        if (features[2] <= 82) {
+                                        if (light <= 82) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -4850,12 +4855,12 @@ int predict_tree_25(unsigned short features[]) {
             }
         }
     } else {
-        if (features[3] <= 98) {
-            if (features[2] <= 31) {
+        if (co2 <= 98) {
+            if (light <= 31) {
                 return 0;
             } else {
-                if (features[0] <= 241) {
-                    if (features[2] <= 96) {
+                if (temperature <= 241) {
+                    if (light <= 96) {
                         return 1;
                     } else {
                         return 0;
@@ -4865,32 +4870,32 @@ int predict_tree_25(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 5) {
+            if (light <= 5) {
                 return 0;
             } else {
-                if (features[1] <= 116) {
-                    if (features[4] <= 126) {
-                        if (features[2] <= 82) {
+                if (humidity <= 116) {
+                    if (humidity_ratio <= 126) {
+                        if (light <= 82) {
                             return 1;
                         } else {
-                            if (features[2] <= 88) {
+                            if (light <= 88) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         }
                     } else {
-                        if (features[2] <= 100) {
+                        if (light <= 100) {
                             return 0;
                         } else {
                             return 1;
                         }
                     }
                 } else {
-                    if (features[0] <= 157) {
-                        if (features[3] <= 131) {
-                            if (features[3] <= 130) {
-                                if (features[2] <= 44) {
+                    if (temperature <= 157) {
+                        if (co2 <= 131) {
+                            if (co2 <= 130) {
+                                if (light <= 44) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -4909,14 +4914,14 @@ int predict_tree_25(unsigned short features[]) {
         }
     }
 }
-int predict_tree_26(unsigned short features[]) {
-    if (features[3] <= 27) {
-        if (features[2] <= 63) {
+int predict_tree_26(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 27) {
+        if (light <= 63) {
             return 0;
         } else {
-            if (features[1] <= 25) {
-                if (features[2] <= 69) {
-                    if (features[4] <= 4) {
+            if (humidity <= 25) {
+                if (light <= 69) {
+                    if (humidity_ratio <= 4) {
                         return 0;
                     } else {
                         return 1;
@@ -4925,14 +4930,14 @@ int predict_tree_26(unsigned short features[]) {
                     return 0;
                 }
             } else {
-                if (features[2] <= 70) {
-                    if (features[0] <= 36) {
+                if (light <= 70) {
+                    if (temperature <= 36) {
                         return 0;
                     } else {
                         return 1;
                     }
                 } else {
-                    if (features[0] <= 69) {
+                    if (temperature <= 69) {
                         return 1;
                     } else {
                         return 0;
@@ -4941,24 +4946,24 @@ int predict_tree_26(unsigned short features[]) {
             }
         }
     } else {
-        if (features[1] <= 189) {
-            if (features[2] <= 46) {
-                if (features[1] <= 188) {
+        if (humidity <= 189) {
+            if (light <= 46) {
+                if (humidity <= 188) {
                     return 0;
                 } else {
-                    if (features[4] <= 175) {
+                    if (humidity_ratio <= 175) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[0] <= 240) {
-                    if (features[3] <= 76) {
-                        if (features[4] <= 107) {
-                            if (features[1] <= 30) {
-                                if (features[0] <= 163) {
-                                    if (features[2] <= 86) {
+                if (temperature <= 240) {
+                    if (co2 <= 76) {
+                        if (humidity_ratio <= 107) {
+                            if (humidity <= 30) {
+                                if (temperature <= 163) {
+                                    if (light <= 86) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -4967,14 +4972,14 @@ int predict_tree_26(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[2] <= 79) {
+                                if (light <= 79) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 63) {
+                                    if (co2 <= 63) {
                                         return 1;
                                     } else {
-                                        if (features[0] <= 169) {
-                                            if (features[3] <= 65) {
+                                        if (temperature <= 169) {
+                                            if (co2 <= 65) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -4986,11 +4991,11 @@ int predict_tree_26(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[0] <= 200) {
+                            if (temperature <= 200) {
                                 return 1;
                             } else {
-                                if (features[3] <= 62) {
-                                    if (features[3] <= 61) {
+                                if (co2 <= 62) {
+                                    if (co2 <= 61) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -5001,25 +5006,25 @@ int predict_tree_26(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[1] <= 112) {
+                        if (humidity <= 112) {
                             return 1;
                         } else {
-                            if (features[1] <= 113) {
-                                if (features[3] <= 99) {
+                            if (humidity <= 113) {
+                                if (co2 <= 99) {
                                     return 0;
                                 } else {
-                                    if (features[2] <= 86) {
+                                    if (light <= 86) {
                                         return 1;
                                     } else {
                                         return 0;
                                     }
                                 }
                             } else {
-                                if (features[0] <= 230) {
+                                if (temperature <= 230) {
                                     return 1;
                                 } else {
-                                    if (features[1] <= 116) {
-                                        if (features[2] <= 91) {
+                                    if (humidity <= 116) {
+                                        if (light <= 91) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -5036,21 +5041,21 @@ int predict_tree_26(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[4] <= 173) {
+            if (humidity_ratio <= 173) {
                 return 0;
             } else {
-                if (features[4] <= 235) {
-                    if (features[0] <= 146) {
+                if (humidity_ratio <= 235) {
+                    if (temperature <= 146) {
                         return 0;
                     } else {
-                        if (features[2] <= 39) {
+                        if (light <= 39) {
                             return 0;
                         } else {
                             return 1;
                         }
                     }
                 } else {
-                    if (features[3] <= 219) {
+                    if (co2 <= 219) {
                         return 0;
                     } else {
                         return 1;
@@ -5060,15 +5065,15 @@ int predict_tree_26(unsigned short features[]) {
         }
     }
 }
-int predict_tree_27(unsigned short features[]) {
-    if (features[3] <= 32) {
-        if (features[2] <= 62) {
-            if (features[4] <= 47) {
+int predict_tree_27(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 32) {
+        if (light <= 62) {
+            if (humidity_ratio <= 47) {
                 return 0;
             } else {
-                if (features[1] <= 65) {
-                    if (features[3] <= 7) {
-                        if (features[3] <= 7) {
+                if (humidity <= 65) {
+                    if (co2 <= 7) {
+                        if (co2 <= 7) {
                             return 0;
                         } else {
                             return 1;
@@ -5077,11 +5082,11 @@ int predict_tree_27(unsigned short features[]) {
                         return 0;
                     }
                 } else {
-                    if (features[0] <= 32) {
+                    if (temperature <= 32) {
                         return 0;
                     } else {
-                        if (features[0] <= 33) {
-                            if (features[4] <= 74) {
+                        if (temperature <= 33) {
+                            if (humidity_ratio <= 74) {
                                 return 0;
                             } else {
                                 return 1;
@@ -5093,16 +5098,16 @@ int predict_tree_27(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[4] <= 4) {
-                if (features[0] <= 73) {
-                    if (features[4] <= 3) {
+            if (humidity_ratio <= 4) {
+                if (temperature <= 73) {
+                    if (humidity_ratio <= 3) {
                         return 0;
                     } else {
                         return 1;
                     }
                 } else {
-                    if (features[1] <= 22) {
-                        if (features[0] <= 74) {
+                    if (humidity <= 22) {
+                        if (temperature <= 74) {
                             return 0;
                         } else {
                             return 1;
@@ -5112,19 +5117,19 @@ int predict_tree_27(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[1] <= 25) {
-                    if (features[0] <= 91) {
+                if (humidity <= 25) {
+                    if (temperature <= 91) {
                         return 1;
                     } else {
                         return 0;
                     }
                 } else {
-                    if (features[3] <= 13) {
-                        if (features[2] <= 66) {
+                    if (co2 <= 13) {
+                        if (light <= 66) {
                             return 0;
                         } else {
-                            if (features[1] <= 66) {
-                                if (features[2] <= 69) {
+                            if (humidity <= 66) {
+                                if (light <= 69) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -5140,20 +5145,20 @@ int predict_tree_27(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 28) {
+        if (light <= 28) {
             return 0;
         } else {
-            if (features[0] <= 228) {
-                if (features[1] <= 113) {
-                    if (features[0] <= 203) {
-                        if (features[0] <= 190) {
-                            if (features[2] <= 87) {
-                                if (features[1] <= 43) {
-                                    if (features[4] <= 41) {
+            if (temperature <= 228) {
+                if (humidity <= 113) {
+                    if (temperature <= 203) {
+                        if (temperature <= 190) {
+                            if (light <= 87) {
+                                if (humidity <= 43) {
+                                    if (humidity_ratio <= 41) {
                                         return 1;
                                     } else {
-                                        if (features[0] <= 170) {
-                                            if (features[2] <= 79) {
+                                        if (temperature <= 170) {
+                                            if (light <= 79) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -5166,8 +5171,8 @@ int predict_tree_27(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[0] <= 163) {
-                                    if (features[3] <= 53) {
+                                if (temperature <= 163) {
+                                    if (co2 <= 53) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -5177,22 +5182,22 @@ int predict_tree_27(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[4] <= 115) {
-                                if (features[1] <= 112) {
-                                    if (features[0] <= 201) {
+                            if (humidity_ratio <= 115) {
+                                if (humidity <= 112) {
+                                    if (temperature <= 201) {
                                         return 1;
                                     } else {
-                                        if (features[1] <= 103) {
+                                        if (humidity <= 103) {
                                             return 1;
                                         } else {
                                             return 0;
                                         }
                                     }
                                 } else {
-                                    if (features[0] <= 192) {
+                                    if (temperature <= 192) {
                                         return 0;
                                     } else {
-                                        if (features[3] <= 100) {
+                                        if (co2 <= 100) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -5200,7 +5205,7 @@ int predict_tree_27(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[3] <= 102) {
+                                if (co2 <= 102) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -5208,12 +5213,12 @@ int predict_tree_27(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[2] <= 74) {
+                        if (light <= 74) {
                             return 1;
                         } else {
-                            if (features[4] <= 118) {
-                                if (features[3] <= 63) {
-                                    if (features[4] <= 111) {
+                            if (humidity_ratio <= 118) {
+                                if (co2 <= 63) {
+                                    if (humidity_ratio <= 111) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -5230,17 +5235,17 @@ int predict_tree_27(unsigned short features[]) {
                     return 1;
                 }
             } else {
-                if (features[4] <= 122) {
+                if (humidity_ratio <= 122) {
                     return 1;
                 } else {
-                    if (features[3] <= 110) {
-                        if (features[2] <= 117) {
+                    if (co2 <= 110) {
+                        if (light <= 117) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[3] <= 111) {
+                        if (co2 <= 111) {
                             return 1;
                         } else {
                             return 0;
@@ -5251,19 +5256,19 @@ int predict_tree_27(unsigned short features[]) {
         }
     }
 }
-int predict_tree_28(unsigned short features[]) {
-    if (features[4] <= 115) {
-        if (features[2] <= 61) {
-            if (features[3] <= 66) {
-                if (features[2] <= 59) {
-                    if (features[0] <= 142) {
+int predict_tree_28(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (humidity_ratio <= 115) {
+        if (light <= 61) {
+            if (co2 <= 66) {
+                if (light <= 59) {
+                    if (temperature <= 142) {
                         return 0;
                     } else {
-                        if (features[0] <= 144) {
-                            if (features[3] <= 38) {
+                        if (temperature <= 144) {
+                            if (co2 <= 38) {
                                 return 0;
                             } else {
-                                if (features[3] <= 40) {
+                                if (co2 <= 40) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -5274,37 +5279,37 @@ int predict_tree_28(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[2] <= 59) {
+                    if (light <= 59) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[4] <= 85) {
+                if (humidity_ratio <= 85) {
                     return 1;
                 } else {
                     return 0;
                 }
             }
         } else {
-            if (features[1] <= 104) {
-                if (features[3] <= 11) {
-                    if (features[4] <= 3) {
+            if (humidity <= 104) {
+                if (co2 <= 11) {
+                    if (humidity_ratio <= 3) {
                         return 0;
                     } else {
-                        if (features[2] <= 70) {
-                            if (features[0] <= 69) {
+                        if (light <= 70) {
+                            if (temperature <= 69) {
                                 return 0;
                             } else {
-                                if (features[2] <= 68) {
+                                if (light <= 68) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 4) {
-                                        if (features[2] <= 69) {
+                                    if (humidity_ratio <= 4) {
+                                        if (light <= 69) {
                                             return 0;
                                         } else {
-                                            if (features[3] <= 6) {
+                                            if (co2 <= 6) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -5320,11 +5325,11 @@ int predict_tree_28(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[1] <= 43) {
-                        if (features[1] <= 43) {
-                            if (features[1] <= 30) {
-                                if (features[0] <= 163) {
-                                    if (features[2] <= 86) {
+                    if (humidity <= 43) {
+                        if (humidity <= 43) {
+                            if (humidity <= 30) {
+                                if (temperature <= 163) {
+                                    if (light <= 86) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -5336,7 +5341,7 @@ int predict_tree_28(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[0] <= 171) {
+                            if (temperature <= 171) {
                                 return 0;
                             } else {
                                 return 1;
@@ -5347,10 +5352,10 @@ int predict_tree_28(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 76) {
-                    if (features[0] <= 200) {
-                        if (features[4] <= 81) {
-                            if (features[3] <= 11) {
+                if (co2 <= 76) {
+                    if (temperature <= 200) {
+                        if (humidity_ratio <= 81) {
+                            if (co2 <= 11) {
                                 return 1;
                             } else {
                                 return 0;
@@ -5359,10 +5364,10 @@ int predict_tree_28(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[2] <= 80) {
+                        if (light <= 80) {
                             return 0;
                         } else {
-                            if (features[2] <= 81) {
+                            if (light <= 81) {
                                 return 1;
                             } else {
                                 return 0;
@@ -5370,20 +5375,20 @@ int predict_tree_28(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[1] <= 112) {
+                    if (humidity <= 112) {
                         return 1;
                     } else {
-                        if (features[4] <= 114) {
+                        if (humidity_ratio <= 114) {
                             return 0;
                         } else {
-                            if (features[1] <= 113) {
-                                if (features[3] <= 99) {
+                            if (humidity <= 113) {
+                                if (co2 <= 99) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             } else {
-                                if (features[1] <= 113) {
+                                if (humidity <= 113) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -5395,9 +5400,9 @@ int predict_tree_28(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 42) {
-            if (features[1] <= 189) {
-                if (features[4] <= 173) {
+        if (light <= 42) {
+            if (humidity <= 189) {
+                if (humidity_ratio <= 173) {
                     return 0;
                 } else {
                     return 1;
@@ -5406,38 +5411,38 @@ int predict_tree_28(unsigned short features[]) {
                 return 0;
             }
         } else {
-            if (features[1] <= 109) {
-                if (features[3] <= 92) {
+            if (humidity <= 109) {
+                if (co2 <= 92) {
                     return 1;
                 } else {
                     return 0;
                 }
             } else {
-                if (features[2] <= 86) {
+                if (light <= 86) {
                     return 1;
                 } else {
-                    if (features[1] <= 115) {
-                        if (features[1] <= 112) {
-                            if (features[2] <= 101) {
+                    if (humidity <= 115) {
+                        if (humidity <= 112) {
+                            if (light <= 101) {
                                 return 1;
                             } else {
-                                if (features[1] <= 111) {
+                                if (humidity <= 111) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             }
                         } else {
-                            if (features[0] <= 227) {
+                            if (temperature <= 227) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         }
                     } else {
-                        if (features[1] <= 116) {
-                            if (features[2] <= 90) {
-                                if (features[2] <= 89) {
+                        if (humidity <= 116) {
+                            if (light <= 90) {
+                                if (light <= 89) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -5454,31 +5459,31 @@ int predict_tree_28(unsigned short features[]) {
         }
     }
 }
-int predict_tree_29(unsigned short features[]) {
-    if (features[3] <= 27) {
-        if (features[2] <= 62) {
-            if (features[3] <= 10) {
+int predict_tree_29(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 27) {
+        if (light <= 62) {
+            if (co2 <= 10) {
                 return 0;
             } else {
-                if (features[3] <= 10) {
+                if (co2 <= 10) {
                     return 1;
                 } else {
                     return 0;
                 }
             }
         } else {
-            if (features[3] <= 13) {
-                if (features[3] <= 7) {
+            if (co2 <= 13) {
+                if (co2 <= 7) {
                     return 0;
                 } else {
-                    if (features[1] <= 120) {
-                        if (features[4] <= 3) {
+                    if (humidity <= 120) {
+                        if (humidity_ratio <= 3) {
                             return 0;
                         } else {
-                            if (features[0] <= 94) {
+                            if (temperature <= 94) {
                                 return 1;
                             } else {
-                                if (features[3] <= 10) {
+                                if (co2 <= 10) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -5494,15 +5499,15 @@ int predict_tree_29(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 38) {
+        if (light <= 38) {
             return 0;
         } else {
-            if (features[1] <= 114) {
-                if (features[0] <= 204) {
-                    if (features[1] <= 112) {
-                        if (features[1] <= 30) {
-                            if (features[0] <= 165) {
-                                if (features[4] <= 26) {
+            if (humidity <= 114) {
+                if (temperature <= 204) {
+                    if (humidity <= 112) {
+                        if (humidity <= 30) {
+                            if (temperature <= 165) {
+                                if (humidity_ratio <= 26) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -5511,12 +5516,12 @@ int predict_tree_29(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[2] <= 79) {
+                            if (light <= 79) {
                                 return 1;
                             } else {
-                                if (features[2] <= 79) {
-                                    if (features[0] <= 169) {
-                                        if (features[4] <= 41) {
+                                if (light <= 79) {
+                                    if (temperature <= 169) {
+                                        if (humidity_ratio <= 41) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -5525,14 +5530,14 @@ int predict_tree_29(unsigned short features[]) {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[2] <= 81) {
-                                        if (features[2] <= 81) {
+                                    if (light <= 81) {
+                                        if (light <= 81) {
                                             return 1;
                                         } else {
-                                            if (features[4] <= 41) {
+                                            if (humidity_ratio <= 41) {
                                                 return 1;
                                             } else {
-                                                if (features[1] <= 46) {
+                                                if (humidity <= 46) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -5546,11 +5551,11 @@ int predict_tree_29(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[3] <= 100) {
-                            if (features[3] <= 82) {
+                        if (co2 <= 100) {
+                            if (co2 <= 82) {
                                 return 1;
                             } else {
-                                if (features[2] <= 75) {
+                                if (light <= 75) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -5561,24 +5566,24 @@ int predict_tree_29(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[2] <= 74) {
-                        if (features[2] <= 73) {
+                    if (light <= 74) {
+                        if (light <= 73) {
                             return 1;
                         } else {
-                            if (features[1] <= 108) {
+                            if (humidity <= 108) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         }
                     } else {
-                        if (features[4] <= 117) {
-                            if (features[4] <= 111) {
-                                if (features[1] <= 105) {
-                                    if (features[2] <= 78) {
+                        if (humidity_ratio <= 117) {
+                            if (humidity_ratio <= 111) {
+                                if (humidity <= 105) {
+                                    if (light <= 78) {
                                         return 0;
                                     } else {
-                                        if (features[3] <= 63) {
+                                        if (co2 <= 63) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -5591,21 +5596,21 @@ int predict_tree_29(unsigned short features[]) {
                                 return 0;
                             }
                         } else {
-                            if (features[4] <= 123) {
-                                if (features[2] <= 92) {
+                            if (humidity_ratio <= 123) {
+                                if (light <= 92) {
                                     return 1;
                                 } else {
-                                    if (features[1] <= 109) {
+                                    if (humidity <= 109) {
                                         return 0;
                                     } else {
                                         return 1;
                                     }
                                 }
                             } else {
-                                if (features[2] <= 109) {
-                                    if (features[4] <= 124) {
-                                        if (features[0] <= 235) {
-                                            if (features[3] <= 102) {
+                                if (light <= 109) {
+                                    if (humidity_ratio <= 124) {
+                                        if (temperature <= 235) {
+                                            if (co2 <= 102) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -5629,27 +5634,27 @@ int predict_tree_29(unsigned short features[]) {
         }
     }
 }
-int predict_tree_30(unsigned short features[]) {
-    if (features[2] <= 61) {
-        if (features[3] <= 233) {
-            if (features[2] <= 35) {
-                if (features[3] <= 131) {
+int predict_tree_30(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 61) {
+        if (co2 <= 233) {
+            if (light <= 35) {
+                if (co2 <= 131) {
                     return 0;
                 } else {
-                    if (features[2] <= 3) {
+                    if (light <= 3) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[1] <= 45) {
+                if (humidity <= 45) {
                     return 0;
                 } else {
-                    if (features[4] <= 95) {
+                    if (humidity_ratio <= 95) {
                         return 1;
                     } else {
-                        if (features[4] <= 115) {
+                        if (humidity_ratio <= 115) {
                             return 0;
                         } else {
                             return 1;
@@ -5661,20 +5666,20 @@ int predict_tree_30(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[0] <= 200) {
-            if (features[0] <= 36) {
-                if (features[4] <= 77) {
+        if (temperature <= 200) {
+            if (temperature <= 36) {
+                if (humidity_ratio <= 77) {
                     return 1;
                 } else {
                     return 0;
                 }
             } else {
-                if (features[4] <= 4) {
-                    if (features[1] <= 22) {
+                if (humidity_ratio <= 4) {
+                    if (humidity <= 22) {
                         return 1;
                     } else {
-                        if (features[0] <= 73) {
-                            if (features[1] <= 23) {
+                        if (temperature <= 73) {
+                            if (humidity <= 23) {
                                 return 1;
                             } else {
                                 return 0;
@@ -5684,14 +5689,14 @@ int predict_tree_30(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[2] <= 116) {
-                        if (features[1] <= 43) {
-                            if (features[3] <= 63) {
-                                if (features[1] <= 29) {
-                                    if (features[1] <= 29) {
+                    if (light <= 116) {
+                        if (humidity <= 43) {
+                            if (co2 <= 63) {
+                                if (humidity <= 29) {
+                                    if (humidity <= 29) {
                                         return 1;
                                     } else {
-                                        if (features[2] <= 87) {
+                                        if (light <= 87) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -5701,7 +5706,7 @@ int predict_tree_30(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[0] <= 171) {
+                                if (temperature <= 171) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -5716,10 +5721,10 @@ int predict_tree_30(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[3] <= 79) {
-                if (features[1] <= 114) {
-                    if (features[4] <= 111) {
-                        if (features[4] <= 111) {
+            if (co2 <= 79) {
+                if (humidity <= 114) {
+                    if (humidity_ratio <= 111) {
+                        if (humidity_ratio <= 111) {
                             return 0;
                         } else {
                             return 1;
@@ -5731,9 +5736,9 @@ int predict_tree_30(unsigned short features[]) {
                     return 1;
                 }
             } else {
-                if (features[0] <= 230) {
-                    if (features[1] <= 112) {
-                        if (features[1] <= 112) {
+                if (temperature <= 230) {
+                    if (humidity <= 112) {
+                        if (humidity <= 112) {
                             return 1;
                         } else {
                             return 0;
@@ -5742,11 +5747,11 @@ int predict_tree_30(unsigned short features[]) {
                         return 1;
                     }
                 } else {
-                    if (features[1] <= 106) {
+                    if (humidity <= 106) {
                         return 1;
                     } else {
-                        if (features[3] <= 111) {
-                            if (features[2] <= 113) {
+                        if (co2 <= 111) {
+                            if (light <= 113) {
                                 return 0;
                             } else {
                                 return 1;
@@ -5760,40 +5765,40 @@ int predict_tree_30(unsigned short features[]) {
         }
     }
 }
-int predict_tree_31(unsigned short features[]) {
-    if (features[2] <= 61) {
-        if (features[3] <= 132) {
-            if (features[2] <= 59) {
-                if (features[3] <= 40) {
+int predict_tree_31(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 61) {
+        if (co2 <= 132) {
+            if (light <= 59) {
+                if (co2 <= 40) {
                     return 0;
                 } else {
-                    if (features[2] <= 35) {
+                    if (light <= 35) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[0] <= 165) {
+                if (temperature <= 165) {
                     return 1;
                 } else {
                     return 0;
                 }
             }
         } else {
-            if (features[2] <= 3) {
+            if (light <= 3) {
                 return 0;
             } else {
                 return 1;
             }
         }
     } else {
-        if (features[1] <= 25) {
-            if (features[3] <= 7) {
+        if (humidity <= 25) {
+            if (co2 <= 7) {
                 return 0;
             } else {
-                if (features[0] <= 71) {
-                    if (features[2] <= 68) {
+                if (temperature <= 71) {
+                    if (light <= 68) {
                         return 0;
                     } else {
                         return 1;
@@ -5803,10 +5808,10 @@ int predict_tree_31(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[0] <= 228) {
-                if (features[2] <= 66) {
-                    if (features[4] <= 82) {
-                        if (features[0] <= 77) {
+            if (temperature <= 228) {
+                if (light <= 66) {
+                    if (humidity_ratio <= 82) {
+                        if (temperature <= 77) {
                             return 0;
                         } else {
                             return 1;
@@ -5815,10 +5820,10 @@ int predict_tree_31(unsigned short features[]) {
                         return 1;
                     }
                 } else {
-                    if (features[0] <= 204) {
-                        if (features[2] <= 76) {
-                            if (features[3] <= 10) {
-                                if (features[2] <= 70) {
+                    if (temperature <= 204) {
+                        if (light <= 76) {
+                            if (co2 <= 10) {
+                                if (light <= 70) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -5827,19 +5832,19 @@ int predict_tree_31(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[0] <= 190) {
-                                if (features[3] <= 64) {
-                                    if (features[2] <= 79) {
-                                        if (features[1] <= 45) {
-                                            if (features[3] <= 62) {
+                            if (temperature <= 190) {
+                                if (co2 <= 64) {
+                                    if (light <= 79) {
+                                        if (humidity <= 45) {
+                                            if (co2 <= 62) {
                                                 return 1;
                                             } else {
-                                                if (features[3] <= 63) {
-                                                    if (features[1] <= 41) {
+                                                if (co2 <= 63) {
+                                                    if (humidity <= 41) {
                                                         return 1;
                                                     } else {
-                                                        if (features[4] <= 41) {
-                                                            if (features[2] <= 79) {
+                                                        if (humidity_ratio <= 41) {
+                                                            if (light <= 79) {
                                                                 return 0;
                                                             } else {
                                                                 return 1;
@@ -5862,17 +5867,17 @@ int predict_tree_31(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[1] <= 112) {
+                                if (humidity <= 112) {
                                     return 1;
                                 } else {
-                                    if (features[2] <= 76) {
-                                        if (features[4] <= 115) {
+                                    if (light <= 76) {
+                                        if (humidity_ratio <= 115) {
                                             return 1;
                                         } else {
                                             return 0;
                                         }
                                     } else {
-                                        if (features[0] <= 192) {
+                                        if (temperature <= 192) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -5882,9 +5887,9 @@ int predict_tree_31(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[3] <= 76) {
-                            if (features[2] <= 75) {
-                                if (features[4] <= 110) {
+                        if (co2 <= 76) {
+                            if (light <= 75) {
+                                if (humidity_ratio <= 110) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -5898,12 +5903,12 @@ int predict_tree_31(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 110) {
-                    if (features[3] <= 92) {
+                if (co2 <= 110) {
+                    if (co2 <= 92) {
                         return 1;
                     } else {
-                        if (features[0] <= 230) {
-                            if (features[2] <= 104) {
+                        if (temperature <= 230) {
+                            if (light <= 104) {
                                 return 0;
                             } else {
                                 return 1;
@@ -5913,11 +5918,11 @@ int predict_tree_31(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[4] <= 128) {
+                    if (humidity_ratio <= 128) {
                         return 1;
                     } else {
-                        if (features[4] <= 129) {
-                            if (features[2] <= 89) {
+                        if (humidity_ratio <= 129) {
+                            if (light <= 89) {
                                 return 1;
                             } else {
                                 return 0;
@@ -5931,23 +5936,23 @@ int predict_tree_31(unsigned short features[]) {
         }
     }
 }
-int predict_tree_32(unsigned short features[]) {
-    if (features[2] <= 65) {
-        if (features[4] <= 247) {
-            if (features[2] <= 59) {
-                if (features[2] <= 48) {
+int predict_tree_32(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 65) {
+        if (humidity_ratio <= 247) {
+            if (light <= 59) {
+                if (light <= 48) {
                     return 0;
                 } else {
-                    if (features[3] <= 9) {
+                    if (co2 <= 9) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[1] <= 125) {
-                    if (features[2] <= 59) {
-                        if (features[4] <= 34) {
+                if (humidity <= 125) {
+                    if (light <= 59) {
+                        if (humidity_ratio <= 34) {
                             return 0;
                         } else {
                             return 1;
@@ -5963,32 +5968,32 @@ int predict_tree_32(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[1] <= 25) {
-            if (features[3] <= 7) {
+        if (humidity <= 25) {
+            if (co2 <= 7) {
                 return 0;
             } else {
                 return 1;
             }
         } else {
-            if (features[4] <= 129) {
-                if (features[0] <= 200) {
-                    if (features[4] <= 113) {
-                        if (features[0] <= 36) {
-                            if (features[3] <= 11) {
+            if (humidity_ratio <= 129) {
+                if (temperature <= 200) {
+                    if (humidity_ratio <= 113) {
+                        if (temperature <= 36) {
+                            if (co2 <= 11) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         } else {
-                            if (features[4] <= 42) {
-                                if (features[4] <= 41) {
-                                    if (features[2] <= 87) {
-                                        if (features[3] <= 62) {
+                            if (humidity_ratio <= 42) {
+                                if (humidity_ratio <= 41) {
+                                    if (light <= 87) {
+                                        if (co2 <= 62) {
                                             return 1;
                                         } else {
-                                            if (features[3] <= 62) {
-                                                if (features[2] <= 80) {
-                                                    if (features[2] <= 78) {
+                                            if (co2 <= 62) {
+                                                if (light <= 80) {
+                                                    if (light <= 78) {
                                                         return 1;
                                                     } else {
                                                         return 0;
@@ -6001,7 +6006,7 @@ int predict_tree_32(unsigned short features[]) {
                                             }
                                         }
                                     } else {
-                                        if (features[0] <= 164) {
+                                        if (temperature <= 164) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -6015,12 +6020,12 @@ int predict_tree_32(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[2] <= 76) {
+                        if (light <= 76) {
                             return 1;
                         } else {
-                            if (features[2] <= 76) {
-                                if (features[1] <= 113) {
-                                    if (features[3] <= 103) {
+                            if (light <= 76) {
+                                if (humidity <= 113) {
+                                    if (co2 <= 103) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -6029,7 +6034,7 @@ int predict_tree_32(unsigned short features[]) {
                                     return 0;
                                 }
                             } else {
-                                if (features[3] <= 100) {
+                                if (co2 <= 100) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -6038,16 +6043,16 @@ int predict_tree_32(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 76) {
-                        if (features[0] <= 203) {
-                            if (features[4] <= 116) {
+                    if (co2 <= 76) {
+                        if (temperature <= 203) {
+                            if (humidity_ratio <= 116) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         } else {
-                            if (features[1] <= 106) {
-                                if (features[3] <= 61) {
+                            if (humidity <= 106) {
+                                if (co2 <= 61) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -6057,27 +6062,27 @@ int predict_tree_32(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[2] <= 84) {
+                        if (light <= 84) {
                             return 1;
                         } else {
-                            if (features[4] <= 124) {
-                                if (features[1] <= 109) {
+                            if (humidity_ratio <= 124) {
+                                if (humidity <= 109) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             } else {
-                                if (features[0] <= 230) {
-                                    if (features[3] <= 105) {
+                                if (temperature <= 230) {
+                                    if (co2 <= 105) {
                                         return 0;
                                     } else {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[1] <= 115) {
+                                    if (humidity <= 115) {
                                         return 0;
                                     } else {
-                                        if (features[3] <= 110) {
+                                        if (co2 <= 110) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -6094,27 +6099,27 @@ int predict_tree_32(unsigned short features[]) {
         }
     }
 }
-int predict_tree_33(unsigned short features[]) {
-    if (features[2] <= 61) {
-        if (features[3] <= 68) {
-            if (features[2] <= 48) {
+int predict_tree_33(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 61) {
+        if (co2 <= 68) {
+            if (light <= 48) {
                 return 0;
             } else {
-                if (features[3] <= 9) {
+                if (co2 <= 9) {
                     return 0;
                 } else {
                     return 1;
                 }
             }
         } else {
-            if (features[2] <= 31) {
-                if (features[2] <= 5) {
+            if (light <= 31) {
+                if (light <= 5) {
                     return 0;
                 } else {
-                    if (features[4] <= 169) {
+                    if (humidity_ratio <= 169) {
                         return 0;
                     } else {
-                        if (features[4] <= 175) {
+                        if (humidity_ratio <= 175) {
                             return 1;
                         } else {
                             return 0;
@@ -6126,10 +6131,10 @@ int predict_tree_33(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 95) {
-            if (features[4] <= 5) {
-                if (features[1] <= 22) {
-                    if (features[0] <= 74) {
+        if (light <= 95) {
+            if (humidity_ratio <= 5) {
+                if (humidity <= 22) {
+                    if (temperature <= 74) {
                         return 0;
                     } else {
                         return 1;
@@ -6138,10 +6143,10 @@ int predict_tree_33(unsigned short features[]) {
                     return 0;
                 }
             } else {
-                if (features[2] <= 75) {
-                    if (features[3] <= 13) {
-                        if (features[0] <= 55) {
-                            if (features[4] <= 77) {
+                if (light <= 75) {
+                    if (co2 <= 13) {
+                        if (temperature <= 55) {
+                            if (humidity_ratio <= 77) {
                                 return 1;
                             } else {
                                 return 0;
@@ -6153,13 +6158,13 @@ int predict_tree_33(unsigned short features[]) {
                         return 1;
                     }
                 } else {
-                    if (features[1] <= 116) {
-                        if (features[1] <= 104) {
-                            if (features[1] <= 43) {
-                                if (features[1] <= 43) {
-                                    if (features[3] <= 38) {
-                                        if (features[0] <= 164) {
-                                            if (features[4] <= 27) {
+                    if (humidity <= 116) {
+                        if (humidity <= 104) {
+                            if (humidity <= 43) {
+                                if (humidity <= 43) {
+                                    if (co2 <= 38) {
+                                        if (temperature <= 164) {
+                                            if (humidity_ratio <= 27) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -6168,13 +6173,13 @@ int predict_tree_33(unsigned short features[]) {
                                             return 1;
                                         }
                                     } else {
-                                        if (features[1] <= 42) {
+                                        if (humidity <= 42) {
                                             return 1;
                                         } else {
-                                            if (features[3] <= 62) {
+                                            if (co2 <= 62) {
                                                 return 1;
                                             } else {
-                                                if (features[2] <= 79) {
+                                                if (light <= 79) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -6183,10 +6188,10 @@ int predict_tree_33(unsigned short features[]) {
                                         }
                                     }
                                 } else {
-                                    if (features[2] <= 79) {
+                                    if (light <= 79) {
                                         return 1;
                                     } else {
-                                        if (features[3] <= 63) {
+                                        if (co2 <= 63) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -6197,13 +6202,13 @@ int predict_tree_33(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[1] <= 108) {
-                                if (features[0] <= 198) {
+                            if (humidity <= 108) {
+                                if (temperature <= 198) {
                                     return 1;
                                 } else {
-                                    if (features[0] <= 226) {
-                                        if (features[3] <= 63) {
-                                            if (features[1] <= 105) {
+                                    if (temperature <= 226) {
+                                        if (co2 <= 63) {
+                                            if (humidity <= 105) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -6216,17 +6221,17 @@ int predict_tree_33(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[3] <= 106) {
-                                    if (features[0] <= 227) {
-                                        if (features[3] <= 84) {
+                                if (co2 <= 106) {
+                                    if (temperature <= 227) {
+                                        if (co2 <= 84) {
                                             return 0;
                                         } else {
-                                            if (features[3] <= 100) {
-                                                if (features[3] <= 100) {
-                                                    if (features[3] <= 99) {
+                                            if (co2 <= 100) {
+                                                if (co2 <= 100) {
+                                                    if (co2 <= 99) {
                                                         return 1;
                                                     } else {
-                                                        if (features[1] <= 112) {
+                                                        if (humidity <= 112) {
                                                             return 1;
                                                         } else {
                                                             return 0;
@@ -6243,14 +6248,14 @@ int predict_tree_33(unsigned short features[]) {
                                         return 0;
                                     }
                                 } else {
-                                    if (features[2] <= 89) {
-                                        if (features[3] <= 108) {
+                                    if (light <= 89) {
+                                        if (co2 <= 108) {
                                             return 0;
                                         } else {
                                             return 1;
                                         }
                                     } else {
-                                        if (features[3] <= 112) {
+                                        if (co2 <= 112) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -6265,13 +6270,13 @@ int predict_tree_33(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[1] <= 111) {
+            if (humidity <= 111) {
                 return 0;
             } else {
-                if (features[0] <= 230) {
+                if (temperature <= 230) {
                     return 1;
                 } else {
-                    if (features[2] <= 102) {
+                    if (light <= 102) {
                         return 0;
                     } else {
                         return 1;
@@ -6281,16 +6286,16 @@ int predict_tree_33(unsigned short features[]) {
         }
     }
 }
-int predict_tree_34(unsigned short features[]) {
-    if (features[3] <= 13) {
-        if (features[2] <= 68) {
-            if (features[2] <= 59) {
+int predict_tree_34(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 13) {
+        if (light <= 68) {
+            if (light <= 59) {
                 return 0;
             } else {
-                if (features[4] <= 35) {
+                if (humidity_ratio <= 35) {
                     return 0;
                 } else {
-                    if (features[1] <= 93) {
+                    if (humidity <= 93) {
                         return 1;
                     } else {
                         return 0;
@@ -6298,41 +6303,41 @@ int predict_tree_34(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[3] <= 7) {
+            if (co2 <= 7) {
                 return 0;
             } else {
                 return 1;
             }
         }
     } else {
-        if (features[2] <= 31) {
-            if (features[4] <= 175) {
+        if (light <= 31) {
+            if (humidity_ratio <= 175) {
                 return 0;
             } else {
-                if (features[4] <= 175) {
+                if (humidity_ratio <= 175) {
                     return 1;
                 } else {
                     return 0;
                 }
             }
         } else {
-            if (features[0] <= 240) {
-                if (features[1] <= 104) {
-                    if (features[1] <= 30) {
-                        if (features[1] <= 30) {
+            if (temperature <= 240) {
+                if (humidity <= 104) {
+                    if (humidity <= 30) {
+                        if (humidity <= 30) {
                             return 1;
                         } else {
                             return 0;
                         }
                     } else {
-                        if (features[0] <= 169) {
+                        if (temperature <= 169) {
                             return 1;
                         } else {
-                            if (features[0] <= 170) {
-                                if (features[2] <= 80) {
+                            if (temperature <= 170) {
+                                if (light <= 80) {
                                     return 1;
                                 } else {
-                                    if (features[2] <= 82) {
+                                    if (light <= 82) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -6344,15 +6349,15 @@ int predict_tree_34(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[0] <= 204) {
-                        if (features[1] <= 113) {
-                            if (features[3] <= 99) {
+                    if (temperature <= 204) {
+                        if (humidity <= 113) {
+                            if (co2 <= 99) {
                                 return 1;
                             } else {
-                                if (features[4] <= 114) {
+                                if (humidity_ratio <= 114) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 101) {
+                                    if (co2 <= 101) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -6363,13 +6368,13 @@ int predict_tree_34(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[0] <= 206) {
-                            if (features[2] <= 73) {
+                        if (temperature <= 206) {
+                            if (light <= 73) {
                                 return 1;
                             } else {
-                                if (features[3] <= 76) {
-                                    if (features[2] <= 75) {
-                                        if (features[2] <= 75) {
+                                if (co2 <= 76) {
+                                    if (light <= 75) {
+                                        if (light <= 75) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -6382,23 +6387,23 @@ int predict_tree_34(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[4] <= 125) {
+                            if (humidity_ratio <= 125) {
                                 return 1;
                             } else {
-                                if (features[1] <= 116) {
-                                    if (features[2] <= 104) {
-                                        if (features[3] <= 110) {
-                                            if (features[2] <= 91) {
+                                if (humidity <= 116) {
+                                    if (light <= 104) {
+                                        if (co2 <= 110) {
+                                            if (light <= 91) {
                                                 return 0;
                                             } else {
-                                                if (features[4] <= 127) {
+                                                if (humidity_ratio <= 127) {
                                                     return 1;
                                                 } else {
                                                     return 0;
                                                 }
                                             }
                                         } else {
-                                            if (features[3] <= 110) {
+                                            if (co2 <= 110) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -6420,16 +6425,16 @@ int predict_tree_34(unsigned short features[]) {
         }
     }
 }
-int predict_tree_35(unsigned short features[]) {
-    if (features[4] <= 115) {
-        if (features[2] <= 62) {
-            if (features[2] <= 35) {
+int predict_tree_35(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (humidity_ratio <= 115) {
+        if (light <= 62) {
+            if (light <= 35) {
                 return 0;
             } else {
-                if (features[4] <= 26) {
+                if (humidity_ratio <= 26) {
                     return 0;
                 } else {
-                    if (features[4] <= 94) {
+                    if (humidity_ratio <= 94) {
                         return 1;
                     } else {
                         return 0;
@@ -6437,28 +6442,28 @@ int predict_tree_35(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[0] <= 203) {
-                if (features[2] <= 98) {
-                    if (features[4] <= 4) {
+            if (temperature <= 203) {
+                if (light <= 98) {
+                    if (humidity_ratio <= 4) {
                         return 0;
                     } else {
-                        if (features[0] <= 36) {
-                            if (features[3] <= 11) {
+                        if (temperature <= 36) {
+                            if (co2 <= 11) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         } else {
-                            if (features[3] <= 11) {
-                                if (features[1] <= 45) {
+                            if (co2 <= 11) {
+                                if (humidity <= 45) {
                                     return 1;
                                 } else {
                                     return 0;
                                 }
                             } else {
-                                if (features[1] <= 30) {
-                                    if (features[0] <= 163) {
-                                        if (features[0] <= 159) {
+                                if (humidity <= 30) {
+                                    if (temperature <= 163) {
+                                        if (temperature <= 159) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -6467,16 +6472,16 @@ int predict_tree_35(unsigned short features[]) {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[3] <= 99) {
-                                        if (features[0] <= 200) {
-                                            if (features[3] <= 64) {
-                                                if (features[1] <= 43) {
-                                                    if (features[3] <= 63) {
-                                                        if (features[1] <= 42) {
+                                    if (co2 <= 99) {
+                                        if (temperature <= 200) {
+                                            if (co2 <= 64) {
+                                                if (humidity <= 43) {
+                                                    if (co2 <= 63) {
+                                                        if (humidity <= 42) {
                                                             return 1;
                                                         } else {
-                                                            if (features[2] <= 78) {
-                                                                if (features[3] <= 62) {
+                                                            if (light <= 78) {
+                                                                if (co2 <= 62) {
                                                                     return 1;
                                                                 } else {
                                                                     return 0;
@@ -6486,7 +6491,7 @@ int predict_tree_35(unsigned short features[]) {
                                                             }
                                                         }
                                                     } else {
-                                                        if (features[0] <= 171) {
+                                                        if (temperature <= 171) {
                                                             return 0;
                                                         } else {
                                                             return 1;
@@ -6499,15 +6504,15 @@ int predict_tree_35(unsigned short features[]) {
                                                 return 1;
                                             }
                                         } else {
-                                            if (features[1] <= 104) {
+                                            if (humidity <= 104) {
                                                 return 1;
                                             } else {
                                                 return 0;
                                             }
                                         }
                                     } else {
-                                        if (features[3] <= 99) {
-                                            if (features[4] <= 112) {
+                                        if (co2 <= 99) {
+                                            if (humidity_ratio <= 112) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -6524,10 +6529,10 @@ int predict_tree_35(unsigned short features[]) {
                     return 0;
                 }
             } else {
-                if (features[1] <= 104) {
+                if (humidity <= 104) {
                     return 1;
                 } else {
-                    if (features[3] <= 87) {
+                    if (co2 <= 87) {
                         return 0;
                     } else {
                         return 1;
@@ -6536,25 +6541,25 @@ int predict_tree_35(unsigned short features[]) {
             }
         }
     } else {
-        if (features[0] <= 107) {
-            if (features[0] <= 89) {
-                if (features[4] <= 139) {
+        if (temperature <= 107) {
+            if (temperature <= 89) {
+                if (humidity_ratio <= 139) {
                     return 1;
                 } else {
                     return 0;
                 }
             } else {
-                if (features[4] <= 148) {
+                if (humidity_ratio <= 148) {
                     return 1;
                 } else {
                     return 0;
                 }
             }
         } else {
-            if (features[3] <= 97) {
-                if (features[1] <= 112) {
-                    if (features[1] <= 106) {
-                        if (features[2] <= 31) {
+            if (co2 <= 97) {
+                if (humidity <= 112) {
+                    if (humidity <= 106) {
+                        if (light <= 31) {
                             return 0;
                         } else {
                             return 1;
@@ -6566,24 +6571,24 @@ int predict_tree_35(unsigned short features[]) {
                     return 1;
                 }
             } else {
-                if (features[4] <= 185) {
-                    if (features[2] <= 44) {
-                        if (features[4] <= 173) {
+                if (humidity_ratio <= 185) {
+                    if (light <= 44) {
+                        if (humidity_ratio <= 173) {
                             return 0;
                         } else {
-                            if (features[4] <= 175) {
+                            if (humidity_ratio <= 175) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         }
                     } else {
-                        if (features[0] <= 227) {
+                        if (temperature <= 227) {
                             return 1;
                         } else {
-                            if (features[2] <= 91) {
-                                if (features[2] <= 86) {
-                                    if (features[0] <= 229) {
+                            if (light <= 91) {
+                                if (light <= 86) {
+                                    if (temperature <= 229) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -6597,25 +6602,25 @@ int predict_tree_35(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[0] <= 153) {
+                    if (temperature <= 153) {
                         return 0;
                     } else {
-                        if (features[3] <= 213) {
-                            if (features[3] <= 168) {
-                                if (features[1] <= 222) {
+                        if (co2 <= 213) {
+                            if (co2 <= 168) {
+                                if (humidity <= 222) {
                                     return 1;
                                 } else {
                                     return 0;
                                 }
                             } else {
-                                if (features[2] <= 36) {
+                                if (light <= 36) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             }
                         } else {
-                            if (features[2] <= 27) {
+                            if (light <= 27) {
                                 return 0;
                             } else {
                                 return 1;
@@ -6627,16 +6632,16 @@ int predict_tree_35(unsigned short features[]) {
         }
     }
 }
-int predict_tree_36(unsigned short features[]) {
-    if (features[3] <= 28) {
-        if (features[2] <= 62) {
-            if (features[1] <= 117) {
+int predict_tree_36(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 28) {
+        if (light <= 62) {
+            if (humidity <= 117) {
                 return 0;
             } else {
-                if (features[2] <= 47) {
+                if (light <= 47) {
                     return 0;
                 } else {
-                    if (features[4] <= 92) {
+                    if (humidity_ratio <= 92) {
                         return 1;
                     } else {
                         return 0;
@@ -6644,17 +6649,17 @@ int predict_tree_36(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[3] <= 7) {
+            if (co2 <= 7) {
                 return 0;
             } else {
-                if (features[0] <= 36) {
-                    if (features[1] <= 120) {
+                if (temperature <= 36) {
+                    if (humidity <= 120) {
                         return 1;
                     } else {
                         return 0;
                     }
                 } else {
-                    if (features[2] <= 70) {
+                    if (light <= 70) {
                         return 1;
                     } else {
                         return 0;
@@ -6663,21 +6668,21 @@ int predict_tree_36(unsigned short features[]) {
             }
         }
     } else {
-        if (features[0] <= 111) {
-            if (features[1] <= 180) {
+        if (temperature <= 111) {
+            if (humidity <= 180) {
                 return 1;
             } else {
                 return 0;
             }
         } else {
-            if (features[2] <= 28) {
+            if (light <= 28) {
                 return 0;
             } else {
-                if (features[0] <= 240) {
-                    if (features[4] <= 108) {
-                        if (features[1] <= 30) {
-                            if (features[0] <= 163) {
-                                if (features[2] <= 86) {
+                if (temperature <= 240) {
+                    if (humidity_ratio <= 108) {
+                        if (humidity <= 30) {
+                            if (temperature <= 163) {
+                                if (light <= 86) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -6686,24 +6691,24 @@ int predict_tree_36(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[2] <= 78) {
+                            if (light <= 78) {
                                 return 1;
                             } else {
-                                if (features[2] <= 79) {
-                                    if (features[4] <= 41) {
+                                if (light <= 79) {
+                                    if (humidity_ratio <= 41) {
                                         return 0;
                                     } else {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[2] <= 81) {
-                                        if (features[2] <= 81) {
+                                    if (light <= 81) {
+                                        if (light <= 81) {
                                             return 1;
                                         } else {
-                                            if (features[0] <= 169) {
+                                            if (temperature <= 169) {
                                                 return 1;
                                             } else {
-                                                if (features[4] <= 49) {
+                                                if (humidity_ratio <= 49) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -6717,13 +6722,13 @@ int predict_tree_36(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[3] <= 76) {
-                            if (features[1] <= 110) {
-                                if (features[0] <= 200) {
+                        if (co2 <= 76) {
+                            if (humidity <= 110) {
+                                if (temperature <= 200) {
                                     return 1;
                                 } else {
-                                    if (features[1] <= 106) {
-                                        if (features[4] <= 110) {
+                                    if (humidity <= 106) {
+                                        if (humidity_ratio <= 110) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -6736,23 +6741,23 @@ int predict_tree_36(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[4] <= 129) {
-                                if (features[0] <= 230) {
-                                    if (features[2] <= 76) {
+                            if (humidity_ratio <= 129) {
+                                if (temperature <= 230) {
+                                    if (light <= 76) {
                                         return 1;
                                     } else {
-                                        if (features[2] <= 76) {
-                                            if (features[1] <= 113) {
+                                        if (light <= 76) {
+                                            if (humidity <= 113) {
                                                 return 1;
                                             } else {
                                                 return 0;
                                             }
                                         } else {
-                                            if (features[1] <= 112) {
-                                                if (features[4] <= 124) {
+                                            if (humidity <= 112) {
+                                                if (humidity_ratio <= 124) {
                                                     return 1;
                                                 } else {
-                                                    if (features[3] <= 102) {
+                                                    if (co2 <= 102) {
                                                         return 1;
                                                     } else {
                                                         return 0;
@@ -6764,7 +6769,7 @@ int predict_tree_36(unsigned short features[]) {
                                         }
                                     }
                                 } else {
-                                    if (features[0] <= 232) {
+                                    if (temperature <= 232) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -6782,27 +6787,27 @@ int predict_tree_36(unsigned short features[]) {
         }
     }
 }
-int predict_tree_37(unsigned short features[]) {
-    if (features[3] <= 27) {
-        if (features[2] <= 62) {
-            if (features[2] <= 48) {
+int predict_tree_37(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 27) {
+        if (light <= 62) {
+            if (light <= 48) {
                 return 0;
             } else {
-                if (features[3] <= 9) {
+                if (co2 <= 9) {
                     return 0;
                 } else {
                     return 1;
                 }
             }
         } else {
-            if (features[1] <= 24) {
-                if (features[2] <= 67) {
+            if (humidity <= 24) {
+                if (light <= 67) {
                     return 1;
                 } else {
-                    if (features[4] <= 3) {
+                    if (humidity_ratio <= 3) {
                         return 0;
                     } else {
-                        if (features[1] <= 23) {
+                        if (humidity <= 23) {
                             return 1;
                         } else {
                             return 0;
@@ -6810,18 +6815,18 @@ int predict_tree_37(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[0] <= 36) {
+                if (temperature <= 36) {
                     return 0;
                 } else {
-                    if (features[1] <= 25) {
-                        if (features[4] <= 9) {
+                    if (humidity <= 25) {
+                        if (humidity_ratio <= 9) {
                             return 1;
                         } else {
                             return 0;
                         }
                     } else {
-                        if (features[3] <= 10) {
-                            if (features[0] <= 91) {
+                        if (co2 <= 10) {
+                            if (temperature <= 91) {
                                 return 1;
                             } else {
                                 return 0;
@@ -6834,31 +6839,31 @@ int predict_tree_37(unsigned short features[]) {
             }
         }
     } else {
-        if (features[0] <= 107) {
-            if (features[0] <= 89) {
+        if (temperature <= 107) {
+            if (temperature <= 89) {
                 return 1;
             } else {
-                if (features[4] <= 148) {
+                if (humidity_ratio <= 148) {
                     return 1;
                 } else {
                     return 0;
                 }
             }
         } else {
-            if (features[2] <= 31) {
+            if (light <= 31) {
                 return 0;
             } else {
-                if (features[2] <= 89) {
-                    if (features[3] <= 76) {
-                        if (features[0] <= 201) {
-                            if (features[1] <= 42) {
-                                if (features[4] <= 40) {
+                if (light <= 89) {
+                    if (co2 <= 76) {
+                        if (temperature <= 201) {
+                            if (humidity <= 42) {
+                                if (humidity_ratio <= 40) {
                                     return 1;
                                 } else {
-                                    if (features[1] <= 42) {
+                                    if (humidity <= 42) {
                                         return 1;
                                     } else {
-                                        if (features[3] <= 62) {
+                                        if (co2 <= 62) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -6869,11 +6874,11 @@ int predict_tree_37(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[3] <= 63) {
-                                if (features[0] <= 205) {
+                            if (co2 <= 63) {
+                                if (temperature <= 205) {
                                     return 0;
                                 } else {
-                                    if (features[2] <= 75) {
+                                    if (light <= 75) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -6884,15 +6889,15 @@ int predict_tree_37(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[2] <= 76) {
+                        if (light <= 76) {
                             return 1;
                         } else {
-                            if (features[1] <= 113) {
-                                if (features[1] <= 113) {
-                                    if (features[1] <= 112) {
+                            if (humidity <= 113) {
+                                if (humidity <= 113) {
+                                    if (humidity <= 112) {
                                         return 1;
                                     } else {
-                                        if (features[3] <= 100) {
+                                        if (co2 <= 100) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -6907,18 +6912,18 @@ int predict_tree_37(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[0] <= 230) {
-                        if (features[0] <= 165) {
-                            if (features[1] <= 39) {
+                    if (temperature <= 230) {
+                        if (temperature <= 165) {
+                            if (humidity <= 39) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         } else {
-                            if (features[0] <= 203) {
+                            if (temperature <= 203) {
                                 return 1;
                             } else {
-                                if (features[1] <= 110) {
+                                if (humidity <= 110) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -6933,18 +6938,18 @@ int predict_tree_37(unsigned short features[]) {
         }
     }
 }
-int predict_tree_38(unsigned short features[]) {
-    if (features[0] <= 113) {
-        if (features[2] <= 54) {
+int predict_tree_38(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (temperature <= 113) {
+        if (light <= 54) {
             return 0;
         } else {
-            if (features[3] <= 7) {
+            if (co2 <= 7) {
                 return 0;
             } else {
-                if (features[3] <= 13) {
-                    if (features[1] <= 120) {
-                        if (features[2] <= 68) {
-                            if (features[3] <= 7) {
+                if (co2 <= 13) {
+                    if (humidity <= 120) {
+                        if (light <= 68) {
+                            if (co2 <= 7) {
                                 return 1;
                             } else {
                                 return 0;
@@ -6961,32 +6966,32 @@ int predict_tree_38(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 61) {
-            if (features[4] <= 83) {
+        if (light <= 61) {
+            if (humidity_ratio <= 83) {
                 return 0;
             } else {
-                if (features[1] <= 84) {
+                if (humidity <= 84) {
                     return 1;
                 } else {
                     return 0;
                 }
             }
         } else {
-            if (features[2] <= 93) {
-                if (features[3] <= 74) {
-                    if (features[0] <= 200) {
-                        if (features[4] <= 41) {
-                            if (features[4] <= 41) {
-                                if (features[4] <= 41) {
-                                    if (features[2] <= 87) {
-                                        if (features[0] <= 168) {
+            if (light <= 93) {
+                if (co2 <= 74) {
+                    if (temperature <= 200) {
+                        if (humidity_ratio <= 41) {
+                            if (humidity_ratio <= 41) {
+                                if (humidity_ratio <= 41) {
+                                    if (light <= 87) {
+                                        if (temperature <= 168) {
                                             return 1;
                                         } else {
-                                            if (features[3] <= 62) {
+                                            if (co2 <= 62) {
                                                 return 1;
                                             } else {
-                                                if (features[2] <= 82) {
-                                                    if (features[0] <= 171) {
+                                                if (light <= 82) {
+                                                    if (temperature <= 171) {
                                                         return 0;
                                                     } else {
                                                         return 1;
@@ -6997,8 +7002,8 @@ int predict_tree_38(unsigned short features[]) {
                                             }
                                         }
                                     } else {
-                                        if (features[0] <= 163) {
-                                            if (features[3] <= 38) {
+                                        if (temperature <= 163) {
+                                            if (co2 <= 38) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -7008,10 +7013,10 @@ int predict_tree_38(unsigned short features[]) {
                                         }
                                     }
                                 } else {
-                                    if (features[3] <= 63) {
+                                    if (co2 <= 63) {
                                         return 1;
                                     } else {
-                                        if (features[4] <= 41) {
+                                        if (humidity_ratio <= 41) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -7025,9 +7030,9 @@ int predict_tree_38(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[1] <= 113) {
-                            if (features[3] <= 63) {
-                                if (features[1] <= 105) {
+                        if (humidity <= 113) {
+                            if (co2 <= 63) {
+                                if (humidity <= 105) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -7040,23 +7045,23 @@ int predict_tree_38(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[0] <= 226) {
-                        if (features[4] <= 115) {
-                            if (features[1] <= 112) {
-                                if (features[2] <= 83) {
+                    if (temperature <= 226) {
+                        if (humidity_ratio <= 115) {
+                            if (humidity <= 112) {
+                                if (light <= 83) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 110) {
+                                    if (humidity_ratio <= 110) {
                                         return 1;
                                     } else {
                                         return 0;
                                     }
                                 }
                             } else {
-                                if (features[0] <= 192) {
+                                if (temperature <= 192) {
                                     return 0;
                                 } else {
-                                    if (features[3] <= 102) {
+                                    if (co2 <= 102) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -7067,10 +7072,10 @@ int predict_tree_38(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[3] <= 102) {
+                        if (co2 <= 102) {
                             return 1;
                         } else {
-                            if (features[3] <= 107) {
+                            if (co2 <= 107) {
                                 return 0;
                             } else {
                                 return 1;
@@ -7079,10 +7084,10 @@ int predict_tree_38(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[0] <= 234) {
-                    if (features[0] <= 230) {
-                        if (features[4] <= 118) {
-                            if (features[4] <= 79) {
+                if (temperature <= 234) {
+                    if (temperature <= 230) {
+                        if (humidity_ratio <= 118) {
+                            if (humidity_ratio <= 79) {
                                 return 1;
                             } else {
                                 return 0;
@@ -7091,7 +7096,7 @@ int predict_tree_38(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[2] <= 102) {
+                        if (light <= 102) {
                             return 0;
                         } else {
                             return 1;
@@ -7104,32 +7109,32 @@ int predict_tree_38(unsigned short features[]) {
         }
     }
 }
-int predict_tree_39(unsigned short features[]) {
-    if (features[0] <= 110) {
-        if (features[2] <= 56) {
-            if (features[2] <= 48) {
+int predict_tree_39(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (temperature <= 110) {
+        if (light <= 56) {
+            if (light <= 48) {
                 return 0;
             } else {
-                if (features[0] <= 41) {
+                if (temperature <= 41) {
                     return 1;
                 } else {
                     return 0;
                 }
             }
         } else {
-            if (features[3] <= 7) {
-                if (features[2] <= 67) {
+            if (co2 <= 7) {
+                if (light <= 67) {
                     return 1;
                 } else {
                     return 0;
                 }
             } else {
-                if (features[3] <= 13) {
-                    if (features[1] <= 120) {
-                        if (features[4] <= 3) {
+                if (co2 <= 13) {
+                    if (humidity <= 120) {
+                        if (humidity_ratio <= 3) {
                             return 0;
                         } else {
-                            if (features[2] <= 70) {
+                            if (light <= 70) {
                                 return 1;
                             } else {
                                 return 0;
@@ -7144,26 +7149,26 @@ int predict_tree_39(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 61) {
-            if (features[3] <= 39) {
+        if (light <= 61) {
+            if (co2 <= 39) {
                 return 0;
             } else {
-                if (features[3] <= 40) {
+                if (co2 <= 40) {
                     return 1;
                 } else {
-                    if (features[1] <= 82) {
+                    if (humidity <= 82) {
                         return 0;
                     } else {
-                        if (features[3] <= 69) {
+                        if (co2 <= 69) {
                             return 1;
                         } else {
-                            if (features[2] <= 5) {
+                            if (light <= 5) {
                                 return 0;
                             } else {
-                                if (features[1] <= 148) {
+                                if (humidity <= 148) {
                                     return 0;
                                 } else {
-                                    if (features[4] <= 175) {
+                                    if (humidity_ratio <= 175) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -7175,25 +7180,25 @@ int predict_tree_39(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[0] <= 227) {
-                if (features[3] <= 76) {
-                    if (features[0] <= 203) {
-                        if (features[4] <= 100) {
+            if (temperature <= 227) {
+                if (co2 <= 76) {
+                    if (temperature <= 203) {
+                        if (humidity_ratio <= 100) {
                             return 1;
                         } else {
-                            if (features[2] <= 74) {
+                            if (light <= 74) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         }
                     } else {
-                        if (features[4] <= 111) {
-                            if (features[1] <= 105) {
-                                if (features[2] <= 78) {
+                        if (humidity_ratio <= 111) {
+                            if (humidity <= 105) {
+                                if (light <= 78) {
                                     return 0;
                                 } else {
-                                    if (features[3] <= 63) {
+                                    if (co2 <= 63) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -7207,17 +7212,17 @@ int predict_tree_39(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 99) {
-                        if (features[2] <= 76) {
+                    if (co2 <= 99) {
+                        if (light <= 76) {
                             return 1;
                         } else {
-                            if (features[3] <= 99) {
+                            if (co2 <= 99) {
                                 return 1;
                             } else {
-                                if (features[1] <= 111) {
+                                if (humidity <= 111) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 127) {
+                                    if (humidity_ratio <= 127) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -7230,14 +7235,14 @@ int predict_tree_39(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[1] <= 115) {
-                    if (features[4] <= 122) {
+                if (humidity <= 115) {
+                    if (humidity_ratio <= 122) {
                         return 1;
                     } else {
-                        if (features[3] <= 98) {
+                        if (co2 <= 98) {
                             return 0;
                         } else {
-                            if (features[2] <= 105) {
+                            if (light <= 105) {
                                 return 0;
                             } else {
                                 return 1;
@@ -7251,35 +7256,35 @@ int predict_tree_39(unsigned short features[]) {
         }
     }
 }
-int predict_tree_40(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[4] <= 28) {
+int predict_tree_40(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (humidity_ratio <= 28) {
             return 0;
         } else {
-            if (features[1] <= 34) {
-                if (features[0] <= 146) {
+            if (humidity <= 34) {
+                if (temperature <= 146) {
                     return 1;
                 } else {
                     return 0;
                 }
             } else {
-                if (features[0] <= 238) {
-                    if (features[1] <= 65) {
-                        if (features[4] <= 47) {
+                if (temperature <= 238) {
+                    if (humidity <= 65) {
+                        if (humidity_ratio <= 47) {
                             return 0;
                         } else {
-                            if (features[2] <= 29) {
+                            if (light <= 29) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         }
                     } else {
-                        if (features[3] <= 10) {
+                        if (co2 <= 10) {
                             return 0;
                         } else {
-                            if (features[4] <= 75) {
-                                if (features[2] <= 24) {
+                            if (humidity_ratio <= 75) {
+                                if (light <= 24) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -7295,39 +7300,39 @@ int predict_tree_40(unsigned short features[]) {
             }
         }
     } else {
-        if (features[4] <= 5) {
+        if (humidity_ratio <= 5) {
             return 0;
         } else {
-            if (features[0] <= 205) {
-                if (features[1] <= 25) {
-                    if (features[0] <= 91) {
+            if (temperature <= 205) {
+                if (humidity <= 25) {
+                    if (temperature <= 91) {
                         return 1;
                     } else {
                         return 0;
                     }
                 } else {
-                    if (features[3] <= 64) {
-                        if (features[3] <= 63) {
-                            if (features[4] <= 27) {
-                                if (features[0] <= 159) {
+                    if (co2 <= 64) {
+                        if (co2 <= 63) {
+                            if (humidity_ratio <= 27) {
+                                if (temperature <= 159) {
                                     return 1;
                                 } else {
-                                    if (features[1] <= 29) {
+                                    if (humidity <= 29) {
                                         return 1;
                                     } else {
                                         return 0;
                                     }
                                 }
                             } else {
-                                if (features[1] <= 42) {
-                                    if (features[3] <= 62) {
+                                if (humidity <= 42) {
+                                    if (co2 <= 62) {
                                         return 1;
                                     } else {
-                                        if (features[3] <= 62) {
-                                            if (features[4] <= 40) {
+                                        if (co2 <= 62) {
+                                            if (humidity_ratio <= 40) {
                                                 return 1;
                                             } else {
-                                                if (features[2] <= 80) {
+                                                if (light <= 80) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -7342,20 +7347,20 @@ int predict_tree_40(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[4] <= 81) {
+                            if (humidity_ratio <= 81) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         }
                     } else {
-                        if (features[2] <= 76) {
+                        if (light <= 76) {
                             return 1;
                         } else {
-                            if (features[1] <= 113) {
+                            if (humidity <= 113) {
                                 return 1;
                             } else {
-                                if (features[1] <= 113) {
+                                if (humidity <= 113) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -7365,12 +7370,12 @@ int predict_tree_40(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 76) {
-                    if (features[3] <= 63) {
-                        if (features[2] <= 76) {
+                if (co2 <= 76) {
+                    if (co2 <= 63) {
+                        if (light <= 76) {
                             return 1;
                         } else {
-                            if (features[4] <= 110) {
+                            if (humidity_ratio <= 110) {
                                 return 0;
                             } else {
                                 return 1;
@@ -7380,9 +7385,9 @@ int predict_tree_40(unsigned short features[]) {
                         return 0;
                     }
                 } else {
-                    if (features[0] <= 230) {
-                        if (features[3] <= 102) {
-                            if (features[3] <= 101) {
+                    if (temperature <= 230) {
+                        if (co2 <= 102) {
+                            if (co2 <= 101) {
                                 return 1;
                             } else {
                                 return 0;
@@ -7391,11 +7396,11 @@ int predict_tree_40(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[2] <= 89) {
-                            if (features[2] <= 86) {
+                        if (light <= 89) {
+                            if (light <= 86) {
                                 return 1;
                             } else {
-                                if (features[0] <= 237) {
+                                if (temperature <= 237) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -7410,18 +7415,18 @@ int predict_tree_40(unsigned short features[]) {
         }
     }
 }
-int predict_tree_41(unsigned short features[]) {
-    if (features[3] <= 29) {
-        if (features[3] <= 13) {
-            if (features[3] <= 10) {
-                if (features[0] <= 69) {
-                    if (features[0] <= 32) {
+int predict_tree_41(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 29) {
+        if (co2 <= 13) {
+            if (co2 <= 10) {
+                if (temperature <= 69) {
+                    if (temperature <= 32) {
                         return 0;
                     } else {
-                        if (features[2] <= 47) {
+                        if (light <= 47) {
                             return 0;
                         } else {
-                            if (features[0] <= 45) {
+                            if (temperature <= 45) {
                                 return 1;
                             } else {
                                 return 0;
@@ -7429,21 +7434,21 @@ int predict_tree_41(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 7) {
-                        if (features[2] <= 68) {
+                    if (co2 <= 7) {
+                        if (light <= 68) {
                             return 0;
                         } else {
-                            if (features[3] <= 7) {
+                            if (co2 <= 7) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         }
                     } else {
-                        if (features[0] <= 78) {
+                        if (temperature <= 78) {
                             return 1;
                         } else {
-                            if (features[2] <= 64) {
+                            if (light <= 64) {
                                 return 0;
                             } else {
                                 return 1;
@@ -7452,14 +7457,14 @@ int predict_tree_41(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[1] <= 49) {
-                    if (features[4] <= 11) {
+                if (humidity <= 49) {
+                    if (humidity_ratio <= 11) {
                         return 1;
                     } else {
                         return 0;
                     }
                 } else {
-                    if (features[2] <= 67) {
+                    if (light <= 67) {
                         return 0;
                     } else {
                         return 1;
@@ -7467,14 +7472,14 @@ int predict_tree_41(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[1] <= 61) {
-                if (features[2] <= 34) {
+            if (humidity <= 61) {
+                if (light <= 34) {
                     return 0;
                 } else {
                     return 1;
                 }
             } else {
-                if (features[4] <= 121) {
+                if (humidity_ratio <= 121) {
                     return 1;
                 } else {
                     return 0;
@@ -7482,16 +7487,16 @@ int predict_tree_41(unsigned short features[]) {
             }
         }
     } else {
-        if (features[1] <= 189) {
-            if (features[3] <= 58) {
-                if (features[1] <= 36) {
-                    if (features[2] <= 29) {
+        if (humidity <= 189) {
+            if (co2 <= 58) {
+                if (humidity <= 36) {
+                    if (light <= 29) {
                         return 0;
                     } else {
-                        if (features[3] <= 38) {
+                        if (co2 <= 38) {
                             return 1;
                         } else {
-                            if (features[3] <= 38) {
+                            if (co2 <= 38) {
                                 return 0;
                             } else {
                                 return 1;
@@ -7499,16 +7504,16 @@ int predict_tree_41(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[4] <= 76) {
-                        if (features[0] <= 168) {
-                            if (features[2] <= 41) {
+                    if (humidity_ratio <= 76) {
+                        if (temperature <= 168) {
+                            if (light <= 41) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         } else {
-                            if (features[4] <= 60) {
-                                if (features[2] <= 31) {
+                            if (humidity_ratio <= 60) {
+                                if (light <= 31) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -7518,10 +7523,10 @@ int predict_tree_41(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[2] <= 32) {
+                        if (light <= 32) {
                             return 0;
                         } else {
-                            if (features[0] <= 200) {
+                            if (temperature <= 200) {
                                 return 1;
                             } else {
                                 return 0;
@@ -7530,16 +7535,16 @@ int predict_tree_41(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[0] <= 230) {
-                    if (features[4] <= 70) {
-                        if (features[1] <= 43) {
-                            if (features[2] <= 79) {
-                                if (features[2] <= 78) {
+                if (temperature <= 230) {
+                    if (humidity_ratio <= 70) {
+                        if (humidity <= 43) {
+                            if (light <= 79) {
+                                if (light <= 78) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 41) {
-                                        if (features[4] <= 41) {
-                                            if (features[3] <= 62) {
+                                    if (humidity_ratio <= 41) {
+                                        if (humidity_ratio <= 41) {
+                                            if (co2 <= 62) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -7558,18 +7563,18 @@ int predict_tree_41(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[2] <= 38) {
+                        if (light <= 38) {
                             return 0;
                         } else {
-                            if (features[3] <= 76) {
-                                if (features[1] <= 100) {
+                            if (co2 <= 76) {
+                                if (humidity <= 100) {
                                     return 1;
                                 } else {
-                                    if (features[0] <= 203) {
+                                    if (temperature <= 203) {
                                         return 1;
                                     } else {
-                                        if (features[1] <= 106) {
-                                            if (features[4] <= 111) {
+                                        if (humidity <= 106) {
+                                            if (humidity_ratio <= 111) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -7580,11 +7585,11 @@ int predict_tree_41(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[0] <= 227) {
+                                if (temperature <= 227) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 124) {
-                                        if (features[3] <= 102) {
+                                    if (humidity_ratio <= 124) {
+                                        if (co2 <= 102) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -7597,9 +7602,9 @@ int predict_tree_41(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 109) {
-                        if (features[1] <= 106) {
-                            if (features[0] <= 238) {
+                    if (co2 <= 109) {
+                        if (humidity <= 106) {
+                            if (temperature <= 238) {
                                 return 0;
                             } else {
                                 return 1;
@@ -7613,10 +7618,10 @@ int predict_tree_41(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[0] <= 148) {
+            if (temperature <= 148) {
                 return 0;
             } else {
-                if (features[2] <= 29) {
+                if (light <= 29) {
                     return 0;
                 } else {
                     return 1;
@@ -7625,16 +7630,16 @@ int predict_tree_41(unsigned short features[]) {
         }
     }
 }
-int predict_tree_42(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[2] <= 35) {
+int predict_tree_42(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (light <= 35) {
             return 0;
         } else {
-            if (features[3] <= 9) {
-                if (features[2] <= 59) {
+            if (co2 <= 9) {
+                if (light <= 59) {
                     return 0;
                 } else {
-                    if (features[0] <= 156) {
+                    if (temperature <= 156) {
                         return 1;
                     } else {
                         return 0;
@@ -7645,12 +7650,12 @@ int predict_tree_42(unsigned short features[]) {
             }
         }
     } else {
-        if (features[3] <= 7) {
+        if (co2 <= 7) {
             return 0;
         } else {
-            if (features[3] <= 13) {
-                if (features[0] <= 54) {
-                    if (features[0] <= 32) {
+            if (co2 <= 13) {
+                if (temperature <= 54) {
+                    if (temperature <= 32) {
                         return 1;
                     } else {
                         return 0;
@@ -7659,13 +7664,13 @@ int predict_tree_42(unsigned short features[]) {
                     return 1;
                 }
             } else {
-                if (features[4] <= 108) {
-                    if (features[1] <= 43) {
-                        if (features[3] <= 63) {
-                            if (features[3] <= 62) {
-                                if (features[1] <= 30) {
-                                    if (features[0] <= 163) {
-                                        if (features[4] <= 19) {
+                if (humidity_ratio <= 108) {
+                    if (humidity <= 43) {
+                        if (co2 <= 63) {
+                            if (co2 <= 62) {
+                                if (humidity <= 30) {
+                                    if (temperature <= 163) {
+                                        if (humidity_ratio <= 19) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -7677,9 +7682,9 @@ int predict_tree_42(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[1] <= 42) {
-                                    if (features[3] <= 62) {
-                                        if (features[2] <= 80) {
+                                if (humidity <= 42) {
+                                    if (co2 <= 62) {
+                                        if (light <= 80) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -7692,11 +7697,11 @@ int predict_tree_42(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[2] <= 82) {
-                                if (features[1] <= 42) {
+                            if (light <= 82) {
+                                if (humidity <= 42) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 65) {
+                                    if (co2 <= 65) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -7710,13 +7715,13 @@ int predict_tree_42(unsigned short features[]) {
                         return 1;
                     }
                 } else {
-                    if (features[3] <= 76) {
-                        if (features[0] <= 201) {
+                    if (co2 <= 76) {
+                        if (temperature <= 201) {
                             return 1;
                         } else {
-                            if (features[1] <= 114) {
-                                if (features[1] <= 106) {
-                                    if (features[4] <= 111) {
+                            if (humidity <= 114) {
+                                if (humidity <= 106) {
+                                    if (humidity_ratio <= 111) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -7729,19 +7734,19 @@ int predict_tree_42(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[0] <= 230) {
-                            if (features[4] <= 115) {
-                                if (features[3] <= 99) {
+                        if (temperature <= 230) {
+                            if (humidity_ratio <= 115) {
+                                if (co2 <= 99) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 99) {
-                                        if (features[1] <= 109) {
+                                    if (co2 <= 99) {
+                                        if (humidity <= 109) {
                                             return 1;
                                         } else {
                                             return 0;
                                         }
                                     } else {
-                                        if (features[4] <= 115) {
+                                        if (humidity_ratio <= 115) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -7752,11 +7757,11 @@ int predict_tree_42(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[2] <= 102) {
-                                if (features[3] <= 92) {
+                            if (light <= 102) {
+                                if (co2 <= 92) {
                                     return 1;
                                 } else {
-                                    if (features[2] <= 89) {
+                                    if (light <= 89) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -7772,20 +7777,20 @@ int predict_tree_42(unsigned short features[]) {
         }
     }
 }
-int predict_tree_43(unsigned short features[]) {
-    if (features[2] <= 61) {
-        if (features[4] <= 247) {
-            if (features[3] <= 68) {
-                if (features[2] <= 48) {
+int predict_tree_43(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 61) {
+        if (humidity_ratio <= 247) {
+            if (co2 <= 68) {
+                if (light <= 48) {
                     return 0;
                 } else {
-                    if (features[2] <= 48) {
+                    if (light <= 48) {
                         return 1;
                     } else {
-                        if (features[1] <= 27) {
+                        if (humidity <= 27) {
                             return 0;
                         } else {
-                            if (features[4] <= 67) {
+                            if (humidity_ratio <= 67) {
                                 return 1;
                             } else {
                                 return 0;
@@ -7794,7 +7799,7 @@ int predict_tree_43(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[2] <= 24) {
+                if (light <= 24) {
                     return 0;
                 } else {
                     return 1;
@@ -7804,35 +7809,35 @@ int predict_tree_43(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[0] <= 230) {
-            if (features[3] <= 7) {
-                if (features[3] <= 4) {
+        if (temperature <= 230) {
+            if (co2 <= 7) {
+                if (co2 <= 4) {
                     return 1;
                 } else {
                     return 0;
                 }
             } else {
-                if (features[0] <= 36) {
-                    if (features[4] <= 77) {
+                if (temperature <= 36) {
+                    if (humidity_ratio <= 77) {
                         return 1;
                     } else {
                         return 0;
                     }
                 } else {
-                    if (features[4] <= 3) {
+                    if (humidity_ratio <= 3) {
                         return 0;
                     } else {
-                        if (features[1] <= 113) {
-                            if (features[4] <= 109) {
-                                if (features[1] <= 30) {
-                                    if (features[1] <= 30) {
-                                        if (features[1] <= 29) {
+                        if (humidity <= 113) {
+                            if (humidity_ratio <= 109) {
+                                if (humidity <= 30) {
+                                    if (humidity <= 30) {
+                                        if (humidity <= 29) {
                                             return 1;
                                         } else {
-                                            if (features[4] <= 26) {
+                                            if (humidity_ratio <= 26) {
                                                 return 1;
                                             } else {
-                                                if (features[4] <= 29) {
+                                                if (humidity_ratio <= 29) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -7843,11 +7848,11 @@ int predict_tree_43(unsigned short features[]) {
                                         return 0;
                                     }
                                 } else {
-                                    if (features[2] <= 81) {
+                                    if (light <= 81) {
                                         return 1;
                                     } else {
-                                        if (features[2] <= 81) {
-                                            if (features[3] <= 62) {
+                                        if (light <= 81) {
+                                            if (co2 <= 62) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -7858,17 +7863,17 @@ int predict_tree_43(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[1] <= 107) {
-                                    if (features[3] <= 87) {
-                                        if (features[2] <= 74) {
+                                if (humidity <= 107) {
+                                    if (co2 <= 87) {
+                                        if (light <= 74) {
                                             return 1;
                                         } else {
-                                            if (features[1] <= 106) {
-                                                if (features[4] <= 111) {
+                                            if (humidity <= 106) {
+                                                if (humidity_ratio <= 111) {
                                                     return 0;
                                                 } else {
-                                                    if (features[4] <= 111) {
-                                                        if (features[3] <= 63) {
+                                                    if (humidity_ratio <= 111) {
+                                                        if (co2 <= 63) {
                                                             return 1;
                                                         } else {
                                                             return 0;
@@ -7885,31 +7890,31 @@ int predict_tree_43(unsigned short features[]) {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[4] <= 124) {
-                                        if (features[4] <= 114) {
-                                            if (features[1] <= 112) {
+                                    if (humidity_ratio <= 124) {
+                                        if (humidity_ratio <= 114) {
+                                            if (humidity <= 112) {
                                                 return 1;
                                             } else {
-                                                if (features[4] <= 114) {
+                                                if (humidity_ratio <= 114) {
                                                     return 0;
                                                 } else {
                                                     return 1;
                                                 }
                                             }
                                         } else {
-                                            if (features[1] <= 113) {
-                                                if (features[4] <= 115) {
-                                                    if (features[2] <= 76) {
+                                            if (humidity <= 113) {
+                                                if (humidity_ratio <= 115) {
+                                                    if (light <= 76) {
                                                         return 0;
                                                     } else {
                                                         return 1;
                                                     }
                                                 } else {
-                                                    if (features[4] <= 124) {
+                                                    if (humidity_ratio <= 124) {
                                                         return 1;
                                                     } else {
-                                                        if (features[4] <= 124) {
-                                                            if (features[2] <= 86) {
+                                                        if (humidity_ratio <= 124) {
+                                                            if (light <= 86) {
                                                                 return 1;
                                                             } else {
                                                                 return 0;
@@ -7935,19 +7940,19 @@ int predict_tree_43(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[3] <= 110) {
-                if (features[3] <= 92) {
+            if (co2 <= 110) {
+                if (co2 <= 92) {
                     return 1;
                 } else {
-                    if (features[2] <= 113) {
+                    if (light <= 113) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[4] <= 129) {
-                    if (features[3] <= 110) {
+                if (humidity_ratio <= 129) {
+                    if (co2 <= 110) {
                         return 1;
                     } else {
                         return 0;
@@ -7959,27 +7964,27 @@ int predict_tree_43(unsigned short features[]) {
         }
     }
 }
-int predict_tree_44(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[3] <= 230) {
-            if (features[0] <= 142) {
-                if (features[3] <= 7) {
+int predict_tree_44(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (co2 <= 230) {
+            if (temperature <= 142) {
+                if (co2 <= 7) {
                     return 0;
                 } else {
-                    if (features[1] <= 63) {
+                    if (humidity <= 63) {
                         return 0;
                     } else {
-                        if (features[3] <= 7) {
-                            if (features[4] <= 48) {
+                        if (co2 <= 7) {
+                            if (humidity_ratio <= 48) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         } else {
-                            if (features[0] <= 32) {
+                            if (temperature <= 32) {
                                 return 0;
                             } else {
-                                if (features[0] <= 33) {
+                                if (temperature <= 33) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -7989,13 +7994,13 @@ int predict_tree_44(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[4] <= 83) {
-                    if (features[0] <= 144) {
-                        if (features[4] <= 31) {
-                            if (features[3] <= 22) {
+                if (humidity_ratio <= 83) {
+                    if (temperature <= 144) {
+                        if (humidity_ratio <= 31) {
+                            if (co2 <= 22) {
                                 return 0;
                             } else {
-                                if (features[1] <= 34) {
+                                if (humidity <= 34) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -8008,12 +8013,12 @@ int predict_tree_44(unsigned short features[]) {
                         return 0;
                     }
                 } else {
-                    if (features[3] <= 74) {
+                    if (co2 <= 74) {
                         return 1;
                     } else {
-                        if (features[4] <= 175) {
-                            if (features[4] <= 174) {
-                                if (features[1] <= 105) {
+                        if (humidity_ratio <= 175) {
+                            if (humidity_ratio <= 174) {
+                                if (humidity <= 105) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -8031,9 +8036,9 @@ int predict_tree_44(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[4] <= 12) {
-            if (features[3] <= 7) {
-                if (features[2] <= 67) {
+        if (humidity_ratio <= 12) {
+            if (co2 <= 7) {
+                if (light <= 67) {
                     return 1;
                 } else {
                     return 0;
@@ -8042,11 +8047,11 @@ int predict_tree_44(unsigned short features[]) {
                 return 1;
             }
         } else {
-            if (features[0] <= 227) {
-                if (features[0] <= 204) {
-                    if (features[3] <= 13) {
-                        if (features[4] <= 77) {
-                            if (features[1] <= 66) {
+            if (temperature <= 227) {
+                if (temperature <= 204) {
+                    if (co2 <= 13) {
+                        if (humidity_ratio <= 77) {
+                            if (humidity <= 66) {
                                 return 0;
                             } else {
                                 return 1;
@@ -8055,9 +8060,9 @@ int predict_tree_44(unsigned short features[]) {
                             return 0;
                         }
                     } else {
-                        if (features[1] <= 30) {
-                            if (features[0] <= 163) {
-                                if (features[0] <= 159) {
+                        if (humidity <= 30) {
+                            if (temperature <= 163) {
+                                if (temperature <= 159) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -8066,29 +8071,29 @@ int predict_tree_44(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[1] <= 43) {
-                                if (features[1] <= 43) {
+                            if (humidity <= 43) {
+                                if (humidity <= 43) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 62) {
+                                    if (co2 <= 62) {
                                         return 1;
                                     } else {
                                         return 0;
                                     }
                                 }
                             } else {
-                                if (features[2] <= 76) {
+                                if (light <= 76) {
                                     return 1;
                                 } else {
-                                    if (features[0] <= 193) {
+                                    if (temperature <= 193) {
                                         return 1;
                                     } else {
-                                        if (features[4] <= 114) {
+                                        if (humidity_ratio <= 114) {
                                             return 1;
                                         } else {
-                                            if (features[1] <= 113) {
-                                                if (features[4] <= 115) {
-                                                    if (features[3] <= 102) {
+                                            if (humidity <= 113) {
+                                                if (humidity_ratio <= 115) {
+                                                    if (co2 <= 102) {
                                                         return 0;
                                                     } else {
                                                         return 1;
@@ -8106,9 +8111,9 @@ int predict_tree_44(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 76) {
-                        if (features[3] <= 63) {
-                            if (features[3] <= 61) {
+                    if (co2 <= 76) {
+                        if (co2 <= 63) {
+                            if (co2 <= 61) {
                                 return 0;
                             } else {
                                 return 1;
@@ -8121,17 +8126,17 @@ int predict_tree_44(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[4] <= 122) {
+                if (humidity_ratio <= 122) {
                     return 1;
                 } else {
-                    if (features[4] <= 129) {
-                        if (features[2] <= 86) {
+                    if (humidity_ratio <= 129) {
+                        if (light <= 86) {
                             return 1;
                         } else {
-                            if (features[3] <= 110) {
+                            if (co2 <= 110) {
                                 return 0;
                             } else {
-                                if (features[2] <= 89) {
+                                if (light <= 89) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -8146,30 +8151,30 @@ int predict_tree_44(unsigned short features[]) {
         }
     }
 }
-int predict_tree_45(unsigned short features[]) {
-    if (features[4] <= 114) {
-        if (features[2] <= 63) {
-            if (features[3] <= 66) {
-                if (features[2] <= 48) {
+int predict_tree_45(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (humidity_ratio <= 114) {
+        if (light <= 63) {
+            if (co2 <= 66) {
+                if (light <= 48) {
                     return 0;
                 } else {
-                    if (features[0] <= 45) {
+                    if (temperature <= 45) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[2] <= 26) {
+                if (light <= 26) {
                     return 0;
                 } else {
                     return 1;
                 }
             }
         } else {
-            if (features[3] <= 7) {
-                if (features[3] <= 5) {
-                    if (features[2] <= 69) {
+            if (co2 <= 7) {
+                if (co2 <= 5) {
+                    if (light <= 69) {
                         return 1;
                     } else {
                         return 0;
@@ -8178,20 +8183,20 @@ int predict_tree_45(unsigned short features[]) {
                     return 0;
                 }
             } else {
-                if (features[1] <= 104) {
-                    if (features[0] <= 71) {
-                        if (features[1] <= 23) {
+                if (humidity <= 104) {
+                    if (temperature <= 71) {
+                        if (humidity <= 23) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[1] <= 30) {
-                            if (features[3] <= 37) {
+                        if (humidity <= 30) {
+                            if (co2 <= 37) {
                                 return 1;
                             } else {
-                                if (features[0] <= 168) {
-                                    if (features[1] <= 30) {
+                                if (temperature <= 168) {
+                                    if (humidity <= 30) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -8201,17 +8206,17 @@ int predict_tree_45(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[3] <= 64) {
-                                if (features[0] <= 168) {
+                            if (co2 <= 64) {
+                                if (temperature <= 168) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 41) {
+                                    if (humidity_ratio <= 41) {
                                         return 1;
                                     } else {
-                                        if (features[2] <= 79) {
+                                        if (light <= 79) {
                                             return 1;
                                         } else {
-                                            if (features[0] <= 171) {
+                                            if (temperature <= 171) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -8225,9 +8230,9 @@ int predict_tree_45(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[0] <= 201) {
-                        if (features[0] <= 36) {
-                            if (features[4] <= 78) {
+                    if (temperature <= 201) {
+                        if (temperature <= 36) {
+                            if (humidity_ratio <= 78) {
                                 return 1;
                             } else {
                                 return 0;
@@ -8236,13 +8241,13 @@ int predict_tree_45(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[2] <= 74) {
+                        if (light <= 74) {
                             return 1;
                         } else {
-                            if (features[1] <= 107) {
+                            if (humidity <= 107) {
                                 return 0;
                             } else {
-                                if (features[2] <= 82) {
+                                if (light <= 82) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -8254,34 +8259,34 @@ int predict_tree_45(unsigned short features[]) {
             }
         }
     } else {
-        if (features[0] <= 123) {
-            if (features[2] <= 35) {
+        if (temperature <= 123) {
+            if (light <= 35) {
                 return 0;
             } else {
                 return 1;
             }
         } else {
-            if (features[2] <= 30) {
+            if (light <= 30) {
                 return 0;
             } else {
-                if (features[1] <= 109) {
-                    if (features[1] <= 106) {
+                if (humidity <= 109) {
+                    if (humidity <= 106) {
                         return 1;
                     } else {
                         return 0;
                     }
                 } else {
-                    if (features[0] <= 230) {
-                        if (features[2] <= 87) {
+                    if (temperature <= 230) {
+                        if (light <= 87) {
                             return 1;
                         } else {
-                            if (features[0] <= 227) {
+                            if (temperature <= 227) {
                                 return 1;
                             } else {
-                                if (features[1] <= 112) {
+                                if (humidity <= 112) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 126) {
+                                    if (humidity_ratio <= 126) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -8290,7 +8295,7 @@ int predict_tree_45(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[2] <= 109) {
+                        if (light <= 109) {
                             return 0;
                         } else {
                             return 1;
@@ -8301,18 +8306,18 @@ int predict_tree_45(unsigned short features[]) {
         }
     }
 }
-int predict_tree_46(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[4] <= 247) {
-            if (features[0] <= 238) {
-                if (features[2] <= 59) {
-                    if (features[0] <= 142) {
+int predict_tree_46(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (humidity_ratio <= 247) {
+            if (temperature <= 238) {
+                if (light <= 59) {
+                    if (temperature <= 142) {
                         return 0;
                     } else {
-                        if (features[2] <= 48) {
+                        if (light <= 48) {
                             return 0;
                         } else {
-                            if (features[0] <= 150) {
+                            if (temperature <= 150) {
                                 return 1;
                             } else {
                                 return 0;
@@ -8320,14 +8325,14 @@ int predict_tree_46(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[0] <= 156) {
+                    if (temperature <= 156) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[0] <= 240) {
+                if (temperature <= 240) {
                     return 1;
                 } else {
                     return 0;
@@ -8337,14 +8342,14 @@ int predict_tree_46(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[0] <= 230) {
-            if (features[3] <= 13) {
-                if (features[3] <= 7) {
-                    if (features[4] <= 3) {
+        if (temperature <= 230) {
+            if (co2 <= 13) {
+                if (co2 <= 7) {
+                    if (humidity_ratio <= 3) {
                         return 1;
                     } else {
-                        if (features[4] <= 3) {
-                            if (features[0] <= 71) {
+                        if (humidity_ratio <= 3) {
+                            if (temperature <= 71) {
                                 return 0;
                             } else {
                                 return 1;
@@ -8354,8 +8359,8 @@ int predict_tree_46(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[2] <= 70) {
-                        if (features[4] <= 79) {
+                    if (light <= 70) {
+                        if (humidity_ratio <= 79) {
                             return 1;
                         } else {
                             return 0;
@@ -8365,27 +8370,27 @@ int predict_tree_46(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[0] <= 204) {
-                    if (features[2] <= 75) {
+                if (temperature <= 204) {
+                    if (light <= 75) {
                         return 1;
                     } else {
-                        if (features[0] <= 201) {
-                            if (features[1] <= 30) {
-                                if (features[1] <= 29) {
+                        if (temperature <= 201) {
+                            if (humidity <= 30) {
+                                if (humidity <= 29) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 40) {
+                                    if (co2 <= 40) {
                                         return 0;
                                     } else {
                                         return 1;
                                     }
                                 }
                             } else {
-                                if (features[4] <= 113) {
+                                if (humidity_ratio <= 113) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 99) {
-                                        if (features[1] <= 123) {
+                                    if (co2 <= 99) {
+                                        if (humidity <= 123) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -8396,7 +8401,7 @@ int predict_tree_46(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[1] <= 110) {
+                            if (humidity <= 110) {
                                 return 0;
                             } else {
                                 return 1;
@@ -8404,12 +8409,12 @@ int predict_tree_46(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[1] <= 108) {
-                        if (features[2] <= 74) {
+                    if (humidity <= 108) {
+                        if (light <= 74) {
                             return 1;
                         } else {
-                            if (features[3] <= 63) {
-                                if (features[2] <= 75) {
+                            if (co2 <= 63) {
+                                if (light <= 75) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -8424,12 +8429,12 @@ int predict_tree_46(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[1] <= 116) {
-                if (features[3] <= 92) {
+            if (humidity <= 116) {
+                if (co2 <= 92) {
                     return 1;
                 } else {
-                    if (features[3] <= 111) {
-                        if (features[2] <= 108) {
+                    if (co2 <= 111) {
+                        if (light <= 108) {
                             return 0;
                         } else {
                             return 1;
@@ -8444,20 +8449,20 @@ int predict_tree_46(unsigned short features[]) {
         }
     }
 }
-int predict_tree_47(unsigned short features[]) {
-    if (features[4] <= 115) {
-        if (features[0] <= 113) {
-            if (features[1] <= 150) {
-                if (features[4] <= 112) {
-                    if (features[3] <= 12) {
-                        if (features[2] <= 53) {
+int predict_tree_47(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (humidity_ratio <= 115) {
+        if (temperature <= 113) {
+            if (humidity <= 150) {
+                if (humidity_ratio <= 112) {
+                    if (co2 <= 12) {
+                        if (light <= 53) {
                             return 0;
                         } else {
-                            if (features[0] <= 109) {
-                                if (features[4] <= 77) {
-                                    if (features[2] <= 70) {
-                                        if (features[4] <= 4) {
-                                            if (features[1] <= 22) {
+                            if (temperature <= 109) {
+                                if (humidity_ratio <= 77) {
+                                    if (light <= 70) {
+                                        if (humidity_ratio <= 4) {
+                                            if (humidity <= 22) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -8466,7 +8471,7 @@ int predict_tree_47(unsigned short features[]) {
                                             return 1;
                                         }
                                     } else {
-                                        if (features[1] <= 92) {
+                                        if (humidity <= 92) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -8480,11 +8485,11 @@ int predict_tree_47(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[2] <= 32) {
+                        if (light <= 32) {
                             return 0;
                         } else {
-                            if (features[3] <= 13) {
-                                if (features[2] <= 67) {
+                            if (co2 <= 13) {
+                                if (light <= 67) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -8501,17 +8506,17 @@ int predict_tree_47(unsigned short features[]) {
                 return 0;
             }
         } else {
-            if (features[4] <= 37) {
-                if (features[1] <= 25) {
+            if (humidity_ratio <= 37) {
+                if (humidity <= 25) {
                     return 0;
                 } else {
-                    if (features[2] <= 46) {
+                    if (light <= 46) {
                         return 0;
                     } else {
-                        if (features[4] <= 27) {
+                        if (humidity_ratio <= 27) {
                             return 1;
                         } else {
-                            if (features[4] <= 28) {
+                            if (humidity_ratio <= 28) {
                                 return 0;
                             } else {
                                 return 1;
@@ -8520,34 +8525,34 @@ int predict_tree_47(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 58) {
-                    if (features[1] <= 80) {
-                        if (features[2] <= 33) {
+                if (co2 <= 58) {
+                    if (humidity <= 80) {
+                        if (light <= 33) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[0] <= 200) {
+                        if (temperature <= 200) {
                             return 1;
                         } else {
                             return 0;
                         }
                     }
                 } else {
-                    if (features[0] <= 204) {
-                        if (features[4] <= 70) {
-                            if (features[4] <= 41) {
-                                if (features[4] <= 41) {
-                                    if (features[4] <= 40) {
-                                        if (features[1] <= 42) {
+                    if (temperature <= 204) {
+                        if (humidity_ratio <= 70) {
+                            if (humidity_ratio <= 41) {
+                                if (humidity_ratio <= 41) {
+                                    if (humidity_ratio <= 40) {
+                                        if (humidity <= 42) {
                                             return 1;
                                         } else {
-                                            if (features[0] <= 157) {
+                                            if (temperature <= 157) {
                                                 return 1;
                                             } else {
-                                                if (features[2] <= 78) {
-                                                    if (features[2] <= 78) {
+                                                if (light <= 78) {
+                                                    if (light <= 78) {
                                                         return 1;
                                                     } else {
                                                         return 0;
@@ -8567,16 +8572,16 @@ int predict_tree_47(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[4] <= 77) {
+                            if (humidity_ratio <= 77) {
                                 return 0;
                             } else {
-                                if (features[2] <= 18) {
+                                if (light <= 18) {
                                     return 0;
                                 } else {
-                                    if (features[3] <= 99) {
+                                    if (co2 <= 99) {
                                         return 1;
                                     } else {
-                                        if (features[1] <= 112) {
+                                        if (humidity <= 112) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -8586,14 +8591,14 @@ int predict_tree_47(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[1] <= 106) {
-                            if (features[4] <= 109) {
+                        if (humidity <= 106) {
+                            if (humidity_ratio <= 109) {
                                 return 1;
                             } else {
-                                if (features[3] <= 61) {
+                                if (co2 <= 61) {
                                     return 0;
                                 } else {
-                                    if (features[2] <= 81) {
+                                    if (light <= 81) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -8601,7 +8606,7 @@ int predict_tree_47(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[3] <= 91) {
+                            if (co2 <= 91) {
                                 return 0;
                             } else {
                                 return 1;
@@ -8612,9 +8617,9 @@ int predict_tree_47(unsigned short features[]) {
             }
         }
     } else {
-        if (features[3] <= 88) {
-            if (features[1] <= 167) {
-                if (features[1] <= 110) {
+        if (co2 <= 88) {
+            if (humidity <= 167) {
+                if (humidity <= 110) {
                     return 0;
                 } else {
                     return 1;
@@ -8623,22 +8628,22 @@ int predict_tree_47(unsigned short features[]) {
                 return 0;
             }
         } else {
-            if (features[2] <= 5) {
+            if (light <= 5) {
                 return 0;
             } else {
-                if (features[0] <= 230) {
-                    if (features[4] <= 115) {
-                        if (features[3] <= 100) {
+                if (temperature <= 230) {
+                    if (humidity_ratio <= 115) {
+                        if (co2 <= 100) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[1] <= 112) {
-                            if (features[1] <= 112) {
+                        if (humidity <= 112) {
+                            if (humidity <= 112) {
                                 return 1;
                             } else {
-                                if (features[3] <= 102) {
+                                if (co2 <= 102) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -8649,11 +8654,11 @@ int predict_tree_47(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 109) {
-                        if (features[1] <= 113) {
-                            if (features[3] <= 97) {
-                                if (features[4] <= 122) {
-                                    if (features[3] <= 90) {
+                    if (co2 <= 109) {
+                        if (humidity <= 113) {
+                            if (co2 <= 97) {
+                                if (humidity_ratio <= 122) {
+                                    if (co2 <= 90) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -8675,30 +8680,30 @@ int predict_tree_47(unsigned short features[]) {
         }
     }
 }
-int predict_tree_48(unsigned short features[]) {
-    if (features[0] <= 113) {
-        if (features[4] <= 115) {
-            if (features[0] <= 32) {
-                if (features[3] <= 11) {
+int predict_tree_48(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (temperature <= 113) {
+        if (humidity_ratio <= 115) {
+            if (temperature <= 32) {
+                if (co2 <= 11) {
                     return 0;
                 } else {
                     return 1;
                 }
             } else {
-                if (features[4] <= 81) {
-                    if (features[1] <= 117) {
-                        if (features[4] <= 5) {
-                            if (features[0] <= 69) {
+                if (humidity_ratio <= 81) {
+                    if (humidity <= 117) {
+                        if (humidity_ratio <= 5) {
+                            if (temperature <= 69) {
                                 return 0;
                             } else {
-                                if (features[0] <= 73) {
+                                if (temperature <= 73) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 3) {
-                                        if (features[4] <= 3) {
+                                    if (humidity_ratio <= 3) {
+                                        if (humidity_ratio <= 3) {
                                             return 0;
                                         } else {
-                                            if (features[3] <= 4) {
+                                            if (co2 <= 4) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -8710,10 +8715,10 @@ int predict_tree_48(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[2] <= 50) {
+                            if (light <= 50) {
                                 return 0;
                             } else {
-                                if (features[2] <= 70) {
+                                if (light <= 70) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -8721,8 +8726,8 @@ int predict_tree_48(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[3] <= 11) {
-                            if (features[4] <= 79) {
+                        if (co2 <= 11) {
+                            if (humidity_ratio <= 79) {
                                 return 1;
                             } else {
                                 return 0;
@@ -8732,7 +8737,7 @@ int predict_tree_48(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[2] <= 56) {
+                    if (light <= 56) {
                         return 0;
                     } else {
                         return 1;
@@ -8740,10 +8745,10 @@ int predict_tree_48(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[3] <= 50) {
+            if (co2 <= 50) {
                 return 0;
             } else {
-                if (features[4] <= 151) {
+                if (humidity_ratio <= 151) {
                     return 1;
                 } else {
                     return 0;
@@ -8751,19 +8756,19 @@ int predict_tree_48(unsigned short features[]) {
             }
         }
     } else {
-        if (features[3] <= 27) {
-            if (features[2] <= 63) {
+        if (co2 <= 27) {
+            if (light <= 63) {
                 return 0;
             } else {
                 return 1;
             }
         } else {
-            if (features[0] <= 163) {
-                if (features[2] <= 48) {
+            if (temperature <= 163) {
+                if (light <= 48) {
                     return 0;
                 } else {
-                    if (features[1] <= 30) {
-                        if (features[3] <= 38) {
+                    if (humidity <= 30) {
+                        if (co2 <= 38) {
                             return 0;
                         } else {
                             return 1;
@@ -8773,24 +8778,24 @@ int predict_tree_48(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[2] <= 27) {
+                if (light <= 27) {
                     return 0;
                 } else {
-                    if (features[0] <= 234) {
-                        if (features[1] <= 116) {
-                            if (features[1] <= 104) {
-                                if (features[4] <= 41) {
-                                    if (features[3] <= 62) {
+                    if (temperature <= 234) {
+                        if (humidity <= 116) {
+                            if (humidity <= 104) {
+                                if (humidity_ratio <= 41) {
+                                    if (co2 <= 62) {
                                         return 1;
                                     } else {
-                                        if (features[2] <= 79) {
-                                            if (features[0] <= 171) {
+                                        if (light <= 79) {
+                                            if (temperature <= 171) {
                                                 return 0;
                                             } else {
                                                 return 1;
                                             }
                                         } else {
-                                            if (features[0] <= 169) {
+                                            if (temperature <= 169) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -8801,15 +8806,15 @@ int predict_tree_48(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[0] <= 204) {
-                                    if (features[1] <= 112) {
+                                if (temperature <= 204) {
+                                    if (humidity <= 112) {
                                         return 1;
                                     } else {
-                                        if (features[0] <= 192) {
+                                        if (temperature <= 192) {
                                             return 0;
                                         } else {
-                                            if (features[4] <= 115) {
-                                                if (features[3] <= 99) {
+                                            if (humidity_ratio <= 115) {
+                                                if (co2 <= 99) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -8820,25 +8825,25 @@ int predict_tree_48(unsigned short features[]) {
                                         }
                                     }
                                 } else {
-                                    if (features[2] <= 75) {
-                                        if (features[3] <= 83) {
+                                    if (light <= 75) {
+                                        if (co2 <= 83) {
                                             return 0;
                                         } else {
                                             return 1;
                                         }
                                     } else {
-                                        if (features[1] <= 110) {
-                                            if (features[2] <= 78) {
+                                        if (humidity <= 110) {
+                                            if (light <= 78) {
                                                 return 0;
                                             } else {
-                                                if (features[1] <= 106) {
-                                                    if (features[3] <= 63) {
+                                                if (humidity <= 106) {
+                                                    if (co2 <= 63) {
                                                         return 1;
                                                     } else {
                                                         return 0;
                                                     }
                                                 } else {
-                                                    if (features[3] <= 76) {
+                                                    if (co2 <= 76) {
                                                         return 0;
                                                     } else {
                                                         return 1;
@@ -8846,25 +8851,25 @@ int predict_tree_48(unsigned short features[]) {
                                                 }
                                             }
                                         } else {
-                                            if (features[2] <= 90) {
-                                                if (features[4] <= 124) {
-                                                    if (features[2] <= 86) {
+                                            if (light <= 90) {
+                                                if (humidity_ratio <= 124) {
+                                                    if (light <= 86) {
                                                         return 1;
                                                     } else {
-                                                        if (features[4] <= 124) {
+                                                        if (humidity_ratio <= 124) {
                                                             return 1;
                                                         } else {
                                                             return 0;
                                                         }
                                                     }
                                                 } else {
-                                                    if (features[2] <= 88) {
+                                                    if (light <= 88) {
                                                         return 0;
                                                     } else {
-                                                        if (features[1] <= 115) {
+                                                        if (humidity <= 115) {
                                                             return 0;
                                                         } else {
-                                                            if (features[3] <= 110) {
+                                                            if (co2 <= 110) {
                                                                 return 1;
                                                             } else {
                                                                 return 0;
@@ -8883,7 +8888,7 @@ int predict_tree_48(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[4] <= 121) {
+                        if (humidity_ratio <= 121) {
                             return 1;
                         } else {
                             return 0;
@@ -8894,16 +8899,16 @@ int predict_tree_48(unsigned short features[]) {
         }
     }
 }
-int predict_tree_49(unsigned short features[]) {
-    if (features[0] <= 138) {
-        if (features[2] <= 54) {
+int predict_tree_49(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (temperature <= 138) {
+        if (light <= 54) {
             return 0;
         } else {
-            if (features[4] <= 15) {
-                if (features[2] <= 69) {
+            if (humidity_ratio <= 15) {
+                if (light <= 69) {
                     return 1;
                 } else {
-                    if (features[3] <= 7) {
+                    if (co2 <= 7) {
                         return 0;
                     } else {
                         return 1;
@@ -8914,20 +8919,20 @@ int predict_tree_49(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 61) {
-            if (features[4] <= 247) {
-                if (features[1] <= 34) {
+        if (light <= 61) {
+            if (humidity_ratio <= 247) {
+                if (humidity <= 34) {
                     return 0;
                 } else {
-                    if (features[1] <= 35) {
+                    if (humidity <= 35) {
                         return 1;
                     } else {
-                        if (features[0] <= 238) {
-                            if (features[2] <= 27) {
-                                if (features[4] <= 173) {
+                        if (temperature <= 238) {
+                            if (light <= 27) {
+                                if (humidity_ratio <= 173) {
                                     return 0;
                                 } else {
-                                    if (features[3] <= 143) {
+                                    if (co2 <= 143) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -8945,11 +8950,11 @@ int predict_tree_49(unsigned short features[]) {
                 return 1;
             }
         } else {
-            if (features[0] <= 200) {
-                if (features[4] <= 41) {
-                    if (features[1] <= 42) {
-                        if (features[0] <= 163) {
-                            if (features[0] <= 159) {
+            if (temperature <= 200) {
+                if (humidity_ratio <= 41) {
+                    if (humidity <= 42) {
+                        if (temperature <= 163) {
+                            if (temperature <= 159) {
                                 return 1;
                             } else {
                                 return 0;
@@ -8958,13 +8963,13 @@ int predict_tree_49(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[4] <= 41) {
-                            if (features[1] <= 42) {
-                                if (features[0] <= 170) {
-                                    if (features[2] <= 78) {
+                        if (humidity_ratio <= 41) {
+                            if (humidity <= 42) {
+                                if (temperature <= 170) {
+                                    if (light <= 78) {
                                         return 1;
                                     } else {
-                                        if (features[2] <= 78) {
+                                        if (light <= 78) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -8977,7 +8982,7 @@ int predict_tree_49(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[2] <= 79) {
+                            if (light <= 79) {
                                 return 1;
                             } else {
                                 return 0;
@@ -8985,25 +8990,25 @@ int predict_tree_49(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[0] <= 190) {
+                    if (temperature <= 190) {
                         return 1;
                     } else {
-                        if (features[0] <= 191) {
-                            if (features[4] <= 112) {
+                        if (temperature <= 191) {
+                            if (humidity_ratio <= 112) {
                                 return 1;
                             } else {
-                                if (features[2] <= 75) {
+                                if (light <= 75) {
                                     return 1;
                                 } else {
                                     return 0;
                                 }
                             }
                         } else {
-                            if (features[4] <= 114) {
+                            if (humidity_ratio <= 114) {
                                 return 1;
                             } else {
-                                if (features[4] <= 115) {
-                                    if (features[3] <= 101) {
+                                if (humidity_ratio <= 115) {
+                                    if (co2 <= 101) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -9016,9 +9021,9 @@ int predict_tree_49(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 76) {
-                    if (features[0] <= 203) {
-                        if (features[1] <= 112) {
+                if (co2 <= 76) {
+                    if (temperature <= 203) {
+                        if (humidity <= 112) {
                             return 0;
                         } else {
                             return 1;
@@ -9027,23 +9032,23 @@ int predict_tree_49(unsigned short features[]) {
                         return 0;
                     }
                 } else {
-                    if (features[3] <= 97) {
-                        if (features[0] <= 223) {
+                    if (co2 <= 97) {
+                        if (temperature <= 223) {
                             return 1;
                         } else {
-                            if (features[2] <= 91) {
+                            if (light <= 91) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         }
                     } else {
-                        if (features[0] <= 230) {
-                            if (features[3] <= 103) {
-                                if (features[3] <= 103) {
+                        if (temperature <= 230) {
+                            if (co2 <= 103) {
+                                if (co2 <= 103) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 126) {
+                                    if (humidity_ratio <= 126) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -9053,9 +9058,9 @@ int predict_tree_49(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[3] <= 111) {
-                                if (features[2] <= 89) {
-                                    if (features[2] <= 87) {
+                            if (co2 <= 111) {
+                                if (light <= 89) {
+                                    if (light <= 87) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -9073,21 +9078,21 @@ int predict_tree_49(unsigned short features[]) {
         }
     }
 }
-int predict_tree_50(unsigned short features[]) {
-    if (features[0] <= 113) {
-        if (features[1] <= 125) {
-            if (features[1] <= 69) {
-                if (features[4] <= 52) {
-                    if (features[2] <= 50) {
+int predict_tree_50(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (temperature <= 113) {
+        if (humidity <= 125) {
+            if (humidity <= 69) {
+                if (humidity_ratio <= 52) {
+                    if (light <= 50) {
                         return 0;
                     } else {
-                        if (features[3] <= 7) {
+                        if (co2 <= 7) {
                             return 0;
                         } else {
-                            if (features[4] <= 48) {
+                            if (humidity_ratio <= 48) {
                                 return 1;
                             } else {
-                                if (features[1] <= 66) {
+                                if (humidity <= 66) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -9099,15 +9104,15 @@ int predict_tree_50(unsigned short features[]) {
                     return 1;
                 }
             } else {
-                if (features[3] <= 13) {
-                    if (features[2] <= 67) {
-                        if (features[0] <= 32) {
+                if (co2 <= 13) {
+                    if (light <= 67) {
+                        if (temperature <= 32) {
                             return 0;
                         } else {
-                            if (features[2] <= 41) {
+                            if (light <= 41) {
                                 return 0;
                             } else {
-                                if (features[4] <= 76) {
+                                if (humidity_ratio <= 76) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -9122,30 +9127,30 @@ int predict_tree_50(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 58) {
+            if (light <= 58) {
                 return 0;
             } else {
                 return 1;
             }
         }
     } else {
-        if (features[4] <= 37) {
-            if (features[2] <= 61) {
-                if (features[4] <= 28) {
+        if (humidity_ratio <= 37) {
+            if (light <= 61) {
+                if (humidity_ratio <= 28) {
                     return 0;
                 } else {
-                    if (features[2] <= 31) {
+                    if (light <= 31) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[4] <= 27) {
+                if (humidity_ratio <= 27) {
                     return 1;
                 } else {
-                    if (features[1] <= 30) {
-                        if (features[0] <= 164) {
+                    if (humidity <= 30) {
+                        if (temperature <= 164) {
                             return 0;
                         } else {
                             return 1;
@@ -9156,27 +9161,27 @@ int predict_tree_50(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 42) {
+            if (light <= 42) {
                 return 0;
             } else {
-                if (features[2] <= 86) {
-                    if (features[0] <= 204) {
-                        if (features[1] <= 43) {
-                            if (features[3] <= 63) {
+                if (light <= 86) {
+                    if (temperature <= 204) {
+                        if (humidity <= 43) {
+                            if (co2 <= 63) {
                                 return 1;
                             } else {
-                                if (features[3] <= 64) {
+                                if (co2 <= 64) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             }
                         } else {
-                            if (features[4] <= 115) {
-                                if (features[4] <= 115) {
-                                    if (features[1] <= 112) {
-                                        if (features[3] <= 58) {
-                                            if (features[2] <= 74) {
+                            if (humidity_ratio <= 115) {
+                                if (humidity_ratio <= 115) {
+                                    if (humidity <= 112) {
+                                        if (co2 <= 58) {
+                                            if (light <= 74) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -9185,10 +9190,10 @@ int predict_tree_50(unsigned short features[]) {
                                             return 1;
                                         }
                                     } else {
-                                        if (features[0] <= 192) {
+                                        if (temperature <= 192) {
                                             return 0;
                                         } else {
-                                            if (features[3] <= 99) {
+                                            if (co2 <= 99) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -9203,16 +9208,16 @@ int predict_tree_50(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[4] <= 112) {
-                            if (features[2] <= 73) {
+                        if (humidity_ratio <= 112) {
+                            if (light <= 73) {
                                 return 1;
                             } else {
-                                if (features[1] <= 106) {
-                                    if (features[4] <= 110) {
+                                if (humidity <= 106) {
+                                    if (humidity_ratio <= 110) {
                                         return 0;
                                     } else {
-                                        if (features[2] <= 75) {
-                                            if (features[2] <= 74) {
+                                        if (light <= 75) {
+                                            if (light <= 74) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -9230,26 +9235,26 @@ int predict_tree_50(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[1] <= 106) {
+                    if (humidity <= 106) {
                         return 1;
                     } else {
-                        if (features[3] <= 97) {
+                        if (co2 <= 97) {
                             return 0;
                         } else {
-                            if (features[0] <= 228) {
+                            if (temperature <= 228) {
                                 return 1;
                             } else {
-                                if (features[1] <= 114) {
+                                if (humidity <= 114) {
                                     return 0;
                                 } else {
-                                    if (features[1] <= 116) {
-                                        if (features[3] <= 110) {
+                                    if (humidity <= 116) {
+                                        if (co2 <= 110) {
                                             return 0;
                                         } else {
-                                            if (features[3] <= 110) {
+                                            if (co2 <= 110) {
                                                 return 1;
                                             } else {
-                                                if (features[4] <= 128) {
+                                                if (humidity_ratio <= 128) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -9268,33 +9273,33 @@ int predict_tree_50(unsigned short features[]) {
         }
     }
 }
-int predict_tree_51(unsigned short features[]) {
-    if (features[3] <= 28) {
-        if (features[0] <= 106) {
-            if (features[0] <= 32) {
-                if (features[2] <= 63) {
+int predict_tree_51(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 28) {
+        if (temperature <= 106) {
+            if (temperature <= 32) {
+                if (light <= 63) {
                     return 0;
                 } else {
                     return 1;
                 }
             } else {
-                if (features[1] <= 119) {
-                    if (features[3] <= 13) {
-                        if (features[1] <= 29) {
-                            if (features[3] <= 7) {
+                if (humidity <= 119) {
+                    if (co2 <= 13) {
+                        if (humidity <= 29) {
+                            if (co2 <= 7) {
                                 return 0;
                             } else {
-                                if (features[1] <= 25) {
-                                    if (features[2] <= 68) {
+                                if (humidity <= 25) {
+                                    if (light <= 68) {
                                         return 0;
                                     } else {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[1] <= 28) {
+                                    if (humidity <= 28) {
                                         return 0;
                                     } else {
-                                        if (features[2] <= 34) {
+                                        if (light <= 34) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -9306,11 +9311,11 @@ int predict_tree_51(unsigned short features[]) {
                             return 0;
                         }
                     } else {
-                        if (features[4] <= 11) {
+                        if (humidity_ratio <= 11) {
                             return 1;
                         } else {
-                            if (features[0] <= 91) {
-                                if (features[2] <= 34) {
+                            if (temperature <= 91) {
+                                if (light <= 34) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -9321,11 +9326,11 @@ int predict_tree_51(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[2] <= 56) {
+                    if (light <= 56) {
                         return 0;
                     } else {
-                        if (features[4] <= 82) {
-                            if (features[4] <= 77) {
+                        if (humidity_ratio <= 82) {
+                            if (humidity_ratio <= 77) {
                                 return 1;
                             } else {
                                 return 0;
@@ -9337,23 +9342,23 @@ int predict_tree_51(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[3] <= 13) {
-                if (features[1] <= 55) {
+            if (co2 <= 13) {
+                if (humidity <= 55) {
                     return 0;
                 } else {
-                    if (features[4] <= 47) {
-                        if (features[3] <= 7) {
+                    if (humidity_ratio <= 47) {
+                        if (co2 <= 7) {
                             return 0;
                         } else {
-                            if (features[2] <= 29) {
+                            if (light <= 29) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         }
                     } else {
-                        if (features[1] <= 68) {
-                            if (features[0] <= 107) {
+                        if (humidity <= 68) {
+                            if (temperature <= 107) {
                                 return 0;
                             } else {
                                 return 1;
@@ -9364,8 +9369,8 @@ int predict_tree_51(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[0] <= 129) {
-                    if (features[2] <= 33) {
+                if (temperature <= 129) {
+                    if (light <= 33) {
                         return 0;
                     } else {
                         return 1;
@@ -9376,27 +9381,27 @@ int predict_tree_51(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 31) {
-            if (features[3] <= 131) {
+        if (light <= 31) {
+            if (co2 <= 131) {
                 return 0;
             } else {
-                if (features[3] <= 132) {
+                if (co2 <= 132) {
                     return 1;
                 } else {
                     return 0;
                 }
             }
         } else {
-            if (features[0] <= 230) {
-                if (features[3] <= 76) {
-                    if (features[4] <= 107) {
-                        if (features[4] <= 42) {
-                            if (features[3] <= 62) {
-                                if (features[2] <= 87) {
+            if (temperature <= 230) {
+                if (co2 <= 76) {
+                    if (humidity_ratio <= 107) {
+                        if (humidity_ratio <= 42) {
+                            if (co2 <= 62) {
+                                if (light <= 87) {
                                     return 1;
                                 } else {
-                                    if (features[2] <= 87) {
-                                        if (features[4] <= 29) {
+                                    if (light <= 87) {
+                                        if (humidity_ratio <= 29) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -9406,21 +9411,21 @@ int predict_tree_51(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[3] <= 62) {
-                                    if (features[2] <= 78) {
+                                if (co2 <= 62) {
+                                    if (light <= 78) {
                                         return 1;
                                     } else {
-                                        if (features[0] <= 171) {
+                                        if (temperature <= 171) {
                                             return 0;
                                         } else {
                                             return 1;
                                         }
                                     }
                                 } else {
-                                    if (features[3] <= 64) {
+                                    if (co2 <= 64) {
                                         return 1;
                                     } else {
-                                        if (features[4] <= 41) {
+                                        if (humidity_ratio <= 41) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -9432,15 +9437,15 @@ int predict_tree_51(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[0] <= 201) {
+                        if (temperature <= 201) {
                             return 1;
                         } else {
-                            if (features[1] <= 113) {
-                                if (features[4] <= 111) {
-                                    if (features[2] <= 78) {
+                            if (humidity <= 113) {
+                                if (humidity_ratio <= 111) {
+                                    if (light <= 78) {
                                         return 0;
                                     } else {
-                                        if (features[3] <= 63) {
+                                        if (co2 <= 63) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -9455,14 +9460,14 @@ int predict_tree_51(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 100) {
-                        if (features[3] <= 99) {
+                    if (co2 <= 100) {
+                        if (co2 <= 99) {
                             return 1;
                         } else {
-                            if (features[1] <= 112) {
+                            if (humidity <= 112) {
                                 return 1;
                             } else {
-                                if (features[2] <= 75) {
+                                if (light <= 75) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -9474,11 +9479,11 @@ int predict_tree_51(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[2] <= 89) {
+                if (light <= 89) {
                     return 1;
                 } else {
-                    if (features[1] <= 115) {
-                        if (features[4] <= 124) {
+                    if (humidity <= 115) {
+                        if (humidity_ratio <= 124) {
                             return 0;
                         } else {
                             return 1;
@@ -9491,35 +9496,35 @@ int predict_tree_51(unsigned short features[]) {
         }
     }
 }
-int predict_tree_52(unsigned short features[]) {
-    if (features[3] <= 33) {
-        if (features[2] <= 62) {
+int predict_tree_52(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 33) {
+        if (light <= 62) {
             return 0;
         } else {
-            if (features[1] <= 26) {
-                if (features[3] <= 7) {
-                    if (features[1] <= 22) {
+            if (humidity <= 26) {
+                if (co2 <= 7) {
+                    if (humidity <= 22) {
                         return 1;
                     } else {
                         return 0;
                     }
                 } else {
-                    if (features[4] <= 3) {
+                    if (humidity_ratio <= 3) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[0] <= 34) {
-                    if (features[3] <= 11) {
+                if (temperature <= 34) {
+                    if (co2 <= 11) {
                         return 1;
                     } else {
                         return 0;
                     }
                 } else {
-                    if (features[3] <= 10) {
-                        if (features[3] <= 9) {
+                    if (co2 <= 10) {
+                        if (co2 <= 9) {
                             return 1;
                         } else {
                             return 0;
@@ -9531,19 +9536,19 @@ int predict_tree_52(unsigned short features[]) {
             }
         }
     } else {
-        if (features[1] <= 190) {
-            if (features[2] <= 31) {
+        if (humidity <= 190) {
+            if (light <= 31) {
                 return 0;
             } else {
-                if (features[0] <= 241) {
-                    if (features[3] <= 68) {
-                        if (features[4] <= 107) {
-                            if (features[1] <= 30) {
-                                if (features[1] <= 29) {
+                if (temperature <= 241) {
+                    if (co2 <= 68) {
+                        if (humidity_ratio <= 107) {
+                            if (humidity <= 30) {
+                                if (humidity <= 29) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 27) {
-                                        if (features[2] <= 86) {
+                                    if (humidity_ratio <= 27) {
+                                        if (light <= 86) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -9553,18 +9558,18 @@ int predict_tree_52(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[2] <= 78) {
+                                if (light <= 78) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 62) {
+                                    if (co2 <= 62) {
                                         return 1;
                                     } else {
-                                        if (features[1] <= 43) {
-                                            if (features[0] <= 171) {
-                                                if (features[3] <= 62) {
+                                        if (humidity <= 43) {
+                                            if (temperature <= 171) {
+                                                if (co2 <= 62) {
                                                     return 0;
                                                 } else {
-                                                    if (features[3] <= 63) {
+                                                    if (co2 <= 63) {
                                                         return 1;
                                                     } else {
                                                         return 0;
@@ -9580,12 +9585,12 @@ int predict_tree_52(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[1] <= 109) {
-                                if (features[0] <= 200) {
+                            if (humidity <= 109) {
+                                if (temperature <= 200) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 63) {
-                                        if (features[2] <= 78) {
+                                    if (co2 <= 63) {
+                                        if (light <= 78) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -9599,13 +9604,13 @@ int predict_tree_52(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[4] <= 112) {
+                        if (humidity_ratio <= 112) {
                             return 1;
                         } else {
-                            if (features[2] <= 84) {
-                                if (features[4] <= 115) {
-                                    if (features[3] <= 100) {
-                                        if (features[1] <= 113) {
+                            if (light <= 84) {
+                                if (humidity_ratio <= 115) {
+                                    if (co2 <= 100) {
+                                        if (humidity <= 113) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -9617,20 +9622,20 @@ int predict_tree_52(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[1] <= 109) {
+                                if (humidity <= 109) {
                                     return 0;
                                 } else {
-                                    if (features[1] <= 115) {
-                                        if (features[1] <= 112) {
+                                    if (humidity <= 115) {
+                                        if (humidity <= 112) {
                                             return 1;
                                         } else {
-                                            if (features[0] <= 226) {
+                                            if (temperature <= 226) {
                                                 return 1;
                                             } else {
-                                                if (features[2] <= 86) {
+                                                if (light <= 86) {
                                                     return 1;
                                                 } else {
-                                                    if (features[0] <= 232) {
+                                                    if (temperature <= 232) {
                                                         return 0;
                                                     } else {
                                                         return 1;
@@ -9639,10 +9644,10 @@ int predict_tree_52(unsigned short features[]) {
                                             }
                                         }
                                     } else {
-                                        if (features[0] <= 230) {
+                                        if (temperature <= 230) {
                                             return 1;
                                         } else {
-                                            if (features[1] <= 117) {
+                                            if (humidity <= 117) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -9654,7 +9659,7 @@ int predict_tree_52(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 92) {
+                    if (co2 <= 92) {
                         return 1;
                     } else {
                         return 0;
@@ -9662,18 +9667,18 @@ int predict_tree_52(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[3] <= 127) {
-                if (features[3] <= 120) {
+            if (co2 <= 127) {
+                if (co2 <= 120) {
                     return 0;
                 } else {
-                    if (features[2] <= 38) {
+                    if (light <= 38) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[2] <= 27) {
+                if (light <= 27) {
                     return 0;
                 } else {
                     return 1;
@@ -9682,18 +9687,18 @@ int predict_tree_52(unsigned short features[]) {
         }
     }
 }
-int predict_tree_53(unsigned short features[]) {
-    if (features[3] <= 27) {
-        if (features[4] <= 92) {
-            if (features[3] <= 13) {
-                if (features[4] <= 11) {
-                    if (features[3] <= 8) {
-                        if (features[2] <= 68) {
+int predict_tree_53(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 27) {
+        if (humidity_ratio <= 92) {
+            if (co2 <= 13) {
+                if (humidity_ratio <= 11) {
+                    if (co2 <= 8) {
+                        if (light <= 68) {
                             return 0;
                         } else {
-                            if (features[1] <= 24) {
-                                if (features[0] <= 73) {
-                                    if (features[0] <= 70) {
+                            if (humidity <= 24) {
+                                if (temperature <= 73) {
+                                    if (temperature <= 70) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -9706,10 +9711,10 @@ int predict_tree_53(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[1] <= 27) {
+                        if (humidity <= 27) {
                             return 1;
                         } else {
-                            if (features[3] <= 10) {
+                            if (co2 <= 10) {
                                 return 0;
                             } else {
                                 return 1;
@@ -9717,13 +9722,13 @@ int predict_tree_53(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[2] <= 67) {
-                        if (features[3] <= 10) {
-                            if (features[2] <= 59) {
+                    if (light <= 67) {
+                        if (co2 <= 10) {
+                            if (light <= 59) {
                                 return 0;
                             } else {
-                                if (features[2] <= 59) {
-                                    if (features[3] <= 7) {
+                                if (light <= 59) {
+                                    if (co2 <= 7) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -9733,10 +9738,10 @@ int predict_tree_53(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[1] <= 116) {
+                            if (humidity <= 116) {
                                 return 0;
                             } else {
-                                if (features[4] <= 77) {
+                                if (humidity_ratio <= 77) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -9744,7 +9749,7 @@ int predict_tree_53(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[2] <= 70) {
+                        if (light <= 70) {
                             return 1;
                         } else {
                             return 0;
@@ -9752,7 +9757,7 @@ int predict_tree_53(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[2] <= 32) {
+                if (light <= 32) {
                     return 0;
                 } else {
                     return 1;
@@ -9762,31 +9767,31 @@ int predict_tree_53(unsigned short features[]) {
             return 0;
         }
     } else {
-        if (features[1] <= 189) {
-            if (features[2] <= 31) {
-                if (features[2] <= 5) {
+        if (humidity <= 189) {
+            if (light <= 31) {
+                if (light <= 5) {
                     return 0;
                 } else {
-                    if (features[4] <= 169) {
+                    if (humidity_ratio <= 169) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[0] <= 230) {
-                    if (features[1] <= 104) {
-                        if (features[1] <= 42) {
-                            if (features[1] <= 42) {
-                                if (features[0] <= 163) {
-                                    if (features[4] <= 27) {
-                                        if (features[2] <= 87) {
+                if (temperature <= 230) {
+                    if (humidity <= 104) {
+                        if (humidity <= 42) {
+                            if (humidity <= 42) {
+                                if (temperature <= 163) {
+                                    if (humidity_ratio <= 27) {
+                                        if (light <= 87) {
                                             return 1;
                                         } else {
                                             return 0;
                                         }
                                     } else {
-                                        if (features[4] <= 28) {
+                                        if (humidity_ratio <= 28) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -9796,10 +9801,10 @@ int predict_tree_53(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[3] <= 62) {
+                                if (co2 <= 62) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 40) {
+                                    if (humidity_ratio <= 40) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -9810,22 +9815,22 @@ int predict_tree_53(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[3] <= 76) {
-                            if (features[2] <= 74) {
+                        if (co2 <= 76) {
+                            if (light <= 74) {
                                 return 1;
                             } else {
-                                if (features[2] <= 80) {
-                                    if (features[3] <= 61) {
+                                if (light <= 80) {
+                                    if (co2 <= 61) {
                                         return 0;
                                     } else {
-                                        if (features[4] <= 111) {
+                                        if (humidity_ratio <= 111) {
                                             return 1;
                                         } else {
                                             return 0;
                                         }
                                     }
                                 } else {
-                                    if (features[2] <= 80) {
+                                    if (light <= 80) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -9833,12 +9838,12 @@ int predict_tree_53(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[1] <= 113) {
-                                if (features[1] <= 113) {
-                                    if (features[1] <= 112) {
+                            if (humidity <= 113) {
+                                if (humidity <= 113) {
+                                    if (humidity <= 112) {
                                         return 1;
                                     } else {
-                                        if (features[4] <= 122) {
+                                        if (humidity_ratio <= 122) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -9853,21 +9858,21 @@ int predict_tree_53(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[2] <= 86) {
+                    if (light <= 86) {
                         return 1;
                     } else {
-                        if (features[3] <= 110) {
-                            if (features[3] <= 97) {
+                        if (co2 <= 110) {
+                            if (co2 <= 97) {
                                 return 0;
                             } else {
-                                if (features[1] <= 113) {
+                                if (humidity <= 113) {
                                     return 1;
                                 } else {
                                     return 0;
                                 }
                             }
                         } else {
-                            if (features[2] <= 89) {
+                            if (light <= 89) {
                                 return 1;
                             } else {
                                 return 0;
@@ -9877,7 +9882,7 @@ int predict_tree_53(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 27) {
+            if (light <= 27) {
                 return 0;
             } else {
                 return 1;
@@ -9885,25 +9890,25 @@ int predict_tree_53(unsigned short features[]) {
         }
     }
 }
-int predict_tree_54(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[4] <= 247) {
-            if (features[0] <= 238) {
-                if (features[3] <= 40) {
-                    if (features[2] <= 59) {
+int predict_tree_54(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (humidity_ratio <= 247) {
+            if (temperature <= 238) {
+                if (co2 <= 40) {
+                    if (light <= 59) {
                         return 0;
                     } else {
-                        if (features[4] <= 34) {
+                        if (humidity_ratio <= 34) {
                             return 0;
                         } else {
                             return 1;
                         }
                     }
                 } else {
-                    if (features[3] <= 40) {
+                    if (co2 <= 40) {
                         return 1;
                     } else {
-                        if (features[2] <= 31) {
+                        if (light <= 31) {
                             return 0;
                         } else {
                             return 1;
@@ -9911,7 +9916,7 @@ int predict_tree_54(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 49) {
+                if (co2 <= 49) {
                     return 0;
                 } else {
                     return 1;
@@ -9921,31 +9926,31 @@ int predict_tree_54(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[0] <= 230) {
-            if (features[3] <= 7) {
-                if (features[4] <= 3) {
-                    if (features[3] <= 4) {
+        if (temperature <= 230) {
+            if (co2 <= 7) {
+                if (humidity_ratio <= 3) {
+                    if (co2 <= 4) {
                         return 0;
                     } else {
                         return 1;
                     }
                 } else {
-                    if (features[0] <= 70) {
+                    if (temperature <= 70) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[3] <= 76) {
-                    if (features[4] <= 107) {
-                        if (features[2] <= 79) {
-                            if (features[1] <= 121) {
-                                if (features[2] <= 70) {
-                                    if (features[2] <= 70) {
+                if (co2 <= 76) {
+                    if (humidity_ratio <= 107) {
+                        if (light <= 79) {
+                            if (humidity <= 121) {
+                                if (light <= 70) {
+                                    if (light <= 70) {
                                         return 1;
                                     } else {
-                                        if (features[1] <= 49) {
+                                        if (humidity <= 49) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -9955,21 +9960,21 @@ int predict_tree_54(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[1] <= 124) {
+                                if (humidity <= 124) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             }
                         } else {
-                            if (features[3] <= 38) {
-                                if (features[1] <= 29) {
+                            if (co2 <= 38) {
+                                if (humidity <= 29) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 26) {
+                                    if (humidity_ratio <= 26) {
                                         return 1;
                                     } else {
-                                        if (features[3] <= 37) {
+                                        if (co2 <= 37) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -9977,10 +9982,10 @@ int predict_tree_54(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[3] <= 63) {
+                                if (co2 <= 63) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 64) {
+                                    if (co2 <= 64) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -9989,9 +9994,9 @@ int predict_tree_54(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[2] <= 74) {
-                            if (features[4] <= 112) {
-                                if (features[4] <= 112) {
+                        if (light <= 74) {
+                            if (humidity_ratio <= 112) {
+                                if (humidity_ratio <= 112) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -10000,8 +10005,8 @@ int predict_tree_54(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[1] <= 106) {
-                                if (features[3] <= 62) {
+                            if (humidity <= 106) {
+                                if (co2 <= 62) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -10012,24 +10017,24 @@ int predict_tree_54(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[1] <= 113) {
-                        if (features[3] <= 99) {
+                    if (humidity <= 113) {
+                        if (co2 <= 99) {
                             return 1;
                         } else {
-                            if (features[1] <= 113) {
-                                if (features[1] <= 112) {
+                            if (humidity <= 113) {
+                                if (humidity <= 112) {
                                     return 1;
                                 } else {
-                                    if (features[1] <= 112) {
+                                    if (humidity <= 112) {
                                         return 0;
                                     } else {
-                                        if (features[4] <= 114) {
+                                        if (humidity_ratio <= 114) {
                                             return 0;
                                         } else {
-                                            if (features[2] <= 75) {
+                                            if (light <= 75) {
                                                 return 1;
                                             } else {
-                                                if (features[3] <= 100) {
+                                                if (co2 <= 100) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -10048,7 +10053,7 @@ int predict_tree_54(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 105) {
+            if (light <= 105) {
                 return 0;
             } else {
                 return 1;
@@ -10056,17 +10061,17 @@ int predict_tree_54(unsigned short features[]) {
         }
     }
 }
-int predict_tree_55(unsigned short features[]) {
-    if (features[3] <= 27) {
-        if (features[2] <= 65) {
-            if (features[0] <= 106) {
+int predict_tree_55(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 27) {
+        if (light <= 65) {
+            if (temperature <= 106) {
                 return 0;
             } else {
-                if (features[4] <= 43) {
+                if (humidity_ratio <= 43) {
                     return 0;
                 } else {
-                    if (features[4] <= 47) {
-                        if (features[2] <= 29) {
+                    if (humidity_ratio <= 47) {
+                        if (light <= 29) {
                             return 0;
                         } else {
                             return 1;
@@ -10077,17 +10082,17 @@ int predict_tree_55(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[3] <= 7) {
-                if (features[1] <= 22) {
+            if (co2 <= 7) {
+                if (humidity <= 22) {
                     return 1;
                 } else {
                     return 0;
                 }
             } else {
-                if (features[1] <= 120) {
+                if (humidity <= 120) {
                     return 1;
                 } else {
-                    if (features[0] <= 36) {
+                    if (temperature <= 36) {
                         return 0;
                     } else {
                         return 1;
@@ -10096,32 +10101,32 @@ int predict_tree_55(unsigned short features[]) {
             }
         }
     } else {
-        if (features[0] <= 113) {
-            if (features[2] <= 32) {
+        if (temperature <= 113) {
+            if (light <= 32) {
                 return 0;
             } else {
                 return 1;
             }
         } else {
-            if (features[2] <= 42) {
-                if (features[3] <= 132) {
+            if (light <= 42) {
+                if (co2 <= 132) {
                     return 0;
                 } else {
-                    if (features[1] <= 205) {
+                    if (humidity <= 205) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[0] <= 234) {
-                    if (features[4] <= 108) {
-                        if (features[3] <= 38) {
-                            if (features[1] <= 31) {
-                                if (features[1] <= 29) {
+                if (temperature <= 234) {
+                    if (humidity_ratio <= 108) {
+                        if (co2 <= 38) {
+                            if (humidity <= 31) {
+                                if (humidity <= 29) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 27) {
+                                    if (humidity_ratio <= 27) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -10134,10 +10139,10 @@ int predict_tree_55(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[3] <= 79) {
-                            if (features[4] <= 116) {
-                                if (features[4] <= 111) {
-                                    if (features[3] <= 61) {
+                        if (co2 <= 79) {
+                            if (humidity_ratio <= 116) {
+                                if (humidity_ratio <= 111) {
+                                    if (co2 <= 61) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -10149,9 +10154,9 @@ int predict_tree_55(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[0] <= 228) {
-                                if (features[4] <= 115) {
-                                    if (features[1] <= 113) {
+                            if (temperature <= 228) {
+                                if (humidity_ratio <= 115) {
+                                    if (humidity <= 113) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -10160,7 +10165,7 @@ int predict_tree_55(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[2] <= 88) {
+                                if (light <= 88) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -10169,7 +10174,7 @@ int predict_tree_55(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[4] <= 122) {
+                    if (humidity_ratio <= 122) {
                         return 1;
                     } else {
                         return 0;
@@ -10179,24 +10184,24 @@ int predict_tree_55(unsigned short features[]) {
         }
     }
 }
-int predict_tree_56(unsigned short features[]) {
-    if (features[0] <= 113) {
-        if (features[2] <= 58) {
+int predict_tree_56(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (temperature <= 113) {
+        if (light <= 58) {
             return 0;
         } else {
-            if (features[1] <= 24) {
-                if (features[3] <= 7) {
+            if (humidity <= 24) {
+                if (co2 <= 7) {
                     return 0;
                 } else {
-                    if (features[4] <= 3) {
+                    if (humidity_ratio <= 3) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[0] <= 36) {
-                    if (features[2] <= 67) {
+                if (temperature <= 36) {
+                    if (light <= 67) {
                         return 0;
                     } else {
                         return 1;
@@ -10207,17 +10212,17 @@ int predict_tree_56(unsigned short features[]) {
             }
         }
     } else {
-        if (features[4] <= 32) {
-            if (features[2] <= 65) {
+        if (humidity_ratio <= 32) {
+            if (light <= 65) {
                 return 0;
             } else {
-                if (features[0] <= 159) {
+                if (temperature <= 159) {
                     return 1;
                 } else {
-                    if (features[1] <= 29) {
+                    if (humidity <= 29) {
                         return 1;
                     } else {
-                        if (features[4] <= 27) {
+                        if (humidity_ratio <= 27) {
                             return 0;
                         } else {
                             return 1;
@@ -10226,35 +10231,35 @@ int predict_tree_56(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 31) {
-                if (features[1] <= 188) {
+            if (light <= 31) {
+                if (humidity <= 188) {
                     return 0;
                 } else {
-                    if (features[4] <= 175) {
+                    if (humidity_ratio <= 175) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[3] <= 100) {
-                    if (features[0] <= 204) {
-                        if (features[3] <= 99) {
-                            if (features[1] <= 43) {
-                                if (features[3] <= 63) {
+                if (co2 <= 100) {
+                    if (temperature <= 204) {
+                        if (co2 <= 99) {
+                            if (humidity <= 43) {
+                                if (co2 <= 63) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 64) {
+                                    if (co2 <= 64) {
                                         return 0;
                                     } else {
                                         return 1;
                                     }
                                 }
                             } else {
-                                if (features[4] <= 108) {
+                                if (humidity_ratio <= 108) {
                                     return 1;
                                 } else {
-                                    if (features[1] <= 105) {
+                                    if (humidity <= 105) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -10262,8 +10267,8 @@ int predict_tree_56(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[1] <= 113) {
-                                if (features[0] <= 191) {
+                            if (humidity <= 113) {
+                                if (temperature <= 191) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -10273,29 +10278,29 @@ int predict_tree_56(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[2] <= 73) {
+                        if (light <= 73) {
                             return 1;
                         } else {
-                            if (features[1] <= 111) {
-                                if (features[2] <= 78) {
+                            if (humidity <= 111) {
+                                if (light <= 78) {
                                     return 0;
                                 } else {
-                                    if (features[0] <= 230) {
-                                        if (features[4] <= 113) {
-                                            if (features[2] <= 81) {
+                                    if (temperature <= 230) {
+                                        if (humidity_ratio <= 113) {
+                                            if (light <= 81) {
                                                 return 1;
                                             } else {
                                                 return 0;
                                             }
                                         } else {
-                                            if (features[3] <= 87) {
+                                            if (co2 <= 87) {
                                                 return 0;
                                             } else {
                                                 return 1;
                                             }
                                         }
                                     } else {
-                                        if (features[3] <= 92) {
+                                        if (co2 <= 92) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -10308,11 +10313,11 @@ int predict_tree_56(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[0] <= 230) {
+                    if (temperature <= 230) {
                         return 1;
                     } else {
-                        if (features[3] <= 111) {
-                            if (features[2] <= 89) {
+                        if (co2 <= 111) {
+                            if (light <= 89) {
                                 return 1;
                             } else {
                                 return 0;
@@ -10326,31 +10331,31 @@ int predict_tree_56(unsigned short features[]) {
         }
     }
 }
-int predict_tree_57(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[2] <= 35) {
-            if (features[4] <= 175) {
+int predict_tree_57(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (light <= 35) {
+            if (humidity_ratio <= 175) {
                 return 0;
             } else {
-                if (features[1] <= 200) {
+                if (humidity <= 200) {
                     return 1;
                 } else {
                     return 0;
                 }
             }
         } else {
-            if (features[3] <= 9) {
+            if (co2 <= 9) {
                 return 0;
             } else {
                 return 1;
             }
         }
     } else {
-        if (features[1] <= 25) {
-            if (features[1] <= 22) {
-                if (features[0] <= 74) {
-                    if (features[0] <= 73) {
-                        if (features[2] <= 69) {
+        if (humidity <= 25) {
+            if (humidity <= 22) {
+                if (temperature <= 74) {
+                    if (temperature <= 73) {
+                        if (light <= 69) {
                             return 0;
                         } else {
                             return 1;
@@ -10365,12 +10370,12 @@ int predict_tree_57(unsigned short features[]) {
                 return 0;
             }
         } else {
-            if (features[3] <= 13) {
-                if (features[2] <= 67) {
+            if (co2 <= 13) {
+                if (light <= 67) {
                     return 0;
                 } else {
-                    if (features[3] <= 10) {
-                        if (features[3] <= 9) {
+                    if (co2 <= 10) {
+                        if (co2 <= 9) {
                             return 1;
                         } else {
                             return 0;
@@ -10380,15 +10385,15 @@ int predict_tree_57(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[2] <= 86) {
-                    if (features[0] <= 200) {
-                        if (features[1] <= 43) {
-                            if (features[4] <= 41) {
-                                if (features[3] <= 62) {
+                if (light <= 86) {
+                    if (temperature <= 200) {
+                        if (humidity <= 43) {
+                            if (humidity_ratio <= 41) {
+                                if (co2 <= 62) {
                                     return 1;
                                 } else {
-                                    if (features[2] <= 79) {
-                                        if (features[4] <= 40) {
+                                    if (light <= 79) {
+                                        if (humidity_ratio <= 40) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -10398,24 +10403,24 @@ int predict_tree_57(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[0] <= 171) {
+                                if (temperature <= 171) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             }
                         } else {
-                            if (features[2] <= 76) {
+                            if (light <= 76) {
                                 return 1;
                             } else {
-                                if (features[4] <= 113) {
+                                if (humidity_ratio <= 113) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 113) {
+                                    if (humidity_ratio <= 113) {
                                         return 0;
                                     } else {
-                                        if (features[4] <= 115) {
-                                            if (features[3] <= 100) {
+                                        if (humidity_ratio <= 115) {
+                                            if (co2 <= 100) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -10428,15 +10433,15 @@ int predict_tree_57(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[4] <= 114) {
-                            if (features[4] <= 108) {
+                        if (humidity_ratio <= 114) {
+                            if (humidity_ratio <= 108) {
                                 return 1;
                             } else {
-                                if (features[3] <= 87) {
-                                    if (features[2] <= 80) {
+                                if (co2 <= 87) {
+                                    if (light <= 80) {
                                         return 0;
                                     } else {
-                                        if (features[3] <= 63) {
+                                        if (co2 <= 63) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -10451,13 +10456,13 @@ int predict_tree_57(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[0] <= 230) {
-                        if (features[4] <= 85) {
-                            if (features[4] <= 27) {
-                                if (features[1] <= 29) {
+                    if (temperature <= 230) {
+                        if (humidity_ratio <= 85) {
+                            if (humidity_ratio <= 27) {
+                                if (humidity <= 29) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 38) {
+                                    if (co2 <= 38) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -10467,17 +10472,17 @@ int predict_tree_57(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[1] <= 110) {
+                            if (humidity <= 110) {
                                 return 0;
                             } else {
-                                if (features[0] <= 227) {
+                                if (temperature <= 227) {
                                     return 1;
                                 } else {
-                                    if (features[1] <= 114) {
-                                        if (features[2] <= 86) {
+                                    if (humidity <= 114) {
+                                        if (light <= 86) {
                                             return 1;
                                         } else {
-                                            if (features[1] <= 112) {
+                                            if (humidity <= 112) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -10490,18 +10495,18 @@ int predict_tree_57(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[1] <= 114) {
-                            if (features[2] <= 109) {
+                        if (humidity <= 114) {
+                            if (light <= 109) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         } else {
-                            if (features[0] <= 232) {
-                                if (features[3] <= 110) {
+                            if (temperature <= 232) {
+                                if (co2 <= 110) {
                                     return 0;
                                 } else {
-                                    if (features[3] <= 110) {
+                                    if (co2 <= 110) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -10517,15 +10522,15 @@ int predict_tree_57(unsigned short features[]) {
         }
     }
 }
-int predict_tree_58(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[0] <= 238) {
-            if (features[2] <= 59) {
-                if (features[3] <= 40) {
+int predict_tree_58(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (temperature <= 238) {
+            if (light <= 59) {
+                if (co2 <= 40) {
                     return 0;
                 } else {
-                    if (features[4] <= 28) {
-                        if (features[2] <= 29) {
+                    if (humidity_ratio <= 28) {
+                        if (light <= 29) {
                             return 0;
                         } else {
                             return 1;
@@ -10535,30 +10540,30 @@ int predict_tree_58(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[0] <= 159) {
+                if (temperature <= 159) {
                     return 1;
                 } else {
                     return 0;
                 }
             }
         } else {
-            if (features[1] <= 57) {
+            if (humidity <= 57) {
                 return 0;
             } else {
                 return 1;
             }
         }
     } else {
-        if (features[1] <= 25) {
-            if (features[1] <= 24) {
-                if (features[2] <= 69) {
-                    if (features[3] <= 7) {
+        if (humidity <= 25) {
+            if (humidity <= 24) {
+                if (light <= 69) {
+                    if (co2 <= 7) {
                         return 1;
                     } else {
                         return 0;
                     }
                 } else {
-                    if (features[3] <= 7) {
+                    if (co2 <= 7) {
                         return 0;
                     } else {
                         return 1;
@@ -10568,18 +10573,18 @@ int predict_tree_58(unsigned short features[]) {
                 return 0;
             }
         } else {
-            if (features[2] <= 89) {
-                if (features[0] <= 200) {
-                    if (features[2] <= 76) {
+            if (light <= 89) {
+                if (temperature <= 200) {
+                    if (light <= 76) {
                         return 1;
                     } else {
-                        if (features[3] <= 100) {
-                            if (features[3] <= 99) {
-                                if (features[4] <= 41) {
-                                    if (features[1] <= 43) {
+                        if (co2 <= 100) {
+                            if (co2 <= 99) {
+                                if (humidity_ratio <= 41) {
+                                    if (humidity <= 43) {
                                         return 1;
                                     } else {
-                                        if (features[2] <= 79) {
+                                        if (light <= 79) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -10589,7 +10594,7 @@ int predict_tree_58(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[4] <= 113) {
+                                if (humidity_ratio <= 113) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -10600,14 +10605,14 @@ int predict_tree_58(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 76) {
-                        if (features[4] <= 111) {
+                    if (co2 <= 76) {
+                        if (humidity_ratio <= 111) {
                             return 0;
                         } else {
-                            if (features[3] <= 63) {
+                            if (co2 <= 63) {
                                 return 1;
                             } else {
-                                if (features[4] <= 118) {
+                                if (humidity_ratio <= 118) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -10615,13 +10620,13 @@ int predict_tree_58(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[0] <= 226) {
+                        if (temperature <= 226) {
                             return 1;
                         } else {
-                            if (features[4] <= 123) {
+                            if (humidity_ratio <= 123) {
                                 return 1;
                             } else {
-                                if (features[1] <= 114) {
+                                if (humidity <= 114) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -10631,10 +10636,10 @@ int predict_tree_58(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[0] <= 230) {
-                    if (features[3] <= 71) {
-                        if (features[1] <= 29) {
-                            if (features[1] <= 28) {
+                if (temperature <= 230) {
+                    if (co2 <= 71) {
+                        if (humidity <= 29) {
+                            if (humidity <= 28) {
                                 return 1;
                             } else {
                                 return 0;
@@ -10643,15 +10648,15 @@ int predict_tree_58(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[3] <= 86) {
+                        if (co2 <= 86) {
                             return 0;
                         } else {
                             return 1;
                         }
                     }
                 } else {
-                    if (features[2] <= 113) {
-                        if (features[1] <= 117) {
+                    if (light <= 113) {
+                        if (humidity <= 117) {
                             return 0;
                         } else {
                             return 1;
@@ -10664,14 +10669,14 @@ int predict_tree_58(unsigned short features[]) {
         }
     }
 }
-int predict_tree_59(unsigned short features[]) {
-    if (features[0] <= 113) {
-        if (features[2] <= 54) {
+int predict_tree_59(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (temperature <= 113) {
+        if (light <= 54) {
             return 0;
         } else {
-            if (features[3] <= 7) {
-                if (features[1] <= 22) {
-                    if (features[0] <= 74) {
+            if (co2 <= 7) {
+                if (humidity <= 22) {
+                    if (temperature <= 74) {
                         return 0;
                     } else {
                         return 1;
@@ -10680,18 +10685,18 @@ int predict_tree_59(unsigned short features[]) {
                     return 0;
                 }
             } else {
-                if (features[4] <= 3) {
+                if (humidity_ratio <= 3) {
                     return 0;
                 } else {
-                    if (features[0] <= 34) {
-                        if (features[4] <= 77) {
+                    if (temperature <= 34) {
+                        if (humidity_ratio <= 77) {
                             return 1;
                         } else {
                             return 0;
                         }
                     } else {
-                        if (features[1] <= 66) {
-                            if (features[1] <= 65) {
+                        if (humidity <= 66) {
+                            if (humidity <= 65) {
                                 return 1;
                             } else {
                                 return 0;
@@ -10704,36 +10709,36 @@ int predict_tree_59(unsigned short features[]) {
             }
         }
     } else {
-        if (features[1] <= 40) {
-            if (features[3] <= 26) {
+        if (humidity <= 40) {
+            if (co2 <= 26) {
                 return 0;
             } else {
-                if (features[2] <= 46) {
+                if (light <= 46) {
                     return 0;
                 } else {
                     return 1;
                 }
             }
         } else {
-            if (features[0] <= 119) {
-                if (features[2] <= 33) {
+            if (temperature <= 119) {
+                if (light <= 33) {
                     return 0;
                 } else {
                     return 1;
                 }
             } else {
-                if (features[3] <= 58) {
-                    if (features[0] <= 133) {
-                        if (features[1] <= 41) {
+                if (co2 <= 58) {
+                    if (temperature <= 133) {
+                        if (humidity <= 41) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[2] <= 35) {
+                        if (light <= 35) {
                             return 0;
                         } else {
-                            if (features[3] <= 57) {
+                            if (co2 <= 57) {
                                 return 1;
                             } else {
                                 return 0;
@@ -10741,27 +10746,27 @@ int predict_tree_59(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[2] <= 36) {
+                    if (light <= 36) {
                         return 0;
                     } else {
-                        if (features[2] <= 86) {
-                            if (features[0] <= 204) {
-                                if (features[1] <= 43) {
-                                    if (features[4] <= 41) {
+                        if (light <= 86) {
+                            if (temperature <= 204) {
+                                if (humidity <= 43) {
+                                    if (humidity_ratio <= 41) {
                                         return 1;
                                     } else {
-                                        if (features[0] <= 171) {
+                                        if (temperature <= 171) {
                                             return 0;
                                         } else {
                                             return 1;
                                         }
                                     }
                                 } else {
-                                    if (features[4] <= 115) {
-                                        if (features[4] <= 115) {
-                                            if (features[4] <= 114) {
-                                                if (features[3] <= 58) {
-                                                    if (features[0] <= 201) {
+                                    if (humidity_ratio <= 115) {
+                                        if (humidity_ratio <= 115) {
+                                            if (humidity_ratio <= 114) {
+                                                if (co2 <= 58) {
+                                                    if (temperature <= 201) {
                                                         return 1;
                                                     } else {
                                                         return 0;
@@ -10770,8 +10775,8 @@ int predict_tree_59(unsigned short features[]) {
                                                     return 1;
                                                 }
                                             } else {
-                                                if (features[2] <= 77) {
-                                                    if (features[2] <= 76) {
+                                                if (light <= 77) {
+                                                    if (light <= 76) {
                                                         return 1;
                                                     } else {
                                                         return 0;
@@ -10788,10 +10793,10 @@ int predict_tree_59(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[4] <= 112) {
-                                    if (features[3] <= 82) {
-                                        if (features[1] <= 106) {
-                                            if (features[2] <= 75) {
+                                if (humidity_ratio <= 112) {
+                                    if (co2 <= 82) {
+                                        if (humidity <= 106) {
+                                            if (light <= 75) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -10803,7 +10808,7 @@ int predict_tree_59(unsigned short features[]) {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[3] <= 76) {
+                                    if (co2 <= 76) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -10811,25 +10816,25 @@ int predict_tree_59(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[0] <= 238) {
-                                if (features[0] <= 203) {
+                            if (temperature <= 238) {
+                                if (temperature <= 203) {
                                     return 1;
                                 } else {
-                                    if (features[1] <= 110) {
+                                    if (humidity <= 110) {
                                         return 0;
                                     } else {
-                                        if (features[3] <= 111) {
-                                            if (features[0] <= 228) {
+                                        if (co2 <= 111) {
+                                            if (temperature <= 228) {
                                                 return 1;
                                             } else {
-                                                if (features[2] <= 105) {
+                                                if (light <= 105) {
                                                     return 0;
                                                 } else {
                                                     return 1;
                                                 }
                                             }
                                         } else {
-                                            if (features[4] <= 130) {
+                                            if (humidity_ratio <= 130) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -10838,7 +10843,7 @@ int predict_tree_59(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[2] <= 91) {
+                                if (light <= 91) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -10851,32 +10856,32 @@ int predict_tree_59(unsigned short features[]) {
         }
     }
 }
-int predict_tree_60(unsigned short features[]) {
-    if (features[3] <= 27) {
-        if (features[3] <= 13) {
-            if (features[4] <= 5) {
-                if (features[3] <= 7) {
+int predict_tree_60(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 27) {
+        if (co2 <= 13) {
+            if (humidity_ratio <= 5) {
+                if (co2 <= 7) {
                     return 0;
                 } else {
-                    if (features[2] <= 35) {
+                    if (light <= 35) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[1] <= 119) {
-                    if (features[1] <= 117) {
-                        if (features[0] <= 105) {
+                if (humidity <= 119) {
+                    if (humidity <= 117) {
+                        if (temperature <= 105) {
                             return 0;
                         } else {
-                            if (features[1] <= 55) {
+                            if (humidity <= 55) {
                                 return 0;
                             } else {
-                                if (features[2] <= 45) {
+                                if (light <= 45) {
                                     return 0;
                                 } else {
-                                    if (features[2] <= 65) {
+                                    if (light <= 65) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -10885,7 +10890,7 @@ int predict_tree_60(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[3] <= 9) {
+                        if (co2 <= 9) {
                             return 0;
                         } else {
                             return 1;
@@ -10896,11 +10901,11 @@ int predict_tree_60(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 32) {
+            if (light <= 32) {
                 return 0;
             } else {
-                if (features[3] <= 13) {
-                    if (features[4] <= 67) {
+                if (co2 <= 13) {
+                    if (humidity_ratio <= 67) {
                         return 1;
                     } else {
                         return 0;
@@ -10911,33 +10916,33 @@ int predict_tree_60(unsigned short features[]) {
             }
         }
     } else {
-        if (features[3] <= 57) {
-            if (features[0] <= 104) {
-                if (features[4] <= 134) {
+        if (co2 <= 57) {
+            if (temperature <= 104) {
+                if (humidity_ratio <= 134) {
                     return 1;
                 } else {
                     return 0;
                 }
             } else {
-                if (features[4] <= 24) {
-                    if (features[2] <= 35) {
+                if (humidity_ratio <= 24) {
+                    if (light <= 35) {
                         return 0;
                     } else {
                         return 1;
                     }
                 } else {
-                    if (features[2] <= 35) {
+                    if (light <= 35) {
                         return 0;
                     } else {
-                        if (features[4] <= 27) {
-                            if (features[2] <= 87) {
+                        if (humidity_ratio <= 27) {
+                            if (light <= 87) {
                                 return 1;
                             } else {
-                                if (features[2] <= 87) {
+                                if (light <= 87) {
                                     return 0;
                                 } else {
-                                    if (features[0] <= 165) {
-                                        if (features[1] <= 30) {
+                                    if (temperature <= 165) {
+                                        if (humidity <= 30) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -10954,30 +10959,30 @@ int predict_tree_60(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[0] <= 123) {
-                if (features[2] <= 35) {
+            if (temperature <= 123) {
+                if (light <= 35) {
                     return 0;
                 } else {
                     return 1;
                 }
             } else {
-                if (features[1] <= 221) {
-                    if (features[1] <= 103) {
-                        if (features[1] <= 47) {
-                            if (features[1] <= 47) {
-                                if (features[2] <= 38) {
+                if (humidity <= 221) {
+                    if (humidity <= 103) {
+                        if (humidity <= 47) {
+                            if (humidity <= 47) {
+                                if (light <= 38) {
                                     return 0;
                                 } else {
-                                    if (features[2] <= 79) {
-                                        if (features[1] <= 43) {
-                                            if (features[3] <= 62) {
+                                    if (light <= 79) {
+                                        if (humidity <= 43) {
+                                            if (co2 <= 62) {
                                                 return 1;
                                             } else {
-                                                if (features[4] <= 42) {
-                                                    if (features[2] <= 79) {
+                                                if (humidity_ratio <= 42) {
+                                                    if (light <= 79) {
                                                         return 0;
                                                     } else {
-                                                        if (features[1] <= 42) {
+                                                        if (humidity <= 42) {
                                                             return 1;
                                                         } else {
                                                             return 0;
@@ -10995,30 +11000,30 @@ int predict_tree_60(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[3] <= 57) {
+                                if (co2 <= 57) {
                                     return 1;
                                 } else {
                                     return 0;
                                 }
                             }
                         } else {
-                            if (features[3] <= 66) {
-                                if (features[3] <= 65) {
-                                    if (features[1] <= 49) {
-                                        if (features[1] <= 48) {
+                            if (co2 <= 66) {
+                                if (co2 <= 65) {
+                                    if (humidity <= 49) {
+                                        if (humidity <= 48) {
                                             return 1;
                                         } else {
-                                            if (features[2] <= 37) {
+                                            if (light <= 37) {
                                                 return 0;
                                             } else {
                                                 return 1;
                                             }
                                         }
                                     } else {
-                                        if (features[4] <= 78) {
+                                        if (humidity_ratio <= 78) {
                                             return 1;
                                         } else {
-                                            if (features[4] <= 79) {
+                                            if (humidity_ratio <= 79) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -11033,27 +11038,27 @@ int predict_tree_60(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[2] <= 35) {
-                            if (features[4] <= 173) {
+                        if (light <= 35) {
+                            if (humidity_ratio <= 173) {
                                 return 0;
                             } else {
-                                if (features[1] <= 189) {
+                                if (humidity <= 189) {
                                     return 1;
                                 } else {
                                     return 0;
                                 }
                             }
                         } else {
-                            if (features[4] <= 115) {
-                                if (features[0] <= 200) {
-                                    if (features[1] <= 112) {
+                            if (humidity_ratio <= 115) {
+                                if (temperature <= 200) {
+                                    if (humidity <= 112) {
                                         return 1;
                                     } else {
-                                        if (features[4] <= 115) {
-                                            if (features[2] <= 76) {
+                                        if (humidity_ratio <= 115) {
+                                            if (light <= 76) {
                                                 return 1;
                                             } else {
-                                                if (features[3] <= 100) {
+                                                if (co2 <= 100) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -11064,28 +11069,28 @@ int predict_tree_60(unsigned short features[]) {
                                         }
                                     }
                                 } else {
-                                    if (features[3] <= 76) {
+                                    if (co2 <= 76) {
                                         return 0;
                                     } else {
                                         return 1;
                                     }
                                 }
                             } else {
-                                if (features[0] <= 228) {
+                                if (temperature <= 228) {
                                     return 1;
                                 } else {
-                                    if (features[2] <= 104) {
-                                        if (features[4] <= 122) {
+                                    if (light <= 104) {
+                                        if (humidity_ratio <= 122) {
                                             return 1;
                                         } else {
-                                            if (features[3] <= 111) {
+                                            if (co2 <= 111) {
                                                 return 0;
                                             } else {
                                                 return 1;
                                             }
                                         }
                                     } else {
-                                        if (features[3] <= 97) {
+                                        if (co2 <= 97) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -11096,10 +11101,10 @@ int predict_tree_60(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 180) {
+                    if (co2 <= 180) {
                         return 0;
                     } else {
-                        if (features[2] <= 27) {
+                        if (light <= 27) {
                             return 0;
                         } else {
                             return 1;
@@ -11110,18 +11115,18 @@ int predict_tree_60(unsigned short features[]) {
         }
     }
 }
-int predict_tree_61(unsigned short features[]) {
-    if (features[3] <= 24) {
-        if (features[2] <= 62) {
-            if (features[3] <= 7) {
+int predict_tree_61(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 24) {
+        if (light <= 62) {
+            if (co2 <= 7) {
                 return 0;
             } else {
-                if (features[0] <= 105) {
+                if (temperature <= 105) {
                     return 0;
                 } else {
-                    if (features[3] <= 7) {
-                        if (features[0] <= 109) {
-                            if (features[1] <= 65) {
+                    if (co2 <= 7) {
+                        if (temperature <= 109) {
+                            if (humidity <= 65) {
                                 return 1;
                             } else {
                                 return 0;
@@ -11135,17 +11140,17 @@ int predict_tree_61(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[3] <= 7) {
+            if (co2 <= 7) {
                 return 0;
             } else {
-                if (features[0] <= 36) {
-                    if (features[3] <= 11) {
+                if (temperature <= 36) {
+                    if (co2 <= 11) {
                         return 1;
                     } else {
                         return 0;
                     }
                 } else {
-                    if (features[4] <= 3) {
+                    if (humidity_ratio <= 3) {
                         return 0;
                     } else {
                         return 1;
@@ -11154,13 +11159,13 @@ int predict_tree_61(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 41) {
+        if (light <= 41) {
             return 0;
         } else {
-            if (features[4] <= 108) {
-                if (features[1] <= 30) {
-                    if (features[0] <= 163) {
-                        if (features[4] <= 26) {
+            if (humidity_ratio <= 108) {
+                if (humidity <= 30) {
+                    if (temperature <= 163) {
+                        if (humidity_ratio <= 26) {
                             return 1;
                         } else {
                             return 0;
@@ -11169,11 +11174,11 @@ int predict_tree_61(unsigned short features[]) {
                         return 1;
                     }
                 } else {
-                    if (features[4] <= 41) {
-                        if (features[4] <= 41) {
+                    if (humidity_ratio <= 41) {
+                        if (humidity_ratio <= 41) {
                             return 1;
                         } else {
-                            if (features[3] <= 61) {
+                            if (co2 <= 61) {
                                 return 1;
                             } else {
                                 return 0;
@@ -11184,12 +11189,12 @@ int predict_tree_61(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[1] <= 107) {
-                    if (features[3] <= 94) {
-                        if (features[3] <= 81) {
-                            if (features[1] <= 107) {
-                                if (features[4] <= 111) {
-                                    if (features[1] <= 105) {
+                if (humidity <= 107) {
+                    if (co2 <= 94) {
+                        if (co2 <= 81) {
+                            if (humidity <= 107) {
+                                if (humidity_ratio <= 111) {
+                                    if (humidity <= 105) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -11201,8 +11206,8 @@ int predict_tree_61(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[1] <= 107) {
-                                if (features[4] <= 122) {
+                            if (humidity <= 107) {
+                                if (humidity_ratio <= 122) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -11215,15 +11220,15 @@ int predict_tree_61(unsigned short features[]) {
                         return 1;
                     }
                 } else {
-                    if (features[2] <= 86) {
-                        if (features[1] <= 113) {
-                            if (features[2] <= 76) {
+                    if (light <= 86) {
+                        if (humidity <= 113) {
+                            if (light <= 76) {
                                 return 1;
                             } else {
-                                if (features[1] <= 112) {
+                                if (humidity <= 112) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 101) {
+                                    if (co2 <= 101) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -11234,21 +11239,21 @@ int predict_tree_61(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[0] <= 227) {
-                            if (features[4] <= 116) {
+                        if (temperature <= 227) {
+                            if (humidity_ratio <= 116) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         } else {
-                            if (features[1] <= 114) {
-                                if (features[2] <= 109) {
+                            if (humidity <= 114) {
+                                if (light <= 109) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             } else {
-                                if (features[2] <= 91) {
+                                if (light <= 91) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -11261,23 +11266,23 @@ int predict_tree_61(unsigned short features[]) {
         }
     }
 }
-int predict_tree_62(unsigned short features[]) {
-    if (features[3] <= 27) {
-        if (features[3] <= 13) {
-            if (features[2] <= 66) {
-                if (features[2] <= 59) {
-                    if (features[4] <= 75) {
+int predict_tree_62(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 27) {
+        if (co2 <= 13) {
+            if (light <= 66) {
+                if (light <= 59) {
+                    if (humidity_ratio <= 75) {
                         return 0;
                     } else {
-                        if (features[4] <= 75) {
+                        if (humidity_ratio <= 75) {
                             return 1;
                         } else {
                             return 0;
                         }
                     }
                 } else {
-                    if (features[2] <= 59) {
-                        if (features[3] <= 7) {
+                    if (light <= 59) {
+                        if (co2 <= 7) {
                             return 0;
                         } else {
                             return 1;
@@ -11287,14 +11292,14 @@ int predict_tree_62(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[4] <= 4) {
-                    if (features[2] <= 67) {
+                if (humidity_ratio <= 4) {
+                    if (light <= 67) {
                         return 1;
                     } else {
                         return 0;
                     }
                 } else {
-                    if (features[2] <= 70) {
+                    if (light <= 70) {
                         return 1;
                     } else {
                         return 0;
@@ -11302,9 +11307,9 @@ int predict_tree_62(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[4] <= 47) {
-                if (features[0] <= 120) {
-                    if (features[2] <= 34) {
+            if (humidity_ratio <= 47) {
+                if (temperature <= 120) {
+                    if (light <= 34) {
                         return 0;
                     } else {
                         return 1;
@@ -11313,7 +11318,7 @@ int predict_tree_62(unsigned short features[]) {
                     return 0;
                 }
             } else {
-                if (features[2] <= 32) {
+                if (light <= 32) {
                     return 0;
                 } else {
                     return 1;
@@ -11321,24 +11326,24 @@ int predict_tree_62(unsigned short features[]) {
             }
         }
     } else {
-        if (features[0] <= 114) {
-            if (features[2] <= 32) {
+        if (temperature <= 114) {
+            if (light <= 32) {
                 return 0;
             } else {
                 return 1;
             }
         } else {
-            if (features[2] <= 31) {
+            if (light <= 31) {
                 return 0;
             } else {
-                if (features[0] <= 240) {
-                    if (features[3] <= 76) {
-                        if (features[4] <= 101) {
-                            if (features[4] <= 41) {
-                                if (features[1] <= 43) {
-                                    if (features[1] <= 29) {
-                                        if (features[0] <= 163) {
-                                            if (features[2] <= 87) {
+                if (temperature <= 240) {
+                    if (co2 <= 76) {
+                        if (humidity_ratio <= 101) {
+                            if (humidity_ratio <= 41) {
+                                if (humidity <= 43) {
+                                    if (humidity <= 29) {
+                                        if (temperature <= 163) {
+                                            if (light <= 87) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -11350,7 +11355,7 @@ int predict_tree_62(unsigned short features[]) {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[1] <= 45) {
+                                    if (humidity <= 45) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -11360,12 +11365,12 @@ int predict_tree_62(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[1] <= 111) {
-                                if (features[4] <= 111) {
-                                    if (features[1] <= 105) {
+                            if (humidity <= 111) {
+                                if (humidity_ratio <= 111) {
+                                    if (humidity <= 105) {
                                         return 0;
                                     } else {
-                                        if (features[3] <= 63) {
+                                        if (co2 <= 63) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -11379,21 +11384,21 @@ int predict_tree_62(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[0] <= 227) {
-                            if (features[3] <= 100) {
-                                if (features[3] <= 100) {
-                                    if (features[3] <= 99) {
+                        if (temperature <= 227) {
+                            if (co2 <= 100) {
+                                if (co2 <= 100) {
+                                    if (co2 <= 99) {
                                         return 1;
                                     } else {
-                                        if (features[3] <= 99) {
-                                            if (features[2] <= 75) {
+                                        if (co2 <= 99) {
+                                            if (light <= 75) {
                                                 return 1;
                                             } else {
                                                 return 0;
                                             }
                                         } else {
-                                            if (features[0] <= 191) {
-                                                if (features[4] <= 112) {
+                                            if (temperature <= 191) {
+                                                if (humidity_ratio <= 112) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -11410,11 +11415,11 @@ int predict_tree_62(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[1] <= 114) {
-                                if (features[4] <= 125) {
-                                    if (features[3] <= 102) {
-                                        if (features[1] <= 111) {
-                                            if (features[4] <= 122) {
+                            if (humidity <= 114) {
+                                if (humidity_ratio <= 125) {
+                                    if (co2 <= 102) {
+                                        if (humidity <= 111) {
+                                            if (humidity_ratio <= 122) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -11440,19 +11445,19 @@ int predict_tree_62(unsigned short features[]) {
         }
     }
 }
-int predict_tree_63(unsigned short features[]) {
-    if (features[4] <= 115) {
-        if (features[0] <= 142) {
-            if (features[3] <= 20) {
-                if (features[3] <= 13) {
-                    if (features[2] <= 66) {
-                        if (features[3] <= 10) {
+int predict_tree_63(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (humidity_ratio <= 115) {
+        if (temperature <= 142) {
+            if (co2 <= 20) {
+                if (co2 <= 13) {
+                    if (light <= 66) {
+                        if (co2 <= 10) {
                             return 0;
                         } else {
-                            if (features[2] <= 24) {
+                            if (light <= 24) {
                                 return 0;
                             } else {
-                                if (features[3] <= 11) {
+                                if (co2 <= 11) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -11460,8 +11465,8 @@ int predict_tree_63(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[1] <= 25) {
-                            if (features[3] <= 7) {
+                        if (humidity <= 25) {
+                            if (co2 <= 7) {
                                 return 0;
                             } else {
                                 return 1;
@@ -11471,11 +11476,11 @@ int predict_tree_63(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[2] <= 33) {
+                    if (light <= 33) {
                         return 0;
                     } else {
-                        if (features[3] <= 13) {
-                            if (features[1] <= 96) {
+                        if (co2 <= 13) {
+                            if (humidity <= 96) {
                                 return 1;
                             } else {
                                 return 0;
@@ -11486,18 +11491,18 @@ int predict_tree_63(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 32) {
-                    if (features[2] <= 32) {
+                if (co2 <= 32) {
+                    if (light <= 32) {
                         return 0;
                     } else {
                         return 1;
                     }
                 } else {
-                    if (features[3] <= 41) {
-                        if (features[4] <= 25) {
+                    if (co2 <= 41) {
+                        if (humidity_ratio <= 25) {
                             return 1;
                         } else {
-                            if (features[4] <= 59) {
+                            if (humidity_ratio <= 59) {
                                 return 0;
                             } else {
                                 return 1;
@@ -11509,17 +11514,17 @@ int predict_tree_63(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[3] <= 31) {
+            if (co2 <= 31) {
                 return 0;
             } else {
-                if (features[2] <= 28) {
+                if (light <= 28) {
                     return 0;
                 } else {
-                    if (features[0] <= 204) {
-                        if (features[1] <= 112) {
-                            if (features[3] <= 38) {
-                                if (features[0] <= 164) {
-                                    if (features[0] <= 153) {
+                    if (temperature <= 204) {
+                        if (humidity <= 112) {
+                            if (co2 <= 38) {
+                                if (temperature <= 164) {
+                                    if (temperature <= 153) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -11528,11 +11533,11 @@ int predict_tree_63(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[3] <= 64) {
-                                    if (features[3] <= 64) {
-                                        if (features[2] <= 79) {
-                                            if (features[2] <= 78) {
-                                                if (features[0] <= 201) {
+                                if (co2 <= 64) {
+                                    if (co2 <= 64) {
+                                        if (light <= 79) {
+                                            if (light <= 78) {
+                                                if (temperature <= 201) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -11551,13 +11556,13 @@ int predict_tree_63(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[3] <= 99) {
+                            if (co2 <= 99) {
                                 return 0;
                             } else {
-                                if (features[4] <= 115) {
+                                if (humidity_ratio <= 115) {
                                     return 1;
                                 } else {
-                                    if (features[1] <= 113) {
+                                    if (humidity <= 113) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -11566,10 +11571,10 @@ int predict_tree_63(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[1] <= 105) {
+                        if (humidity <= 105) {
                             return 1;
                         } else {
-                            if (features[3] <= 89) {
+                            if (co2 <= 89) {
                                 return 0;
                             } else {
                                 return 1;
@@ -11580,27 +11585,27 @@ int predict_tree_63(unsigned short features[]) {
             }
         }
     } else {
-        if (features[0] <= 114) {
-            if (features[4] <= 149) {
+        if (temperature <= 114) {
+            if (humidity_ratio <= 149) {
                 return 1;
             } else {
                 return 0;
             }
         } else {
-            if (features[0] <= 230) {
-                if (features[4] <= 190) {
-                    if (features[2] <= 49) {
-                        if (features[1] <= 188) {
+            if (temperature <= 230) {
+                if (humidity_ratio <= 190) {
+                    if (light <= 49) {
+                        if (humidity <= 188) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[0] <= 227) {
+                        if (temperature <= 227) {
                             return 1;
                         } else {
-                            if (features[2] <= 97) {
-                                if (features[2] <= 86) {
+                            if (light <= 97) {
+                                if (light <= 86) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -11611,21 +11616,21 @@ int predict_tree_63(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 213) {
-                        if (features[1] <= 220) {
-                            if (features[2] <= 38) {
+                    if (co2 <= 213) {
+                        if (humidity <= 220) {
+                            if (light <= 38) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         } else {
-                            if (features[0] <= 176) {
+                            if (temperature <= 176) {
                                 return 0;
                             } else {
-                                if (features[4] <= 229) {
+                                if (humidity_ratio <= 229) {
                                     return 1;
                                 } else {
-                                    if (features[2] <= 36) {
+                                    if (light <= 36) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -11638,21 +11643,21 @@ int predict_tree_63(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 110) {
-                    if (features[4] <= 119) {
+                if (co2 <= 110) {
+                    if (humidity_ratio <= 119) {
                         return 1;
                     } else {
-                        if (features[1] <= 106) {
+                        if (humidity <= 106) {
                             return 1;
                         } else {
                             return 0;
                         }
                     }
                 } else {
-                    if (features[3] <= 110) {
+                    if (co2 <= 110) {
                         return 1;
                     } else {
-                        if (features[4] <= 129) {
+                        if (humidity_ratio <= 129) {
                             return 0;
                         } else {
                             return 1;
@@ -11663,25 +11668,25 @@ int predict_tree_63(unsigned short features[]) {
         }
     }
 }
-int predict_tree_64(unsigned short features[]) {
-    if (features[4] <= 115) {
-        if (features[0] <= 138) {
-            if (features[3] <= 13) {
-                if (features[0] <= 106) {
-                    if (features[3] <= 7) {
+int predict_tree_64(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (humidity_ratio <= 115) {
+        if (temperature <= 138) {
+            if (co2 <= 13) {
+                if (temperature <= 106) {
+                    if (co2 <= 7) {
                         return 0;
                     } else {
-                        if (features[1] <= 25) {
+                        if (humidity <= 25) {
                             return 1;
                         } else {
-                            if (features[4] <= 8) {
-                                if (features[3] <= 8) {
+                            if (humidity_ratio <= 8) {
+                                if (co2 <= 8) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             } else {
-                                if (features[2] <= 67) {
+                                if (light <= 67) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -11690,14 +11695,14 @@ int predict_tree_64(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[2] <= 52) {
+                    if (light <= 52) {
                         return 0;
                     } else {
-                        if (features[4] <= 30) {
+                        if (humidity_ratio <= 30) {
                             return 0;
                         } else {
-                            if (features[1] <= 66) {
-                                if (features[1] <= 65) {
+                            if (humidity <= 66) {
+                                if (humidity <= 65) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -11709,31 +11714,31 @@ int predict_tree_64(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[4] <= 33) {
-                    if (features[4] <= 24) {
-                        if (features[2] <= 34) {
+                if (humidity_ratio <= 33) {
+                    if (humidity_ratio <= 24) {
+                        if (light <= 34) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[3] <= 42) {
+                        if (co2 <= 42) {
                             return 0;
                         } else {
                             return 1;
                         }
                     }
                 } else {
-                    if (features[0] <= 136) {
+                    if (temperature <= 136) {
                         return 1;
                     } else {
-                        if (features[3] <= 33) {
+                        if (co2 <= 33) {
                             return 0;
                         } else {
-                            if (features[3] <= 35) {
+                            if (co2 <= 35) {
                                 return 1;
                             } else {
-                                if (features[3] <= 46) {
+                                if (co2 <= 46) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -11744,30 +11749,30 @@ int predict_tree_64(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 61) {
-                if (features[3] <= 67) {
-                    if (features[1] <= 34) {
+            if (light <= 61) {
+                if (co2 <= 67) {
+                    if (humidity <= 34) {
                         return 0;
                     } else {
-                        if (features[4] <= 28) {
+                        if (humidity_ratio <= 28) {
                             return 1;
                         } else {
                             return 0;
                         }
                     }
                 } else {
-                    if (features[1] <= 95) {
+                    if (humidity <= 95) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[1] <= 104) {
-                    if (features[4] <= 41) {
-                        if (features[4] <= 41) {
-                            if (features[3] <= 38) {
-                                if (features[3] <= 38) {
+                if (humidity <= 104) {
+                    if (humidity_ratio <= 41) {
+                        if (humidity_ratio <= 41) {
+                            if (co2 <= 38) {
+                                if (co2 <= 38) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -11776,10 +11781,10 @@ int predict_tree_64(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[2] <= 77) {
+                            if (light <= 77) {
                                 return 1;
                             } else {
-                                if (features[3] <= 60) {
+                                if (co2 <= 60) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -11790,15 +11795,15 @@ int predict_tree_64(unsigned short features[]) {
                         return 1;
                     }
                 } else {
-                    if (features[1] <= 107) {
-                        if (features[2] <= 74) {
+                    if (humidity <= 107) {
+                        if (light <= 74) {
                             return 1;
                         } else {
-                            if (features[0] <= 198) {
+                            if (temperature <= 198) {
                                 return 1;
                             } else {
-                                if (features[2] <= 75) {
-                                    if (features[3] <= 61) {
+                                if (light <= 75) {
+                                    if (co2 <= 61) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -11809,12 +11814,12 @@ int predict_tree_64(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[4] <= 113) {
+                        if (humidity_ratio <= 113) {
                             return 1;
                         } else {
-                            if (features[3] <= 99) {
-                                if (features[0] <= 203) {
-                                    if (features[3] <= 80) {
+                            if (co2 <= 99) {
+                                if (temperature <= 203) {
+                                    if (co2 <= 80) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -11831,12 +11836,12 @@ int predict_tree_64(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 44) {
-            if (features[0] <= 154) {
+        if (light <= 44) {
+            if (temperature <= 154) {
                 return 0;
             } else {
-                if (features[0] <= 157) {
-                    if (features[2] <= 5) {
+                if (temperature <= 157) {
+                    if (light <= 5) {
                         return 0;
                     } else {
                         return 1;
@@ -11846,24 +11851,24 @@ int predict_tree_64(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[1] <= 109) {
-                if (features[1] <= 106) {
+            if (humidity <= 109) {
+                if (humidity <= 106) {
                     return 1;
                 } else {
                     return 0;
                 }
             } else {
-                if (features[4] <= 129) {
-                    if (features[0] <= 227) {
+                if (humidity_ratio <= 129) {
+                    if (temperature <= 227) {
                         return 1;
                     } else {
-                        if (features[1] <= 115) {
+                        if (humidity <= 115) {
                             return 0;
                         } else {
-                            if (features[3] <= 110) {
+                            if (co2 <= 110) {
                                 return 0;
                             } else {
-                                if (features[2] <= 89) {
+                                if (light <= 89) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -11878,16 +11883,16 @@ int predict_tree_64(unsigned short features[]) {
         }
     }
 }
-int predict_tree_65(unsigned short features[]) {
-    if (features[2] <= 61) {
-        if (features[4] <= 247) {
-            if (features[2] <= 48) {
+int predict_tree_65(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 61) {
+        if (humidity_ratio <= 247) {
+            if (light <= 48) {
                 return 0;
             } else {
-                if (features[1] <= 27) {
+                if (humidity <= 27) {
                     return 0;
                 } else {
-                    if (features[3] <= 21) {
+                    if (co2 <= 21) {
                         return 0;
                     } else {
                         return 1;
@@ -11898,20 +11903,20 @@ int predict_tree_65(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[1] <= 25) {
-            if (features[4] <= 3) {
-                if (features[0] <= 71) {
+        if (humidity <= 25) {
+            if (humidity_ratio <= 3) {
+                if (temperature <= 71) {
                     return 0;
                 } else {
-                    if (features[2] <= 71) {
+                    if (light <= 71) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[2] <= 69) {
-                    if (features[0] <= 73) {
+                if (light <= 69) {
+                    if (temperature <= 73) {
                         return 1;
                     } else {
                         return 0;
@@ -11921,36 +11926,36 @@ int predict_tree_65(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 93) {
-                if (features[3] <= 76) {
-                    if (features[4] <= 107) {
-                        if (features[3] <= 12) {
-                            if (features[3] <= 11) {
+            if (light <= 93) {
+                if (co2 <= 76) {
+                    if (humidity_ratio <= 107) {
+                        if (co2 <= 12) {
+                            if (co2 <= 11) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         } else {
-                            if (features[4] <= 42) {
-                                if (features[4] <= 41) {
-                                    if (features[1] <= 42) {
+                            if (humidity_ratio <= 42) {
+                                if (humidity_ratio <= 41) {
+                                    if (humidity <= 42) {
                                         return 1;
                                     } else {
-                                        if (features[2] <= 78) {
+                                        if (light <= 78) {
                                             return 1;
                                         } else {
-                                            if (features[1] <= 43) {
-                                                if (features[3] <= 62) {
+                                            if (humidity <= 43) {
+                                                if (co2 <= 62) {
                                                     return 1;
                                                 } else {
-                                                    if (features[3] <= 63) {
+                                                    if (co2 <= 63) {
                                                         return 0;
                                                     } else {
                                                         return 1;
                                                     }
                                                 }
                                             } else {
-                                                if (features[0] <= 159) {
+                                                if (temperature <= 159) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -11966,15 +11971,15 @@ int predict_tree_65(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[0] <= 201) {
+                        if (temperature <= 201) {
                             return 1;
                         } else {
-                            if (features[4] <= 118) {
-                                if (features[4] <= 111) {
-                                    if (features[2] <= 78) {
+                            if (humidity_ratio <= 118) {
+                                if (humidity_ratio <= 111) {
+                                    if (light <= 78) {
                                         return 0;
                                     } else {
-                                        if (features[2] <= 81) {
+                                        if (light <= 81) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -11989,16 +11994,16 @@ int predict_tree_65(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[2] <= 86) {
-                        if (features[3] <= 100) {
-                            if (features[3] <= 100) {
-                                if (features[3] <= 99) {
+                    if (light <= 86) {
+                        if (co2 <= 100) {
+                            if (co2 <= 100) {
+                                if (co2 <= 99) {
                                     return 1;
                                 } else {
-                                    if (features[2] <= 76) {
+                                    if (light <= 76) {
                                         return 1;
                                     } else {
-                                        if (features[2] <= 76) {
+                                        if (light <= 76) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -12012,10 +12017,10 @@ int predict_tree_65(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[3] <= 106) {
+                        if (co2 <= 106) {
                             return 1;
                         } else {
-                            if (features[1] <= 114) {
+                            if (humidity <= 114) {
                                 return 0;
                             } else {
                                 return 1;
@@ -12024,9 +12029,9 @@ int predict_tree_65(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[0] <= 230) {
-                    if (features[3] <= 86) {
-                        if (features[4] <= 79) {
+                if (temperature <= 230) {
+                    if (co2 <= 86) {
+                        if (humidity_ratio <= 79) {
                             return 1;
                         } else {
                             return 0;
@@ -12035,7 +12040,7 @@ int predict_tree_65(unsigned short features[]) {
                         return 1;
                     }
                 } else {
-                    if (features[2] <= 108) {
+                    if (light <= 108) {
                         return 0;
                     } else {
                         return 1;
@@ -12045,32 +12050,32 @@ int predict_tree_65(unsigned short features[]) {
         }
     }
 }
-int predict_tree_66(unsigned short features[]) {
-    if (features[2] <= 61) {
-        if (features[3] <= 233) {
-            if (features[0] <= 105) {
-                if (features[2] <= 48) {
+int predict_tree_66(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 61) {
+        if (co2 <= 233) {
+            if (temperature <= 105) {
+                if (light <= 48) {
                     return 0;
                 } else {
-                    if (features[0] <= 41) {
+                    if (temperature <= 41) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[1] <= 34) {
+                if (humidity <= 34) {
                     return 0;
                 } else {
-                    if (features[0] <= 235) {
-                        if (features[4] <= 47) {
-                            if (features[1] <= 34) {
+                    if (temperature <= 235) {
+                        if (humidity_ratio <= 47) {
+                            if (humidity <= 34) {
                                 return 1;
                             } else {
-                                if (features[1] <= 60) {
+                                if (humidity <= 60) {
                                     return 0;
                                 } else {
-                                    if (features[3] <= 7) {
+                                    if (co2 <= 7) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -12078,14 +12083,14 @@ int predict_tree_66(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[0] <= 154) {
+                            if (temperature <= 154) {
                                 return 0;
                             } else {
-                                if (features[0] <= 157) {
-                                    if (features[2] <= 5) {
+                                if (temperature <= 157) {
+                                    if (light <= 5) {
                                         return 0;
                                     } else {
-                                        if (features[1] <= 189) {
+                                        if (humidity <= 189) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -12105,42 +12110,42 @@ int predict_tree_66(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[2] <= 95) {
-            if (features[3] <= 13) {
-                if (features[0] <= 71) {
+        if (light <= 95) {
+            if (co2 <= 13) {
+                if (temperature <= 71) {
                     return 0;
                 } else {
-                    if (features[2] <= 70) {
+                    if (light <= 70) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[4] <= 108) {
-                    if (features[2] <= 78) {
+                if (humidity_ratio <= 108) {
+                    if (light <= 78) {
                         return 1;
                     } else {
-                        if (features[2] <= 79) {
-                            if (features[0] <= 157) {
+                        if (light <= 79) {
+                            if (temperature <= 157) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         } else {
-                            if (features[3] <= 38) {
-                                if (features[1] <= 30) {
+                            if (co2 <= 38) {
+                                if (humidity <= 30) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 27) {
+                                    if (humidity_ratio <= 27) {
                                         return 1;
                                     } else {
                                         return 0;
                                     }
                                 }
                             } else {
-                                if (features[4] <= 42) {
-                                    if (features[4] <= 41) {
+                                if (humidity_ratio <= 42) {
+                                    if (humidity_ratio <= 41) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -12152,16 +12157,16 @@ int predict_tree_66(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[0] <= 200) {
-                        if (features[3] <= 100) {
-                            if (features[3] <= 100) {
-                                if (features[3] <= 99) {
+                    if (temperature <= 200) {
+                        if (co2 <= 100) {
+                            if (co2 <= 100) {
+                                if (co2 <= 99) {
                                     return 1;
                                 } else {
-                                    if (features[1] <= 112) {
+                                    if (humidity <= 112) {
                                         return 1;
                                     } else {
-                                        if (features[3] <= 99) {
+                                        if (co2 <= 99) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -12169,7 +12174,7 @@ int predict_tree_66(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[4] <= 113) {
+                                if (humidity_ratio <= 113) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -12179,16 +12184,16 @@ int predict_tree_66(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[1] <= 107) {
-                            if (features[2] <= 73) {
+                        if (humidity <= 107) {
+                            if (light <= 73) {
                                 return 1;
                             } else {
-                                if (features[1] <= 106) {
-                                    if (features[4] <= 111) {
-                                        if (features[0] <= 205) {
+                                if (humidity <= 106) {
+                                    if (humidity_ratio <= 111) {
+                                        if (temperature <= 205) {
                                             return 0;
                                         } else {
-                                            if (features[2] <= 74) {
+                                            if (light <= 74) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -12202,34 +12207,34 @@ int predict_tree_66(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[4] <= 114) {
-                                if (features[2] <= 77) {
+                            if (humidity_ratio <= 114) {
+                                if (light <= 77) {
                                     return 1;
                                 } else {
                                     return 0;
                                 }
                             } else {
-                                if (features[0] <= 226) {
-                                    if (features[2] <= 93) {
+                                if (temperature <= 226) {
+                                    if (light <= 93) {
                                         return 1;
                                     } else {
                                         return 0;
                                     }
                                 } else {
-                                    if (features[2] <= 86) {
+                                    if (light <= 86) {
                                         return 1;
                                     } else {
-                                        if (features[2] <= 89) {
-                                            if (features[0] <= 229) {
+                                        if (light <= 89) {
+                                            if (temperature <= 229) {
                                                 return 0;
                                             } else {
                                                 return 1;
                                             }
                                         } else {
-                                            if (features[0] <= 232) {
+                                            if (temperature <= 232) {
                                                 return 0;
                                             } else {
-                                                if (features[2] <= 93) {
+                                                if (light <= 93) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -12244,13 +12249,13 @@ int predict_tree_66(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[3] <= 98) {
+            if (co2 <= 98) {
                 return 0;
             } else {
-                if (features[4] <= 127) {
+                if (humidity_ratio <= 127) {
                     return 1;
                 } else {
-                    if (features[0] <= 230) {
+                    if (temperature <= 230) {
                         return 1;
                     } else {
                         return 0;
@@ -12260,16 +12265,16 @@ int predict_tree_66(unsigned short features[]) {
         }
     }
 }
-int predict_tree_67(unsigned short features[]) {
-    if (features[3] <= 33) {
-        if (features[2] <= 62) {
-            if (features[0] <= 106) {
+int predict_tree_67(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 33) {
+        if (light <= 62) {
+            if (temperature <= 106) {
                 return 0;
             } else {
-                if (features[2] <= 59) {
+                if (light <= 59) {
                     return 0;
                 } else {
-                    if (features[0] <= 156) {
+                    if (temperature <= 156) {
                         return 1;
                     } else {
                         return 0;
@@ -12277,12 +12282,12 @@ int predict_tree_67(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[1] <= 24) {
-                if (features[1] <= 22) {
-                    if (features[3] <= 6) {
+            if (humidity <= 24) {
+                if (humidity <= 22) {
+                    if (co2 <= 6) {
                         return 0;
                     } else {
-                        if (features[0] <= 71) {
+                        if (temperature <= 71) {
                             return 0;
                         } else {
                             return 1;
@@ -12292,15 +12297,15 @@ int predict_tree_67(unsigned short features[]) {
                     return 0;
                 }
             } else {
-                if (features[3] <= 7) {
+                if (co2 <= 7) {
                     return 0;
                 } else {
-                    if (features[3] <= 12) {
-                        if (features[1] <= 120) {
-                            if (features[0] <= 91) {
+                    if (co2 <= 12) {
+                        if (humidity <= 120) {
+                            if (temperature <= 91) {
                                 return 1;
                             } else {
-                                if (features[2] <= 70) {
+                                if (light <= 70) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -12316,28 +12321,28 @@ int predict_tree_67(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 31) {
-            if (features[3] <= 132) {
+        if (light <= 31) {
+            if (co2 <= 132) {
                 return 0;
             } else {
-                if (features[1] <= 189) {
+                if (humidity <= 189) {
                     return 1;
                 } else {
                     return 0;
                 }
             }
         } else {
-            if (features[4] <= 108) {
-                if (features[1] <= 43) {
-                    if (features[0] <= 170) {
-                        if (features[4] <= 41) {
-                            if (features[4] <= 41) {
-                                if (features[2] <= 89) {
-                                    if (features[1] <= 42) {
+            if (humidity_ratio <= 108) {
+                if (humidity <= 43) {
+                    if (temperature <= 170) {
+                        if (humidity_ratio <= 41) {
+                            if (humidity_ratio <= 41) {
+                                if (light <= 89) {
+                                    if (humidity <= 42) {
                                         return 1;
                                     } else {
-                                        if (features[1] <= 42) {
-                                            if (features[3] <= 62) {
+                                        if (humidity <= 42) {
+                                            if (co2 <= 62) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -12347,14 +12352,14 @@ int predict_tree_67(unsigned short features[]) {
                                         }
                                     }
                                 } else {
-                                    if (features[0] <= 163) {
+                                    if (temperature <= 163) {
                                         return 0;
                                     } else {
                                         return 1;
                                     }
                                 }
                             } else {
-                                if (features[2] <= 79) {
+                                if (light <= 79) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -12370,15 +12375,15 @@ int predict_tree_67(unsigned short features[]) {
                     return 1;
                 }
             } else {
-                if (features[1] <= 108) {
-                    if (features[3] <= 76) {
-                        if (features[0] <= 200) {
+                if (humidity <= 108) {
+                    if (co2 <= 76) {
+                        if (temperature <= 200) {
                             return 1;
                         } else {
-                            if (features[2] <= 80) {
-                                if (features[2] <= 80) {
-                                    if (features[4] <= 111) {
-                                        if (features[4] <= 111) {
+                            if (light <= 80) {
+                                if (light <= 80) {
+                                    if (humidity_ratio <= 111) {
+                                        if (humidity_ratio <= 111) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -12394,10 +12399,10 @@ int predict_tree_67(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[0] <= 241) {
+                        if (temperature <= 241) {
                             return 1;
                         } else {
-                            if (features[2] <= 91) {
+                            if (light <= 91) {
                                 return 1;
                             } else {
                                 return 0;
@@ -12405,22 +12410,22 @@ int predict_tree_67(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[0] <= 230) {
-                        if (features[1] <= 113) {
-                            if (features[4] <= 124) {
-                                if (features[3] <= 100) {
-                                    if (features[0] <= 191) {
-                                        if (features[3] <= 98) {
+                    if (temperature <= 230) {
+                        if (humidity <= 113) {
+                            if (humidity_ratio <= 124) {
+                                if (co2 <= 100) {
+                                    if (temperature <= 191) {
+                                        if (co2 <= 98) {
                                             return 1;
                                         } else {
                                             return 0;
                                         }
                                     } else {
-                                        if (features[3] <= 100) {
-                                            if (features[4] <= 114) {
+                                        if (co2 <= 100) {
+                                            if (humidity_ratio <= 114) {
                                                 return 1;
                                             } else {
-                                                if (features[0] <= 197) {
+                                                if (temperature <= 197) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -12434,7 +12439,7 @@ int predict_tree_67(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[1] <= 112) {
+                                if (humidity <= 112) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -12444,7 +12449,7 @@ int predict_tree_67(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[1] <= 116) {
+                        if (humidity <= 116) {
                             return 0;
                         } else {
                             return 1;
@@ -12455,18 +12460,18 @@ int predict_tree_67(unsigned short features[]) {
         }
     }
 }
-int predict_tree_68(unsigned short features[]) {
-    if (features[2] <= 62) {
-        if (features[1] <= 246) {
-            if (features[1] <= 104) {
-                if (features[3] <= 90) {
-                    if (features[2] <= 59) {
-                        if (features[3] <= 67) {
-                            if (features[3] <= 39) {
+int predict_tree_68(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 62) {
+        if (humidity <= 246) {
+            if (humidity <= 104) {
+                if (co2 <= 90) {
+                    if (light <= 59) {
+                        if (co2 <= 67) {
+                            if (co2 <= 39) {
                                 return 0;
                             } else {
-                                if (features[1] <= 35) {
-                                    if (features[4] <= 28) {
+                                if (humidity <= 35) {
+                                    if (humidity_ratio <= 28) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -12476,10 +12481,10 @@ int predict_tree_68(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[0] <= 188) {
+                            if (temperature <= 188) {
                                 return 0;
                             } else {
-                                if (features[4] <= 102) {
+                                if (humidity_ratio <= 102) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -12487,7 +12492,7 @@ int predict_tree_68(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[4] <= 35) {
+                        if (humidity_ratio <= 35) {
                             return 0;
                         } else {
                             return 1;
@@ -12503,22 +12508,22 @@ int predict_tree_68(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[3] <= 12) {
-            if (features[3] <= 4) {
-                if (features[0] <= 74) {
+        if (co2 <= 12) {
+            if (co2 <= 4) {
+                if (temperature <= 74) {
                     return 0;
                 } else {
                     return 1;
                 }
             } else {
-                if (features[4] <= 4) {
+                if (humidity_ratio <= 4) {
                     return 0;
                 } else {
-                    if (features[1] <= 120) {
-                        if (features[3] <= 7) {
+                    if (humidity <= 120) {
+                        if (co2 <= 7) {
                             return 0;
                         } else {
-                            if (features[2] <= 69) {
+                            if (light <= 69) {
                                 return 1;
                             } else {
                                 return 0;
@@ -12530,17 +12535,17 @@ int predict_tree_68(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 93) {
-                if (features[1] <= 116) {
-                    if (features[4] <= 109) {
-                        if (features[1] <= 43) {
-                            if (features[4] <= 41) {
+            if (light <= 93) {
+                if (humidity <= 116) {
+                    if (humidity_ratio <= 109) {
+                        if (humidity <= 43) {
+                            if (humidity_ratio <= 41) {
                                 return 1;
                             } else {
-                                if (features[3] <= 63) {
+                                if (co2 <= 63) {
                                     return 1;
                                 } else {
-                                    if (features[0] <= 171) {
+                                    if (temperature <= 171) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -12551,19 +12556,19 @@ int predict_tree_68(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[3] <= 83) {
-                            if (features[0] <= 202) {
+                        if (co2 <= 83) {
+                            if (temperature <= 202) {
                                 return 1;
                             } else {
-                                if (features[2] <= 75) {
-                                    if (features[2] <= 75) {
+                                if (light <= 75) {
+                                    if (light <= 75) {
                                         return 0;
                                     } else {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[3] <= 63) {
-                                        if (features[2] <= 78) {
+                                    if (co2 <= 63) {
+                                        if (light <= 78) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -12574,14 +12579,14 @@ int predict_tree_68(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[0] <= 229) {
-                                if (features[1] <= 113) {
+                            if (temperature <= 229) {
+                                if (humidity <= 113) {
                                     return 1;
                                 } else {
-                                    if (features[2] <= 76) {
+                                    if (light <= 76) {
                                         return 1;
                                     } else {
-                                        if (features[3] <= 100) {
+                                        if (co2 <= 100) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -12589,10 +12594,10 @@ int predict_tree_68(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[3] <= 99) {
+                                if (co2 <= 99) {
                                     return 1;
                                 } else {
-                                    if (features[2] <= 91) {
+                                    if (light <= 91) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -12605,17 +12610,17 @@ int predict_tree_68(unsigned short features[]) {
                     return 1;
                 }
             } else {
-                if (features[3] <= 97) {
-                    if (features[0] <= 199) {
+                if (co2 <= 97) {
+                    if (temperature <= 199) {
                         return 1;
                     } else {
                         return 0;
                     }
                 } else {
-                    if (features[0] <= 230) {
+                    if (temperature <= 230) {
                         return 1;
                     } else {
-                        if (features[1] <= 113) {
+                        if (humidity <= 113) {
                             return 1;
                         } else {
                             return 0;
@@ -12626,27 +12631,27 @@ int predict_tree_68(unsigned short features[]) {
         }
     }
 }
-int predict_tree_69(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[1] <= 247) {
-            if (features[4] <= 75) {
+int predict_tree_69(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (humidity <= 247) {
+            if (humidity_ratio <= 75) {
                 return 0;
             } else {
-                if (features[4] <= 75) {
+                if (humidity_ratio <= 75) {
                     return 1;
                 } else {
-                    if (features[0] <= 188) {
-                        if (features[4] <= 175) {
+                    if (temperature <= 188) {
+                        if (humidity_ratio <= 175) {
                             return 0;
                         } else {
-                            if (features[4] <= 175) {
+                            if (humidity_ratio <= 175) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         }
                     } else {
-                        if (features[3] <= 74) {
+                        if (co2 <= 74) {
                             return 1;
                         } else {
                             return 0;
@@ -12658,9 +12663,9 @@ int predict_tree_69(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[3] <= 7) {
-            if (features[4] <= 3) {
-                if (features[0] <= 74) {
+        if (co2 <= 7) {
+            if (humidity_ratio <= 3) {
+                if (temperature <= 74) {
                     return 0;
                 } else {
                     return 1;
@@ -12669,23 +12674,23 @@ int predict_tree_69(unsigned short features[]) {
                 return 0;
             }
         } else {
-            if (features[0] <= 201) {
-                if (features[4] <= 115) {
-                    if (features[0] <= 36) {
-                        if (features[0] <= 32) {
+            if (temperature <= 201) {
+                if (humidity_ratio <= 115) {
+                    if (temperature <= 36) {
+                        if (temperature <= 32) {
                             return 1;
                         } else {
                             return 0;
                         }
                     } else {
-                        if (features[1] <= 112) {
-                            if (features[1] <= 43) {
-                                if (features[3] <= 63) {
-                                    if (features[2] <= 87) {
+                        if (humidity <= 112) {
+                            if (humidity <= 43) {
+                                if (co2 <= 63) {
+                                    if (light <= 87) {
                                         return 1;
                                     } else {
-                                        if (features[3] <= 38) {
-                                            if (features[0] <= 163) {
+                                        if (co2 <= 38) {
+                                            if (temperature <= 163) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -12695,7 +12700,7 @@ int predict_tree_69(unsigned short features[]) {
                                         }
                                     }
                                 } else {
-                                    if (features[0] <= 171) {
+                                    if (temperature <= 171) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -12705,12 +12710,12 @@ int predict_tree_69(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[2] <= 76) {
+                            if (light <= 76) {
                                 return 1;
                             } else {
-                                if (features[2] <= 77) {
-                                    if (features[2] <= 76) {
-                                        if (features[3] <= 103) {
+                                if (light <= 77) {
+                                    if (light <= 76) {
+                                        if (co2 <= 103) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -12728,9 +12733,9 @@ int predict_tree_69(unsigned short features[]) {
                     return 1;
                 }
             } else {
-                if (features[3] <= 76) {
-                    if (features[3] <= 63) {
-                        if (features[1] <= 105) {
+                if (co2 <= 76) {
+                    if (co2 <= 63) {
+                        if (humidity <= 105) {
                             return 0;
                         } else {
                             return 1;
@@ -12739,12 +12744,12 @@ int predict_tree_69(unsigned short features[]) {
                         return 0;
                     }
                 } else {
-                    if (features[0] <= 230) {
-                        if (features[2] <= 86) {
+                    if (temperature <= 230) {
+                        if (light <= 86) {
                             return 1;
                         } else {
-                            if (features[1] <= 114) {
-                                if (features[1] <= 112) {
+                            if (humidity <= 114) {
+                                if (humidity <= 112) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -12754,21 +12759,21 @@ int predict_tree_69(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[1] <= 114) {
-                            if (features[4] <= 122) {
+                        if (humidity <= 114) {
+                            if (humidity_ratio <= 122) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         } else {
-                            if (features[4] <= 129) {
-                                if (features[4] <= 128) {
+                            if (humidity_ratio <= 129) {
+                                if (humidity_ratio <= 128) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 128) {
+                                    if (humidity_ratio <= 128) {
                                         return 0;
                                     } else {
-                                        if (features[3] <= 110) {
+                                        if (co2 <= 110) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -12785,15 +12790,15 @@ int predict_tree_69(unsigned short features[]) {
         }
     }
 }
-int predict_tree_70(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[1] <= 247) {
-            if (features[4] <= 175) {
-                if (features[1] <= 117) {
+int predict_tree_70(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (humidity <= 247) {
+            if (humidity_ratio <= 175) {
+                if (humidity <= 117) {
                     return 0;
                 } else {
-                    if (features[4] <= 75) {
-                        if (features[1] <= 118) {
+                    if (humidity_ratio <= 75) {
+                        if (humidity <= 118) {
                             return 1;
                         } else {
                             return 0;
@@ -12803,7 +12808,7 @@ int predict_tree_70(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[4] <= 175) {
+                if (humidity_ratio <= 175) {
                     return 1;
                 } else {
                     return 0;
@@ -12813,20 +12818,20 @@ int predict_tree_70(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[3] <= 7) {
+        if (co2 <= 7) {
             return 0;
         } else {
-            if (features[0] <= 234) {
-                if (features[3] <= 76) {
-                    if (features[3] <= 76) {
-                        if (features[0] <= 200) {
-                            if (features[3] <= 13) {
-                                if (features[3] <= 12) {
-                                    if (features[2] <= 66) {
+            if (temperature <= 234) {
+                if (co2 <= 76) {
+                    if (co2 <= 76) {
+                        if (temperature <= 200) {
+                            if (co2 <= 13) {
+                                if (co2 <= 12) {
+                                    if (light <= 66) {
                                         return 0;
                                     } else {
-                                        if (features[3] <= 10) {
-                                            if (features[0] <= 91) {
+                                        if (co2 <= 10) {
+                                            if (temperature <= 91) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -12839,27 +12844,27 @@ int predict_tree_70(unsigned short features[]) {
                                     return 0;
                                 }
                             } else {
-                                if (features[1] <= 29) {
-                                    if (features[1] <= 29) {
+                                if (humidity <= 29) {
+                                    if (humidity <= 29) {
                                         return 1;
                                     } else {
-                                        if (features[0] <= 159) {
+                                        if (temperature <= 159) {
                                             return 1;
                                         } else {
                                             return 0;
                                         }
                                     }
                                 } else {
-                                    if (features[4] <= 41) {
-                                        if (features[4] <= 41) {
-                                            if (features[1] <= 42) {
+                                    if (humidity_ratio <= 41) {
+                                        if (humidity_ratio <= 41) {
+                                            if (humidity <= 42) {
                                                 return 1;
                                             } else {
-                                                if (features[3] <= 62) {
+                                                if (co2 <= 62) {
                                                     return 1;
                                                 } else {
-                                                    if (features[1] <= 42) {
-                                                        if (features[2] <= 79) {
+                                                    if (humidity <= 42) {
+                                                        if (light <= 79) {
                                                             return 0;
                                                         } else {
                                                             return 1;
@@ -12870,7 +12875,7 @@ int predict_tree_70(unsigned short features[]) {
                                                 }
                                             }
                                         } else {
-                                            if (features[2] <= 79) {
+                                            if (light <= 79) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -12882,11 +12887,11 @@ int predict_tree_70(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[2] <= 73) {
+                            if (light <= 73) {
                                 return 1;
                             } else {
-                                if (features[3] <= 62) {
-                                    if (features[1] <= 105) {
+                                if (co2 <= 62) {
+                                    if (humidity <= 105) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -12900,14 +12905,14 @@ int predict_tree_70(unsigned short features[]) {
                         return 0;
                     }
                 } else {
-                    if (features[4] <= 128) {
-                        if (features[0] <= 227) {
-                            if (features[4] <= 114) {
+                    if (humidity_ratio <= 128) {
+                        if (temperature <= 227) {
+                            if (humidity_ratio <= 114) {
                                 return 1;
                             } else {
-                                if (features[1] <= 113) {
-                                    if (features[4] <= 115) {
-                                        if (features[3] <= 100) {
+                                if (humidity <= 113) {
+                                    if (humidity_ratio <= 115) {
+                                        if (co2 <= 100) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -12920,9 +12925,9 @@ int predict_tree_70(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[4] <= 128) {
-                                if (features[0] <= 229) {
-                                    if (features[3] <= 102) {
+                            if (humidity_ratio <= 128) {
+                                if (temperature <= 229) {
+                                    if (co2 <= 102) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -12939,7 +12944,7 @@ int predict_tree_70(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[1] <= 105) {
+                if (humidity <= 105) {
                     return 1;
                 } else {
                     return 0;
@@ -12948,25 +12953,25 @@ int predict_tree_70(unsigned short features[]) {
         }
     }
 }
-int predict_tree_71(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[3] <= 233) {
-            if (features[0] <= 238) {
-                if (features[2] <= 59) {
-                    if (features[3] <= 10) {
+int predict_tree_71(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (co2 <= 233) {
+            if (temperature <= 238) {
+                if (light <= 59) {
+                    if (co2 <= 10) {
                         return 0;
                     } else {
-                        if (features[0] <= 33) {
-                            if (features[0] <= 32) {
+                        if (temperature <= 33) {
+                            if (temperature <= 32) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         } else {
-                            if (features[0] <= 188) {
+                            if (temperature <= 188) {
                                 return 0;
                             } else {
-                                if (features[1] <= 95) {
+                                if (humidity <= 95) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -12975,14 +12980,14 @@ int predict_tree_71(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[1] <= 38) {
+                    if (humidity <= 38) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[4] <= 72) {
+                if (humidity_ratio <= 72) {
                     return 0;
                 } else {
                     return 1;
@@ -12992,31 +12997,31 @@ int predict_tree_71(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[3] <= 13) {
-            if (features[4] <= 77) {
-                if (features[4] <= 4) {
-                    if (features[3] <= 7) {
-                        if (features[2] <= 67) {
+        if (co2 <= 13) {
+            if (humidity_ratio <= 77) {
+                if (humidity_ratio <= 4) {
+                    if (co2 <= 7) {
+                        if (light <= 67) {
                             return 1;
                         } else {
                             return 0;
                         }
                     } else {
-                        if (features[2] <= 69) {
+                        if (light <= 69) {
                             return 0;
                         } else {
                             return 1;
                         }
                     }
                 } else {
-                    if (features[3] <= 7) {
+                    if (co2 <= 7) {
                         return 0;
                     } else {
-                        if (features[3] <= 9) {
+                        if (co2 <= 9) {
                             return 1;
                         } else {
-                            if (features[4] <= 49) {
-                                if (features[0] <= 94) {
+                            if (humidity_ratio <= 49) {
+                                if (temperature <= 94) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -13031,28 +13036,28 @@ int predict_tree_71(unsigned short features[]) {
                 return 0;
             }
         } else {
-            if (features[0] <= 230) {
-                if (features[0] <= 204) {
-                    if (features[0] <= 162) {
+            if (temperature <= 230) {
+                if (temperature <= 204) {
+                    if (temperature <= 162) {
                         return 1;
                     } else {
-                        if (features[0] <= 163) {
-                            if (features[3] <= 51) {
+                        if (temperature <= 163) {
+                            if (co2 <= 51) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         } else {
-                            if (features[4] <= 108) {
-                                if (features[4] <= 40) {
-                                    if (features[1] <= 41) {
+                            if (humidity_ratio <= 108) {
+                                if (humidity_ratio <= 40) {
+                                    if (humidity <= 41) {
                                         return 1;
                                     } else {
-                                        if (features[1] <= 42) {
-                                            if (features[3] <= 62) {
+                                        if (humidity <= 42) {
+                                            if (co2 <= 62) {
                                                 return 1;
                                             } else {
-                                                if (features[3] <= 62) {
+                                                if (co2 <= 62) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -13066,18 +13071,18 @@ int predict_tree_71(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[2] <= 75) {
+                                if (light <= 75) {
                                     return 1;
                                 } else {
-                                    if (features[1] <= 105) {
+                                    if (humidity <= 105) {
                                         return 0;
                                     } else {
-                                        if (features[1] <= 113) {
-                                            if (features[2] <= 76) {
-                                                if (features[1] <= 112) {
+                                        if (humidity <= 113) {
+                                            if (light <= 76) {
+                                                if (humidity <= 112) {
                                                     return 1;
                                                 } else {
-                                                    if (features[3] <= 103) {
+                                                    if (co2 <= 103) {
                                                         return 0;
                                                     } else {
                                                         return 1;
@@ -13095,29 +13100,29 @@ int predict_tree_71(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 76) {
+                    if (co2 <= 76) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[2] <= 89) {
-                    if (features[1] <= 110) {
+                if (light <= 89) {
+                    if (humidity <= 110) {
                         return 1;
                     } else {
-                        if (features[4] <= 128) {
+                        if (humidity_ratio <= 128) {
                             return 0;
                         } else {
                             return 1;
                         }
                     }
                 } else {
-                    if (features[3] <= 112) {
-                        if (features[1] <= 110) {
+                    if (co2 <= 112) {
+                        if (humidity <= 110) {
                             return 0;
                         } else {
-                            if (features[0] <= 232) {
+                            if (temperature <= 232) {
                                 return 0;
                             } else {
                                 return 1;
@@ -13131,30 +13136,30 @@ int predict_tree_71(unsigned short features[]) {
         }
     }
 }
-int predict_tree_72(unsigned short features[]) {
-    if (features[2] <= 61) {
-        if (features[2] <= 59) {
-            if (features[2] <= 35) {
+int predict_tree_72(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 61) {
+        if (light <= 59) {
+            if (light <= 35) {
                 return 0;
             } else {
-                if (features[3] <= 9) {
+                if (co2 <= 9) {
                     return 0;
                 } else {
                     return 1;
                 }
             }
         } else {
-            if (features[4] <= 35) {
+            if (humidity_ratio <= 35) {
                 return 0;
             } else {
                 return 1;
             }
         }
     } else {
-        if (features[1] <= 25) {
-            if (features[4] <= 3) {
-                if (features[4] <= 3) {
-                    if (features[0] <= 74) {
+        if (humidity <= 25) {
+            if (humidity_ratio <= 3) {
+                if (humidity_ratio <= 3) {
+                    if (temperature <= 74) {
                         return 0;
                     } else {
                         return 1;
@@ -13163,10 +13168,10 @@ int predict_tree_72(unsigned short features[]) {
                     return 1;
                 }
             } else {
-                if (features[1] <= 24) {
+                if (humidity <= 24) {
                     return 0;
                 } else {
-                    if (features[4] <= 9) {
+                    if (humidity_ratio <= 9) {
                         return 1;
                     } else {
                         return 0;
@@ -13174,17 +13179,17 @@ int predict_tree_72(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[4] <= 109) {
-                if (features[0] <= 36) {
-                    if (features[2] <= 67) {
+            if (humidity_ratio <= 109) {
+                if (temperature <= 36) {
+                    if (light <= 67) {
                         return 0;
                     } else {
                         return 1;
                     }
                 } else {
-                    if (features[0] <= 107) {
-                        if (features[3] <= 11) {
-                            if (features[2] <= 69) {
+                    if (temperature <= 107) {
+                        if (co2 <= 11) {
+                            if (light <= 69) {
                                 return 1;
                             } else {
                                 return 0;
@@ -13193,9 +13198,9 @@ int predict_tree_72(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[1] <= 43) {
-                            if (features[2] <= 79) {
-                                if (features[3] <= 63) {
+                        if (humidity <= 43) {
+                            if (light <= 79) {
+                                if (co2 <= 63) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -13209,22 +13214,22 @@ int predict_tree_72(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[0] <= 204) {
-                    if (features[3] <= 100) {
-                        if (features[3] <= 100) {
-                            if (features[4] <= 109) {
+                if (temperature <= 204) {
+                    if (co2 <= 100) {
+                        if (co2 <= 100) {
+                            if (humidity_ratio <= 109) {
                                 return 0;
                             } else {
-                                if (features[3] <= 99) {
+                                if (co2 <= 99) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 99) {
+                                    if (co2 <= 99) {
                                         return 0;
                                     } else {
-                                        if (features[4] <= 113) {
+                                        if (humidity_ratio <= 113) {
                                             return 1;
                                         } else {
-                                            if (features[4] <= 113) {
+                                            if (humidity_ratio <= 113) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -13234,7 +13239,7 @@ int predict_tree_72(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[0] <= 193) {
+                            if (temperature <= 193) {
                                 return 1;
                             } else {
                                 return 0;
@@ -13244,23 +13249,23 @@ int predict_tree_72(unsigned short features[]) {
                         return 1;
                     }
                 } else {
-                    if (features[3] <= 97) {
-                        if (features[2] <= 72) {
+                    if (co2 <= 97) {
+                        if (light <= 72) {
                             return 1;
                         } else {
-                            if (features[2] <= 75) {
-                                if (features[4] <= 110) {
+                            if (light <= 75) {
+                                if (humidity_ratio <= 110) {
                                     return 0;
                                 } else {
-                                    if (features[1] <= 106) {
+                                    if (humidity <= 106) {
                                         return 1;
                                     } else {
                                         return 0;
                                     }
                                 }
                             } else {
-                                if (features[1] <= 106) {
-                                    if (features[4] <= 116) {
+                                if (humidity <= 106) {
+                                    if (humidity_ratio <= 116) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -13271,20 +13276,20 @@ int predict_tree_72(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[0] <= 227) {
+                        if (temperature <= 227) {
                             return 1;
                         } else {
-                            if (features[2] <= 86) {
+                            if (light <= 86) {
                                 return 1;
                             } else {
-                                if (features[2] <= 91) {
-                                    if (features[2] <= 88) {
+                                if (light <= 91) {
+                                    if (light <= 88) {
                                         return 0;
                                     } else {
-                                        if (features[3] <= 110) {
+                                        if (co2 <= 110) {
                                             return 0;
                                         } else {
-                                            if (features[2] <= 89) {
+                                            if (light <= 89) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -13302,29 +13307,29 @@ int predict_tree_72(unsigned short features[]) {
         }
     }
 }
-int predict_tree_73(unsigned short features[]) {
-    if (features[3] <= 30) {
-        if (features[0] <= 107) {
-            if (features[2] <= 47) {
+int predict_tree_73(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 30) {
+        if (temperature <= 107) {
+            if (light <= 47) {
                 return 0;
             } else {
-                if (features[4] <= 6) {
-                    if (features[0] <= 74) {
+                if (humidity_ratio <= 6) {
+                    if (temperature <= 74) {
                         return 0;
                     } else {
                         return 1;
                     }
                 } else {
-                    if (features[0] <= 105) {
-                        if (features[2] <= 56) {
-                            if (features[1] <= 133) {
+                    if (temperature <= 105) {
+                        if (light <= 56) {
+                            if (humidity <= 133) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         } else {
-                            if (features[0] <= 36) {
-                                if (features[1] <= 121) {
+                            if (temperature <= 36) {
+                                if (humidity <= 121) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -13334,10 +13339,10 @@ int predict_tree_73(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[1] <= 28) {
+                        if (humidity <= 28) {
                             return 0;
                         } else {
-                            if (features[1] <= 65) {
+                            if (humidity <= 65) {
                                 return 1;
                             } else {
                                 return 0;
@@ -13347,10 +13352,10 @@ int predict_tree_73(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 63) {
+            if (light <= 63) {
                 return 0;
             } else {
-                if (features[1] <= 28) {
+                if (humidity <= 28) {
                     return 0;
                 } else {
                     return 1;
@@ -13358,25 +13363,25 @@ int predict_tree_73(unsigned short features[]) {
             }
         }
     } else {
-        if (features[0] <= 111) {
-            if (features[2] <= 33) {
+        if (temperature <= 111) {
+            if (light <= 33) {
                 return 0;
             } else {
                 return 1;
             }
         } else {
-            if (features[2] <= 41) {
+            if (light <= 41) {
                 return 0;
             } else {
-                if (features[2] <= 97) {
-                    if (features[3] <= 73) {
-                        if (features[1] <= 99) {
-                            if (features[2] <= 87) {
-                                if (features[2] <= 81) {
+                if (light <= 97) {
+                    if (co2 <= 73) {
+                        if (humidity <= 99) {
+                            if (light <= 87) {
+                                if (light <= 81) {
                                     return 1;
                                 } else {
-                                    if (features[2] <= 81) {
-                                        if (features[1] <= 37) {
+                                    if (light <= 81) {
+                                        if (humidity <= 37) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -13386,9 +13391,9 @@ int predict_tree_73(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[0] <= 164) {
-                                    if (features[2] <= 89) {
-                                        if (features[1] <= 30) {
+                                if (temperature <= 164) {
+                                    if (light <= 89) {
+                                        if (humidity <= 30) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -13401,9 +13406,9 @@ int predict_tree_73(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[1] <= 107) {
-                                if (features[4] <= 111) {
-                                    if (features[4] <= 110) {
+                            if (humidity <= 107) {
+                                if (humidity_ratio <= 111) {
+                                    if (humidity_ratio <= 110) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -13416,22 +13421,22 @@ int predict_tree_73(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[1] <= 116) {
-                            if (features[3] <= 106) {
-                                if (features[4] <= 124) {
-                                    if (features[2] <= 83) {
-                                        if (features[1] <= 112) {
+                        if (humidity <= 116) {
+                            if (co2 <= 106) {
+                                if (humidity_ratio <= 124) {
+                                    if (light <= 83) {
+                                        if (humidity <= 112) {
                                             return 1;
                                         } else {
-                                            if (features[3] <= 99) {
+                                            if (co2 <= 99) {
                                                 return 0;
                                             } else {
                                                 return 1;
                                             }
                                         }
                                     } else {
-                                        if (features[3] <= 76) {
-                                            if (features[1] <= 80) {
+                                        if (co2 <= 76) {
+                                            if (humidity <= 80) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -13444,17 +13449,17 @@ int predict_tree_73(unsigned short features[]) {
                                     return 0;
                                 }
                             } else {
-                                if (features[2] <= 81) {
+                                if (light <= 81) {
                                     return 1;
                                 } else {
-                                    if (features[1] <= 114) {
+                                    if (humidity <= 114) {
                                         return 0;
                                     } else {
-                                        if (features[2] <= 91) {
-                                            if (features[3] <= 110) {
+                                        if (light <= 91) {
+                                            if (co2 <= 110) {
                                                 return 0;
                                             } else {
-                                                if (features[3] <= 110) {
+                                                if (co2 <= 110) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -13471,10 +13476,10 @@ int predict_tree_73(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[1] <= 111) {
+                    if (humidity <= 111) {
                         return 0;
                     } else {
-                        if (features[2] <= 100) {
+                        if (light <= 100) {
                             return 0;
                         } else {
                             return 1;
@@ -13485,26 +13490,26 @@ int predict_tree_73(unsigned short features[]) {
         }
     }
 }
-int predict_tree_74(unsigned short features[]) {
-    if (features[4] <= 115) {
-        if (features[0] <= 113) {
-            if (features[2] <= 58) {
-                if (features[2] <= 47) {
+int predict_tree_74(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (humidity_ratio <= 115) {
+        if (temperature <= 113) {
+            if (light <= 58) {
+                if (light <= 47) {
                     return 0;
                 } else {
-                    if (features[1] <= 133) {
+                    if (humidity <= 133) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[3] <= 7) {
+                if (co2 <= 7) {
                     return 0;
                 } else {
-                    if (features[2] <= 70) {
-                        if (features[0] <= 36) {
-                            if (features[3] <= 11) {
+                    if (light <= 70) {
+                        if (temperature <= 36) {
+                            if (co2 <= 11) {
                                 return 1;
                             } else {
                                 return 0;
@@ -13513,7 +13518,7 @@ int predict_tree_74(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[2] <= 71) {
+                        if (light <= 71) {
                             return 0;
                         } else {
                             return 1;
@@ -13522,19 +13527,19 @@ int predict_tree_74(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[4] <= 35) {
-                if (features[1] <= 25) {
+            if (humidity_ratio <= 35) {
+                if (humidity <= 25) {
                     return 0;
                 } else {
-                    if (features[0] <= 163) {
-                        if (features[1] <= 35) {
-                            if (features[2] <= 35) {
+                    if (temperature <= 163) {
+                        if (humidity <= 35) {
+                            if (light <= 35) {
                                 return 0;
                             } else {
-                                if (features[2] <= 86) {
+                                if (light <= 86) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 26) {
+                                    if (humidity_ratio <= 26) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -13542,10 +13547,10 @@ int predict_tree_74(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[1] <= 41) {
+                            if (humidity <= 41) {
                                 return 0;
                             } else {
-                                if (features[3] <= 46) {
+                                if (co2 <= 46) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -13557,27 +13562,27 @@ int predict_tree_74(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 54) {
-                    if (features[2] <= 38) {
+                if (co2 <= 54) {
+                    if (light <= 38) {
                         return 0;
                     } else {
                         return 1;
                     }
                 } else {
-                    if (features[0] <= 200) {
-                        if (features[2] <= 22) {
+                    if (temperature <= 200) {
+                        if (light <= 22) {
                             return 0;
                         } else {
-                            if (features[1] <= 112) {
-                                if (features[4] <= 41) {
-                                    if (features[4] <= 41) {
-                                        if (features[4] <= 41) {
+                            if (humidity <= 112) {
+                                if (humidity_ratio <= 41) {
+                                    if (humidity_ratio <= 41) {
+                                        if (humidity_ratio <= 41) {
                                             return 1;
                                         } else {
-                                            if (features[3] <= 63) {
+                                            if (co2 <= 63) {
                                                 return 1;
                                             } else {
-                                                if (features[3] <= 64) {
+                                                if (co2 <= 64) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -13591,7 +13596,7 @@ int predict_tree_74(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[3] <= 99) {
+                                if (co2 <= 99) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -13599,18 +13604,18 @@ int predict_tree_74(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[3] <= 82) {
-                            if (features[3] <= 63) {
-                                if (features[3] <= 62) {
+                        if (co2 <= 82) {
+                            if (co2 <= 63) {
+                                if (co2 <= 62) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             } else {
-                                if (features[1] <= 107) {
+                                if (humidity <= 107) {
                                     return 0;
                                 } else {
-                                    if (features[4] <= 113) {
+                                    if (humidity_ratio <= 113) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -13625,14 +13630,14 @@ int predict_tree_74(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 41) {
-            if (features[2] <= 5) {
+        if (light <= 41) {
+            if (light <= 5) {
                 return 0;
             } else {
-                if (features[4] <= 169) {
+                if (humidity_ratio <= 169) {
                     return 0;
                 } else {
-                    if (features[3] <= 131) {
+                    if (co2 <= 131) {
                         return 0;
                     } else {
                         return 1;
@@ -13640,17 +13645,17 @@ int predict_tree_74(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[0] <= 230) {
+            if (temperature <= 230) {
                 return 1;
             } else {
-                if (features[3] <= 110) {
-                    if (features[3] <= 92) {
+                if (co2 <= 110) {
+                    if (co2 <= 92) {
                         return 1;
                     } else {
-                        if (features[3] <= 97) {
+                        if (co2 <= 97) {
                             return 0;
                         } else {
-                            if (features[2] <= 106) {
+                            if (light <= 106) {
                                 return 0;
                             } else {
                                 return 1;
@@ -13664,31 +13669,31 @@ int predict_tree_74(unsigned short features[]) {
         }
     }
 }
-int predict_tree_75(unsigned short features[]) {
-    if (features[0] <= 110) {
-        if (features[2] <= 56) {
+int predict_tree_75(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (temperature <= 110) {
+        if (light <= 56) {
             return 0;
         } else {
-            if (features[3] <= 13) {
-                if (features[1] <= 120) {
-                    if (features[4] <= 11) {
-                        if (features[2] <= 69) {
+            if (co2 <= 13) {
+                if (humidity <= 120) {
+                    if (humidity_ratio <= 11) {
+                        if (light <= 69) {
                             return 1;
                         } else {
-                            if (features[0] <= 73) {
+                            if (temperature <= 73) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         }
                     } else {
-                        if (features[3] <= 7) {
+                        if (co2 <= 7) {
                             return 0;
                         } else {
-                            if (features[2] <= 65) {
+                            if (light <= 65) {
                                 return 1;
                             } else {
-                                if (features[4] <= 62) {
+                                if (humidity_ratio <= 62) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -13704,16 +13709,16 @@ int predict_tree_75(unsigned short features[]) {
             }
         }
     } else {
-        if (features[3] <= 26) {
-            if (features[3] <= 15) {
-                if (features[2] <= 64) {
+        if (co2 <= 26) {
+            if (co2 <= 15) {
+                if (light <= 64) {
                     return 0;
                 } else {
                     return 1;
                 }
             } else {
-                if (features[1] <= 59) {
-                    if (features[2] <= 35) {
+                if (humidity <= 59) {
+                    if (light <= 35) {
                         return 0;
                     } else {
                         return 1;
@@ -13723,22 +13728,22 @@ int predict_tree_75(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[0] <= 228) {
-                if (features[0] <= 163) {
-                    if (features[3] <= 55) {
-                        if (features[1] <= 79) {
-                            if (features[4] <= 27) {
-                                if (features[4] <= 23) {
+            if (temperature <= 228) {
+                if (temperature <= 163) {
+                    if (co2 <= 55) {
+                        if (humidity <= 79) {
+                            if (humidity_ratio <= 27) {
+                                if (humidity_ratio <= 23) {
                                     return 1;
                                 } else {
-                                    if (features[1] <= 35) {
-                                        if (features[3] <= 30) {
+                                    if (humidity <= 35) {
+                                        if (co2 <= 30) {
                                             return 0;
                                         } else {
                                             return 1;
                                         }
                                     } else {
-                                        if (features[3] <= 38) {
+                                        if (co2 <= 38) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -13746,10 +13751,10 @@ int predict_tree_75(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[2] <= 35) {
+                                if (light <= 35) {
                                     return 0;
                                 } else {
-                                    if (features[2] <= 86) {
+                                    if (light <= 86) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -13760,26 +13765,26 @@ int predict_tree_75(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[2] <= 38) {
+                        if (light <= 38) {
                             return 0;
                         } else {
                             return 1;
                         }
                     }
                 } else {
-                    if (features[4] <= 68) {
-                        if (features[2] <= 40) {
+                    if (humidity_ratio <= 68) {
+                        if (light <= 40) {
                             return 0;
                         } else {
-                            if (features[0] <= 170) {
-                                if (features[0] <= 169) {
-                                    if (features[3] <= 63) {
+                            if (temperature <= 170) {
+                                if (temperature <= 169) {
+                                    if (co2 <= 63) {
                                         return 1;
                                     } else {
-                                        if (features[2] <= 79) {
+                                        if (light <= 79) {
                                             return 1;
                                         } else {
-                                            if (features[1] <= 44) {
+                                            if (humidity <= 44) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -13787,8 +13792,8 @@ int predict_tree_75(unsigned short features[]) {
                                         }
                                     }
                                 } else {
-                                    if (features[3] <= 65) {
-                                        if (features[2] <= 82) {
+                                    if (co2 <= 65) {
+                                        if (light <= 82) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -13802,24 +13807,24 @@ int predict_tree_75(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[1] <= 107) {
-                            if (features[2] <= 44) {
+                        if (humidity <= 107) {
+                            if (light <= 44) {
                                 return 0;
                             } else {
-                                if (features[4] <= 109) {
-                                    if (features[4] <= 108) {
+                                if (humidity_ratio <= 109) {
+                                    if (humidity_ratio <= 108) {
                                         return 1;
                                     } else {
-                                        if (features[3] <= 76) {
+                                        if (co2 <= 76) {
                                             return 0;
                                         } else {
                                             return 1;
                                         }
                                     }
                                 } else {
-                                    if (features[2] <= 74) {
-                                        if (features[3] <= 83) {
-                                            if (features[0] <= 203) {
+                                    if (light <= 74) {
+                                        if (co2 <= 83) {
+                                            if (temperature <= 203) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -13828,11 +13833,11 @@ int predict_tree_75(unsigned short features[]) {
                                             return 1;
                                         }
                                     } else {
-                                        if (features[1] <= 106) {
-                                            if (features[1] <= 105) {
+                                        if (humidity <= 106) {
+                                            if (humidity <= 105) {
                                                 return 0;
                                             } else {
-                                                if (features[2] <= 81) {
+                                                if (light <= 81) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -13845,19 +13850,19 @@ int predict_tree_75(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[2] <= 27) {
+                            if (light <= 27) {
                                 return 0;
                             } else {
-                                if (features[4] <= 115) {
-                                    if (features[4] <= 113) {
-                                        if (features[1] <= 112) {
+                                if (humidity_ratio <= 115) {
+                                    if (humidity_ratio <= 113) {
+                                        if (humidity <= 112) {
                                             return 1;
                                         } else {
                                             return 0;
                                         }
                                     } else {
-                                        if (features[3] <= 101) {
-                                            if (features[2] <= 75) {
+                                        if (co2 <= 101) {
+                                            if (light <= 75) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -13874,17 +13879,17 @@ int predict_tree_75(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[1] <= 105) {
-                    if (features[3] <= 90) {
+                if (humidity <= 105) {
+                    if (co2 <= 90) {
                         return 0;
                     } else {
                         return 1;
                     }
                 } else {
-                    if (features[4] <= 128) {
+                    if (humidity_ratio <= 128) {
                         return 0;
                     } else {
-                        if (features[2] <= 100) {
+                        if (light <= 100) {
                             return 0;
                         } else {
                             return 1;
@@ -13895,16 +13900,16 @@ int predict_tree_75(unsigned short features[]) {
         }
     }
 }
-int predict_tree_76(unsigned short features[]) {
-    if (features[0] <= 138) {
-        if (features[4] <= 115) {
-            if (features[1] <= 82) {
-                if (features[2] <= 55) {
+int predict_tree_76(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (temperature <= 138) {
+        if (humidity_ratio <= 115) {
+            if (humidity <= 82) {
+                if (light <= 55) {
                     return 0;
                 } else {
-                    if (features[1] <= 26) {
-                        if (features[0] <= 73) {
-                            if (features[4] <= 3) {
+                    if (humidity <= 26) {
+                        if (temperature <= 73) {
+                            if (humidity_ratio <= 3) {
                                 return 0;
                             } else {
                                 return 1;
@@ -13917,12 +13922,12 @@ int predict_tree_76(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 10) {
-                    if (features[0] <= 32) {
+                if (co2 <= 10) {
+                    if (temperature <= 32) {
                         return 0;
                     } else {
-                        if (features[0] <= 33) {
-                            if (features[1] <= 133) {
+                        if (temperature <= 33) {
+                            if (humidity <= 133) {
                                 return 1;
                             } else {
                                 return 0;
@@ -13932,9 +13937,9 @@ int predict_tree_76(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 13) {
-                        if (features[0] <= 34) {
-                            if (features[2] <= 34) {
+                    if (co2 <= 13) {
+                        if (temperature <= 34) {
+                            if (light <= 34) {
                                 return 0;
                             } else {
                                 return 1;
@@ -13948,14 +13953,14 @@ int predict_tree_76(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[4] <= 152) {
-                if (features[2] <= 35) {
+            if (humidity_ratio <= 152) {
+                if (light <= 35) {
                     return 0;
                 } else {
                     return 1;
                 }
             } else {
-                if (features[2] <= 50) {
+                if (light <= 50) {
                     return 0;
                 } else {
                     return 1;
@@ -13963,24 +13968,24 @@ int predict_tree_76(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 61) {
-            if (features[3] <= 233) {
-                if (features[4] <= 119) {
-                    if (features[3] <= 39) {
+        if (light <= 61) {
+            if (co2 <= 233) {
+                if (humidity_ratio <= 119) {
+                    if (co2 <= 39) {
                         return 0;
                     } else {
-                        if (features[2] <= 35) {
+                        if (light <= 35) {
                             return 0;
                         } else {
                             return 1;
                         }
                     }
                 } else {
-                    if (features[2] <= 5) {
+                    if (light <= 5) {
                         return 0;
                     } else {
-                        if (features[0] <= 197) {
-                            if (features[1] <= 189) {
+                        if (temperature <= 197) {
+                            if (humidity <= 189) {
                                 return 1;
                             } else {
                                 return 0;
@@ -13994,25 +13999,25 @@ int predict_tree_76(unsigned short features[]) {
                 return 1;
             }
         } else {
-            if (features[0] <= 227) {
-                if (features[0] <= 201) {
-                    if (features[3] <= 38) {
-                        if (features[4] <= 27) {
+            if (temperature <= 227) {
+                if (temperature <= 201) {
+                    if (co2 <= 38) {
+                        if (humidity_ratio <= 27) {
                             return 1;
                         } else {
-                            if (features[4] <= 27) {
+                            if (humidity_ratio <= 27) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         }
                     } else {
-                        if (features[4] <= 40) {
-                            if (features[3] <= 62) {
+                        if (humidity_ratio <= 40) {
+                            if (co2 <= 62) {
                                 return 1;
                             } else {
-                                if (features[0] <= 169) {
-                                    if (features[4] <= 40) {
+                                if (temperature <= 169) {
+                                    if (humidity_ratio <= 40) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -14022,11 +14027,11 @@ int predict_tree_76(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[1] <= 113) {
+                            if (humidity <= 113) {
                                 return 1;
                             } else {
-                                if (features[1] <= 113) {
-                                    if (features[4] <= 115) {
+                                if (humidity <= 113) {
+                                    if (humidity_ratio <= 115) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -14038,9 +14043,9 @@ int predict_tree_76(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 76) {
-                        if (features[2] <= 75) {
-                            if (features[4] <= 111) {
+                    if (co2 <= 76) {
+                        if (light <= 75) {
+                            if (humidity_ratio <= 111) {
                                 return 0;
                             } else {
                                 return 1;
@@ -14053,12 +14058,12 @@ int predict_tree_76(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 111) {
-                    if (features[3] <= 92) {
+                if (co2 <= 111) {
+                    if (co2 <= 92) {
                         return 1;
                     } else {
-                        if (features[0] <= 230) {
-                            if (features[2] <= 98) {
+                        if (temperature <= 230) {
+                            if (light <= 98) {
                                 return 0;
                             } else {
                                 return 1;
@@ -14074,46 +14079,46 @@ int predict_tree_76(unsigned short features[]) {
         }
     }
 }
-int predict_tree_77(unsigned short features[]) {
-    if (features[3] <= 27) {
-        if (features[2] <= 62) {
-            if (features[2] <= 59) {
-                if (features[3] <= 10) {
+int predict_tree_77(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 27) {
+        if (light <= 62) {
+            if (light <= 59) {
+                if (co2 <= 10) {
                     return 0;
                 } else {
-                    if (features[3] <= 10) {
+                    if (co2 <= 10) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[1] <= 38) {
+                if (humidity <= 38) {
                     return 0;
                 } else {
                     return 1;
                 }
             }
         } else {
-            if (features[1] <= 24) {
-                if (features[3] <= 4) {
+            if (humidity <= 24) {
+                if (co2 <= 4) {
                     return 1;
                 } else {
                     return 0;
                 }
             } else {
-                if (features[3] <= 7) {
+                if (co2 <= 7) {
                     return 0;
                 } else {
-                    if (features[0] <= 34) {
-                        if (features[4] <= 77) {
+                    if (temperature <= 34) {
+                        if (humidity_ratio <= 77) {
                             return 1;
                         } else {
                             return 0;
                         }
                     } else {
-                        if (features[3] <= 10) {
-                            if (features[3] <= 9) {
+                        if (co2 <= 10) {
+                            if (co2 <= 9) {
                                 return 1;
                             } else {
                                 return 0;
@@ -14126,23 +14131,23 @@ int predict_tree_77(unsigned short features[]) {
             }
         }
     } else {
-        if (features[1] <= 189) {
-            if (features[3] <= 58) {
-                if (features[1] <= 36) {
-                    if (features[0] <= 163) {
-                        if (features[0] <= 159) {
-                            if (features[4] <= 27) {
-                                if (features[0] <= 124) {
+        if (humidity <= 189) {
+            if (co2 <= 58) {
+                if (humidity <= 36) {
+                    if (temperature <= 163) {
+                        if (temperature <= 159) {
+                            if (humidity_ratio <= 27) {
+                                if (temperature <= 124) {
                                     return 1;
                                 } else {
-                                    if (features[1] <= 33) {
+                                    if (humidity <= 33) {
                                         return 1;
                                     } else {
                                         return 0;
                                     }
                                 }
                             } else {
-                                if (features[3] <= 40) {
+                                if (co2 <= 40) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -14155,18 +14160,18 @@ int predict_tree_77(unsigned short features[]) {
                         return 1;
                     }
                 } else {
-                    if (features[1] <= 80) {
-                        if (features[2] <= 38) {
+                    if (humidity <= 80) {
+                        if (light <= 38) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[1] <= 171) {
-                            if (features[4] <= 107) {
+                        if (humidity <= 171) {
+                            if (humidity_ratio <= 107) {
                                 return 1;
                             } else {
-                                if (features[4] <= 110) {
+                                if (humidity_ratio <= 110) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -14178,31 +14183,31 @@ int predict_tree_77(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[2] <= 44) {
-                    if (features[4] <= 173) {
+                if (light <= 44) {
+                    if (humidity_ratio <= 173) {
                         return 0;
                     } else {
-                        if (features[4] <= 175) {
+                        if (humidity_ratio <= 175) {
                             return 1;
                         } else {
                             return 0;
                         }
                     }
                 } else {
-                    if (features[4] <= 109) {
-                        if (features[1] <= 43) {
-                            if (features[1] <= 43) {
-                                if (features[3] <= 62) {
+                    if (humidity_ratio <= 109) {
+                        if (humidity <= 43) {
+                            if (humidity <= 43) {
+                                if (co2 <= 62) {
                                     return 1;
                                 } else {
-                                    if (features[0] <= 169) {
+                                    if (temperature <= 169) {
                                         return 0;
                                     } else {
                                         return 1;
                                     }
                                 }
                             } else {
-                                if (features[0] <= 171) {
+                                if (temperature <= 171) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -14212,12 +14217,12 @@ int predict_tree_77(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[3] <= 76) {
-                            if (features[2] <= 74) {
+                        if (co2 <= 76) {
+                            if (light <= 74) {
                                 return 1;
                             } else {
-                                if (features[1] <= 106) {
-                                    if (features[4] <= 111) {
+                                if (humidity <= 106) {
+                                    if (humidity_ratio <= 111) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -14227,26 +14232,26 @@ int predict_tree_77(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[0] <= 230) {
-                                if (features[0] <= 228) {
+                            if (temperature <= 230) {
+                                if (temperature <= 228) {
                                     return 1;
                                 } else {
-                                    if (features[2] <= 97) {
+                                    if (light <= 97) {
                                         return 0;
                                     } else {
                                         return 1;
                                     }
                                 }
                             } else {
-                                if (features[1] <= 116) {
-                                    if (features[1] <= 106) {
+                                if (humidity <= 116) {
+                                    if (humidity <= 106) {
                                         return 1;
                                     } else {
-                                        if (features[2] <= 113) {
-                                            if (features[2] <= 94) {
-                                                if (features[2] <= 91) {
-                                                    if (features[2] <= 89) {
-                                                        if (features[3] <= 108) {
+                                        if (light <= 113) {
+                                            if (light <= 94) {
+                                                if (light <= 91) {
+                                                    if (light <= 89) {
+                                                        if (co2 <= 108) {
                                                             return 0;
                                                         } else {
                                                             return 1;
@@ -14273,12 +14278,12 @@ int predict_tree_77(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[3] <= 129) {
-                if (features[3] <= 119) {
+            if (co2 <= 129) {
+                if (co2 <= 119) {
                     return 0;
                 } else {
-                    if (features[1] <= 207) {
-                        if (features[2] <= 41) {
+                    if (humidity <= 207) {
+                        if (light <= 41) {
                             return 0;
                         } else {
                             return 1;
@@ -14288,7 +14293,7 @@ int predict_tree_77(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[2] <= 27) {
+                if (light <= 27) {
                     return 0;
                 } else {
                     return 1;
@@ -14297,15 +14302,15 @@ int predict_tree_77(unsigned short features[]) {
         }
     }
 }
-int predict_tree_78(unsigned short features[]) {
-    if (features[3] <= 32) {
-        if (features[2] <= 62) {
-            if (features[2] <= 59) {
-                if (features[3] <= 10) {
+int predict_tree_78(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 32) {
+        if (light <= 62) {
+            if (light <= 59) {
+                if (co2 <= 10) {
                     return 0;
                 } else {
-                    if (features[0] <= 33) {
-                        if (features[4] <= 74) {
+                    if (temperature <= 33) {
+                        if (humidity_ratio <= 74) {
                             return 0;
                         } else {
                             return 1;
@@ -14315,22 +14320,22 @@ int predict_tree_78(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[4] <= 34) {
+                if (humidity_ratio <= 34) {
                     return 0;
                 } else {
                     return 1;
                 }
             }
         } else {
-            if (features[3] <= 13) {
-                if (features[2] <= 70) {
-                    if (features[4] <= 65) {
-                        if (features[4] <= 4) {
-                            if (features[2] <= 67) {
+            if (co2 <= 13) {
+                if (light <= 70) {
+                    if (humidity_ratio <= 65) {
+                        if (humidity_ratio <= 4) {
+                            if (light <= 67) {
                                 return 1;
                             } else {
-                                if (features[0] <= 73) {
-                                    if (features[4] <= 3) {
+                                if (temperature <= 73) {
+                                    if (humidity_ratio <= 3) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -14353,25 +14358,25 @@ int predict_tree_78(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 31) {
-            if (features[3] <= 132) {
+        if (light <= 31) {
+            if (co2 <= 132) {
                 return 0;
             } else {
-                if (features[1] <= 189) {
+                if (humidity <= 189) {
                     return 1;
                 } else {
                     return 0;
                 }
             }
         } else {
-            if (features[1] <= 116) {
-                if (features[4] <= 123) {
-                    if (features[2] <= 75) {
-                        if (features[2] <= 74) {
+            if (humidity <= 116) {
+                if (humidity_ratio <= 123) {
+                    if (light <= 75) {
+                        if (light <= 74) {
                             return 1;
                         } else {
-                            if (features[1] <= 106) {
-                                if (features[1] <= 78) {
+                            if (humidity <= 106) {
+                                if (humidity <= 78) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -14381,15 +14386,15 @@ int predict_tree_78(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[4] <= 108) {
-                            if (features[4] <= 28) {
-                                if (features[2] <= 86) {
+                        if (humidity_ratio <= 108) {
+                            if (humidity_ratio <= 28) {
+                                if (light <= 86) {
                                     return 1;
                                 } else {
-                                    if (features[1] <= 28) {
+                                    if (humidity <= 28) {
                                         return 1;
                                     } else {
-                                        if (features[0] <= 159) {
+                                        if (temperature <= 159) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -14397,20 +14402,20 @@ int predict_tree_78(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[3] <= 64) {
-                                    if (features[2] <= 81) {
-                                        if (features[2] <= 81) {
-                                            if (features[2] <= 78) {
+                                if (co2 <= 64) {
+                                    if (light <= 81) {
+                                        if (light <= 81) {
+                                            if (light <= 78) {
                                                 return 1;
                                             } else {
-                                                if (features[1] <= 41) {
+                                                if (humidity <= 41) {
                                                     return 1;
                                                 } else {
-                                                    if (features[4] <= 40) {
-                                                        if (features[3] <= 61) {
+                                                    if (humidity_ratio <= 40) {
+                                                        if (co2 <= 61) {
                                                             return 1;
                                                         } else {
-                                                            if (features[3] <= 62) {
+                                                            if (co2 <= 62) {
                                                                 return 0;
                                                             } else {
                                                                 return 1;
@@ -14422,7 +14427,7 @@ int predict_tree_78(unsigned short features[]) {
                                                 }
                                             }
                                         } else {
-                                            if (features[1] <= 43) {
+                                            if (humidity <= 43) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -14436,14 +14441,14 @@ int predict_tree_78(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[4] <= 115) {
-                                if (features[1] <= 108) {
-                                    if (features[0] <= 198) {
+                            if (humidity_ratio <= 115) {
+                                if (humidity <= 108) {
+                                    if (temperature <= 198) {
                                         return 1;
                                     } else {
-                                        if (features[3] <= 76) {
-                                            if (features[3] <= 64) {
-                                                if (features[3] <= 62) {
+                                        if (co2 <= 76) {
+                                            if (co2 <= 64) {
+                                                if (co2 <= 62) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -14456,17 +14461,17 @@ int predict_tree_78(unsigned short features[]) {
                                         }
                                     }
                                 } else {
-                                    if (features[1] <= 112) {
-                                        if (features[0] <= 199) {
+                                    if (humidity <= 112) {
+                                        if (temperature <= 199) {
                                             return 1;
                                         } else {
                                             return 0;
                                         }
                                     } else {
-                                        if (features[0] <= 192) {
+                                        if (temperature <= 192) {
                                             return 0;
                                         } else {
-                                            if (features[3] <= 100) {
+                                            if (co2 <= 100) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -14480,17 +14485,17 @@ int predict_tree_78(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[0] <= 227) {
+                    if (temperature <= 227) {
                         return 1;
                     } else {
-                        if (features[1] <= 111) {
+                        if (humidity <= 111) {
                             return 0;
                         } else {
-                            if (features[0] <= 232) {
-                                if (features[2] <= 89) {
-                                    if (features[2] <= 88) {
-                                        if (features[1] <= 112) {
-                                            if (features[3] <= 102) {
+                            if (temperature <= 232) {
+                                if (light <= 89) {
+                                    if (light <= 88) {
+                                        if (humidity <= 112) {
+                                            if (co2 <= 102) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -14516,31 +14521,31 @@ int predict_tree_78(unsigned short features[]) {
         }
     }
 }
-int predict_tree_79(unsigned short features[]) {
-    if (features[3] <= 28) {
-        if (features[4] <= 91) {
-            if (features[3] <= 13) {
-                if (features[2] <= 59) {
-                    if (features[3] <= 10) {
+int predict_tree_79(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 28) {
+        if (humidity_ratio <= 91) {
+            if (co2 <= 13) {
+                if (light <= 59) {
+                    if (co2 <= 10) {
                         return 0;
                     } else {
-                        if (features[1] <= 117) {
+                        if (humidity <= 117) {
                             return 0;
                         } else {
                             return 1;
                         }
                     }
                 } else {
-                    if (features[1] <= 45) {
-                        if (features[3] <= 4) {
-                            if (features[2] <= 69) {
+                    if (humidity <= 45) {
+                        if (co2 <= 4) {
+                            if (light <= 69) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         } else {
-                            if (features[0] <= 73) {
-                                if (features[2] <= 69) {
+                            if (temperature <= 73) {
+                                if (light <= 69) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -14550,11 +14555,11 @@ int predict_tree_79(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[4] <= 77) {
-                            if (features[3] <= 9) {
+                        if (humidity_ratio <= 77) {
+                            if (co2 <= 9) {
                                 return 1;
                             } else {
-                                if (features[0] <= 69) {
+                                if (temperature <= 69) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -14566,7 +14571,7 @@ int predict_tree_79(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[2] <= 32) {
+                if (light <= 32) {
                     return 0;
                 } else {
                     return 1;
@@ -14576,21 +14581,21 @@ int predict_tree_79(unsigned short features[]) {
             return 0;
         }
     } else {
-        if (features[0] <= 109) {
-            if (features[2] <= 32) {
+        if (temperature <= 109) {
+            if (light <= 32) {
                 return 0;
             } else {
                 return 1;
             }
         } else {
-            if (features[0] <= 163) {
-                if (features[2] <= 35) {
+            if (temperature <= 163) {
+                if (light <= 35) {
                     return 0;
                 } else {
-                    if (features[0] <= 162) {
+                    if (temperature <= 162) {
                         return 1;
                     } else {
-                        if (features[4] <= 38) {
+                        if (humidity_ratio <= 38) {
                             return 0;
                         } else {
                             return 1;
@@ -14598,16 +14603,16 @@ int predict_tree_79(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[0] <= 203) {
-                    if (features[3] <= 58) {
-                        if (features[2] <= 77) {
-                            if (features[1] <= 38) {
+                if (temperature <= 203) {
+                    if (co2 <= 58) {
+                        if (light <= 77) {
+                            if (humidity <= 38) {
                                 return 1;
                             } else {
-                                if (features[2] <= 41) {
+                                if (light <= 41) {
                                     return 0;
                                 } else {
-                                    if (features[0] <= 185) {
+                                    if (temperature <= 185) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -14618,19 +14623,19 @@ int predict_tree_79(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[0] <= 191) {
-                            if (features[4] <= 68) {
-                                if (features[2] <= 79) {
+                        if (temperature <= 191) {
+                            if (humidity_ratio <= 68) {
+                                if (light <= 79) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 41) {
+                                    if (humidity_ratio <= 41) {
                                         return 1;
                                     } else {
-                                        if (features[4] <= 41) {
+                                        if (humidity_ratio <= 41) {
                                             return 0;
                                         } else {
-                                            if (features[3] <= 64) {
-                                                if (features[2] <= 82) {
+                                            if (co2 <= 64) {
+                                                if (light <= 82) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -14642,16 +14647,16 @@ int predict_tree_79(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[2] <= 18) {
+                                if (light <= 18) {
                                     return 0;
                                 } else {
-                                    if (features[2] <= 77) {
+                                    if (light <= 77) {
                                         return 1;
                                     } else {
-                                        if (features[4] <= 112) {
+                                        if (humidity_ratio <= 112) {
                                             return 1;
                                         } else {
-                                            if (features[4] <= 154) {
+                                            if (humidity_ratio <= 154) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -14661,15 +14666,15 @@ int predict_tree_79(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[1] <= 113) {
+                            if (humidity <= 113) {
                                 return 1;
                             } else {
-                                if (features[2] <= 33) {
+                                if (light <= 33) {
                                     return 0;
                                 } else {
-                                    if (features[1] <= 113) {
-                                        if (features[3] <= 102) {
-                                            if (features[4] <= 116) {
+                                    if (humidity <= 113) {
+                                        if (co2 <= 102) {
+                                            if (humidity_ratio <= 116) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -14685,36 +14690,36 @@ int predict_tree_79(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[2] <= 38) {
+                    if (light <= 38) {
                         return 0;
                     } else {
-                        if (features[3] <= 76) {
+                        if (co2 <= 76) {
                             return 0;
                         } else {
-                            if (features[2] <= 86) {
+                            if (light <= 86) {
                                 return 1;
                             } else {
-                                if (features[0] <= 227) {
+                                if (temperature <= 227) {
                                     return 1;
                                 } else {
-                                    if (features[1] <= 111) {
+                                    if (humidity <= 111) {
                                         return 0;
                                     } else {
-                                        if (features[1] <= 112) {
+                                        if (humidity <= 112) {
                                             return 1;
                                         } else {
-                                            if (features[1] <= 116) {
-                                                if (features[3] <= 110) {
-                                                    if (features[3] <= 101) {
+                                            if (humidity <= 116) {
+                                                if (co2 <= 110) {
+                                                    if (co2 <= 101) {
                                                         return 1;
                                                     } else {
                                                         return 0;
                                                     }
                                                 } else {
-                                                    if (features[4] <= 129) {
+                                                    if (humidity_ratio <= 129) {
                                                         return 1;
                                                     } else {
-                                                        if (features[3] <= 110) {
+                                                        if (co2 <= 110) {
                                                             return 1;
                                                         } else {
                                                             return 0;
@@ -14735,16 +14740,16 @@ int predict_tree_79(unsigned short features[]) {
         }
     }
 }
-int predict_tree_80(unsigned short features[]) {
-    if (features[3] <= 27) {
-        if (features[2] <= 65) {
-            if (features[1] <= 117) {
+int predict_tree_80(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 27) {
+        if (light <= 65) {
+            if (humidity <= 117) {
                 return 0;
             } else {
-                if (features[3] <= 9) {
+                if (co2 <= 9) {
                     return 0;
                 } else {
-                    if (features[4] <= 77) {
+                    if (humidity_ratio <= 77) {
                         return 1;
                     } else {
                         return 0;
@@ -14752,14 +14757,14 @@ int predict_tree_80(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[4] <= 14) {
-                if (features[1] <= 25) {
-                    if (features[4] <= 9) {
-                        if (features[2] <= 69) {
+            if (humidity_ratio <= 14) {
+                if (humidity <= 25) {
+                    if (humidity_ratio <= 9) {
+                        if (light <= 69) {
                             return 1;
                         } else {
-                            if (features[2] <= 70) {
-                                if (features[4] <= 3) {
+                            if (light <= 70) {
+                                if (humidity_ratio <= 3) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -14775,8 +14780,8 @@ int predict_tree_80(unsigned short features[]) {
                     return 1;
                 }
             } else {
-                if (features[3] <= 13) {
-                    if (features[4] <= 77) {
+                if (co2 <= 13) {
+                    if (humidity_ratio <= 77) {
                         return 1;
                     } else {
                         return 0;
@@ -14787,21 +14792,21 @@ int predict_tree_80(unsigned short features[]) {
             }
         }
     } else {
-        if (features[0] <= 111) {
-            if (features[4] <= 148) {
+        if (temperature <= 111) {
+            if (humidity_ratio <= 148) {
                 return 1;
             } else {
                 return 0;
             }
         } else {
-            if (features[0] <= 163) {
-                if (features[2] <= 44) {
+            if (temperature <= 163) {
+                if (light <= 44) {
                     return 0;
                 } else {
-                    if (features[2] <= 86) {
+                    if (light <= 86) {
                         return 1;
                     } else {
-                        if (features[1] <= 30) {
+                        if (humidity <= 30) {
                             return 0;
                         } else {
                             return 1;
@@ -14809,18 +14814,18 @@ int predict_tree_80(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[4] <= 69) {
-                    if (features[2] <= 36) {
+                if (humidity_ratio <= 69) {
+                    if (light <= 36) {
                         return 0;
                     } else {
-                        if (features[0] <= 170) {
-                            if (features[2] <= 79) {
+                        if (temperature <= 170) {
+                            if (light <= 79) {
                                 return 1;
                             } else {
-                                if (features[1] <= 43) {
+                                if (humidity <= 43) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 42) {
+                                    if (humidity_ratio <= 42) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -14832,18 +14837,18 @@ int predict_tree_80(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[2] <= 27) {
+                    if (light <= 27) {
                         return 0;
                     } else {
-                        if (features[1] <= 108) {
-                            if (features[1] <= 104) {
-                                if (features[1] <= 104) {
+                        if (humidity <= 108) {
+                            if (humidity <= 104) {
+                                if (humidity <= 104) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 107) {
+                                    if (humidity_ratio <= 107) {
                                         return 1;
                                     } else {
-                                        if (features[4] <= 109) {
+                                        if (humidity_ratio <= 109) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -14851,29 +14856,29 @@ int predict_tree_80(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[0] <= 200) {
+                                if (temperature <= 200) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 112) {
-                                        if (features[4] <= 110) {
+                                    if (humidity_ratio <= 112) {
+                                        if (humidity_ratio <= 110) {
                                             return 0;
                                         } else {
-                                            if (features[2] <= 75) {
-                                                if (features[2] <= 74) {
+                                            if (light <= 75) {
+                                                if (light <= 74) {
                                                     return 1;
                                                 } else {
-                                                    if (features[3] <= 61) {
+                                                    if (co2 <= 61) {
                                                         return 0;
                                                     } else {
                                                         return 1;
                                                     }
                                                 }
                                             } else {
-                                                if (features[1] <= 106) {
-                                                    if (features[1] <= 105) {
+                                                if (humidity <= 106) {
+                                                    if (humidity <= 105) {
                                                         return 0;
                                                     } else {
-                                                        if (features[3] <= 63) {
+                                                        if (co2 <= 63) {
                                                             return 1;
                                                         } else {
                                                             return 0;
@@ -14885,11 +14890,11 @@ int predict_tree_80(unsigned short features[]) {
                                             }
                                         }
                                     } else {
-                                        if (features[2] <= 79) {
+                                        if (light <= 79) {
                                             return 1;
                                         } else {
-                                            if (features[4] <= 121) {
-                                                if (features[4] <= 117) {
+                                            if (humidity_ratio <= 121) {
+                                                if (humidity_ratio <= 117) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -14902,24 +14907,24 @@ int predict_tree_80(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[0] <= 230) {
-                                if (features[4] <= 115) {
-                                    if (features[3] <= 84) {
-                                        if (features[2] <= 84) {
+                            if (temperature <= 230) {
+                                if (humidity_ratio <= 115) {
+                                    if (co2 <= 84) {
+                                        if (light <= 84) {
                                             return 1;
                                         } else {
                                             return 0;
                                         }
                                     } else {
-                                        if (features[2] <= 77) {
-                                            if (features[4] <= 115) {
+                                        if (light <= 77) {
+                                            if (humidity_ratio <= 115) {
                                                 return 1;
                                             } else {
                                                 return 0;
                                             }
                                         } else {
-                                            if (features[0] <= 191) {
-                                                if (features[0] <= 190) {
+                                            if (temperature <= 191) {
+                                                if (temperature <= 190) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -14930,14 +14935,14 @@ int predict_tree_80(unsigned short features[]) {
                                         }
                                     }
                                 } else {
-                                    if (features[3] <= 103) {
-                                        if (features[4] <= 124) {
+                                    if (co2 <= 103) {
+                                        if (humidity_ratio <= 124) {
                                             return 1;
                                         } else {
-                                            if (features[3] <= 102) {
+                                            if (co2 <= 102) {
                                                 return 1;
                                             } else {
-                                                if (features[0] <= 223) {
+                                                if (temperature <= 223) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -14949,10 +14954,10 @@ int predict_tree_80(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[1] <= 114) {
+                                if (humidity <= 114) {
                                     return 0;
                                 } else {
-                                    if (features[0] <= 232) {
+                                    if (temperature <= 232) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -14966,20 +14971,20 @@ int predict_tree_80(unsigned short features[]) {
         }
     }
 }
-int predict_tree_81(unsigned short features[]) {
-    if (features[0] <= 114) {
-        if (features[2] <= 48) {
+int predict_tree_81(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (temperature <= 114) {
+        if (light <= 48) {
             return 0;
         } else {
-            if (features[4] <= 4) {
+            if (humidity_ratio <= 4) {
                 return 0;
             } else {
-                if (features[3] <= 13) {
-                    if (features[1] <= 120) {
-                        if (features[0] <= 91) {
+                if (co2 <= 13) {
+                    if (humidity <= 120) {
+                        if (temperature <= 91) {
                             return 1;
                         } else {
-                            if (features[1] <= 66) {
+                            if (humidity <= 66) {
                                 return 0;
                             } else {
                                 return 1;
@@ -14994,13 +14999,13 @@ int predict_tree_81(unsigned short features[]) {
             }
         }
     } else {
-        if (features[4] <= 35) {
-            if (features[2] <= 65) {
-                if (features[3] <= 39) {
+        if (humidity_ratio <= 35) {
+            if (light <= 65) {
+                if (co2 <= 39) {
                     return 0;
                 } else {
-                    if (features[4] <= 28) {
-                        if (features[4] <= 28) {
+                    if (humidity_ratio <= 28) {
+                        if (humidity_ratio <= 28) {
                             return 0;
                         } else {
                             return 1;
@@ -15010,10 +15015,10 @@ int predict_tree_81(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[2] <= 89) {
+                if (light <= 89) {
                     return 1;
                 } else {
-                    if (features[2] <= 89) {
+                    if (light <= 89) {
                         return 0;
                     } else {
                         return 1;
@@ -15021,30 +15026,30 @@ int predict_tree_81(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[0] <= 163) {
-                if (features[3] <= 54) {
-                    if (features[2] <= 33) {
+            if (temperature <= 163) {
+                if (co2 <= 54) {
+                    if (light <= 33) {
                         return 0;
                     } else {
                         return 1;
                     }
                 } else {
-                    if (features[4] <= 190) {
-                        if (features[1] <= 45) {
+                    if (humidity_ratio <= 190) {
+                        if (humidity <= 45) {
                             return 0;
                         } else {
-                            if (features[4] <= 165) {
-                                if (features[2] <= 49) {
+                            if (humidity_ratio <= 165) {
+                                if (light <= 49) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             } else {
-                                if (features[2] <= 40) {
-                                    if (features[2] <= 5) {
+                                if (light <= 40) {
+                                    if (light <= 5) {
                                         return 0;
                                     } else {
-                                        if (features[4] <= 175) {
+                                        if (humidity_ratio <= 175) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -15056,8 +15061,8 @@ int predict_tree_81(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[4] <= 191) {
-                            if (features[1] <= 211) {
+                        if (humidity_ratio <= 191) {
+                            if (humidity <= 211) {
                                 return 1;
                             } else {
                                 return 0;
@@ -15068,17 +15073,17 @@ int predict_tree_81(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[4] <= 67) {
-                    if (features[3] <= 64) {
-                        if (features[3] <= 64) {
-                            if (features[2] <= 35) {
+                if (humidity_ratio <= 67) {
+                    if (co2 <= 64) {
+                        if (co2 <= 64) {
+                            if (light <= 35) {
                                 return 0;
                             } else {
-                                if (features[3] <= 62) {
+                                if (co2 <= 62) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 62) {
-                                        if (features[2] <= 80) {
+                                    if (co2 <= 62) {
+                                        if (light <= 80) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -15095,16 +15100,16 @@ int predict_tree_81(unsigned short features[]) {
                         return 1;
                     }
                 } else {
-                    if (features[2] <= 27) {
+                    if (light <= 27) {
                         return 0;
                     } else {
-                        if (features[3] <= 73) {
-                            if (features[4] <= 114) {
-                                if (features[0] <= 200) {
+                        if (co2 <= 73) {
+                            if (humidity_ratio <= 114) {
+                                if (temperature <= 200) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 63) {
-                                        if (features[4] <= 110) {
+                                    if (co2 <= 63) {
+                                        if (humidity_ratio <= 110) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -15117,22 +15122,22 @@ int predict_tree_81(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[2] <= 86) {
-                                if (features[3] <= 77) {
-                                    if (features[1] <= 102) {
+                            if (light <= 86) {
+                                if (co2 <= 77) {
+                                    if (humidity <= 102) {
                                         return 1;
                                     } else {
                                         return 0;
                                     }
                                 } else {
-                                    if (features[2] <= 76) {
+                                    if (light <= 76) {
                                         return 1;
                                     } else {
-                                        if (features[3] <= 100) {
-                                            if (features[3] <= 99) {
+                                        if (co2 <= 100) {
+                                            if (co2 <= 99) {
                                                 return 1;
                                             } else {
-                                                if (features[4] <= 113) {
+                                                if (humidity_ratio <= 113) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -15144,15 +15149,15 @@ int predict_tree_81(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[3] <= 97) {
+                                if (co2 <= 97) {
                                     return 0;
                                 } else {
-                                    if (features[1] <= 114) {
-                                        if (features[1] <= 112) {
+                                    if (humidity <= 114) {
+                                        if (humidity <= 112) {
                                             return 1;
                                         } else {
-                                            if (features[4] <= 124) {
-                                                if (features[2] <= 86) {
+                                            if (humidity_ratio <= 124) {
+                                                if (light <= 86) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -15162,11 +15167,11 @@ int predict_tree_81(unsigned short features[]) {
                                             }
                                         }
                                     } else {
-                                        if (features[1] <= 115) {
-                                            if (features[0] <= 228) {
+                                        if (humidity <= 115) {
+                                            if (temperature <= 228) {
                                                 return 1;
                                             } else {
-                                                if (features[4] <= 128) {
+                                                if (humidity_ratio <= 128) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -15185,24 +15190,24 @@ int predict_tree_81(unsigned short features[]) {
         }
     }
 }
-int predict_tree_82(unsigned short features[]) {
-    if (features[3] <= 27) {
-        if (features[2] <= 62) {
-            if (features[3] <= 10) {
-                if (features[2] <= 59) {
+int predict_tree_82(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 27) {
+        if (light <= 62) {
+            if (co2 <= 10) {
+                if (light <= 59) {
                     return 0;
                 } else {
-                    if (features[1] <= 38) {
+                    if (humidity <= 38) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[1] <= 117) {
+                if (humidity <= 117) {
                     return 0;
                 } else {
-                    if (features[4] <= 113) {
+                    if (humidity_ratio <= 113) {
                         return 1;
                     } else {
                         return 0;
@@ -15210,16 +15215,16 @@ int predict_tree_82(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 70) {
-                if (features[3] <= 7) {
-                    if (features[0] <= 74) {
+            if (light <= 70) {
+                if (co2 <= 7) {
+                    if (temperature <= 74) {
                         return 0;
                     } else {
                         return 1;
                     }
                 } else {
-                    if (features[3] <= 13) {
-                        if (features[1] <= 121) {
+                    if (co2 <= 13) {
+                        if (humidity <= 121) {
                             return 1;
                         } else {
                             return 0;
@@ -15229,7 +15234,7 @@ int predict_tree_82(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[0] <= 52) {
+                if (temperature <= 52) {
                     return 1;
                 } else {
                     return 0;
@@ -15237,27 +15242,27 @@ int predict_tree_82(unsigned short features[]) {
             }
         }
     } else {
-        if (features[1] <= 186) {
-            if (features[2] <= 34) {
+        if (humidity <= 186) {
+            if (light <= 34) {
                 return 0;
             } else {
-                if (features[1] <= 104) {
-                    if (features[3] <= 64) {
-                        if (features[0] <= 169) {
-                            if (features[2] <= 89) {
+                if (humidity <= 104) {
+                    if (co2 <= 64) {
+                        if (temperature <= 169) {
+                            if (light <= 89) {
                                 return 1;
                             } else {
-                                if (features[2] <= 90) {
+                                if (light <= 90) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             }
                         } else {
-                            if (features[1] <= 43) {
+                            if (humidity <= 43) {
                                 return 1;
                             } else {
-                                if (features[3] <= 64) {
+                                if (co2 <= 64) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -15268,21 +15273,21 @@ int predict_tree_82(unsigned short features[]) {
                         return 1;
                     }
                 } else {
-                    if (features[4] <= 115) {
-                        if (features[4] <= 111) {
-                            if (features[0] <= 200) {
+                    if (humidity_ratio <= 115) {
+                        if (humidity_ratio <= 111) {
+                            if (temperature <= 200) {
                                 return 1;
                             } else {
-                                if (features[4] <= 110) {
+                                if (humidity_ratio <= 110) {
                                     return 0;
                                 } else {
-                                    if (features[3] <= 61) {
+                                    if (co2 <= 61) {
                                         return 0;
                                     } else {
-                                        if (features[3] <= 63) {
+                                        if (co2 <= 63) {
                                             return 1;
                                         } else {
-                                            if (features[3] <= 81) {
+                                            if (co2 <= 81) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -15292,17 +15297,17 @@ int predict_tree_82(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[3] <= 76) {
-                                if (features[1] <= 109) {
+                            if (co2 <= 76) {
+                                if (humidity <= 109) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             } else {
-                                if (features[1] <= 112) {
+                                if (humidity <= 112) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 99) {
+                                    if (co2 <= 99) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -15311,21 +15316,21 @@ int predict_tree_82(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[3] <= 97) {
-                            if (features[2] <= 88) {
+                        if (co2 <= 97) {
+                            if (light <= 88) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         } else {
-                            if (features[2] <= 87) {
+                            if (light <= 87) {
                                 return 1;
                             } else {
-                                if (features[0] <= 228) {
+                                if (temperature <= 228) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 130) {
-                                        if (features[4] <= 125) {
+                                    if (humidity_ratio <= 130) {
+                                        if (humidity_ratio <= 125) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -15340,14 +15345,14 @@ int predict_tree_82(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[3] <= 124) {
-                if (features[2] <= 41) {
+            if (co2 <= 124) {
+                if (light <= 41) {
                     return 0;
                 } else {
                     return 1;
                 }
             } else {
-                if (features[2] <= 5) {
+                if (light <= 5) {
                     return 0;
                 } else {
                     return 1;
@@ -15356,27 +15361,27 @@ int predict_tree_82(unsigned short features[]) {
         }
     }
 }
-int predict_tree_83(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[4] <= 246) {
-            if (features[3] <= 39) {
-                if (features[3] <= 7) {
+int predict_tree_83(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (humidity_ratio <= 246) {
+            if (co2 <= 39) {
+                if (co2 <= 7) {
                     return 0;
                 } else {
-                    if (features[0] <= 32) {
+                    if (temperature <= 32) {
                         return 0;
                     } else {
-                        if (features[3] <= 7) {
-                            if (features[2] <= 58) {
+                        if (co2 <= 7) {
+                            if (light <= 58) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         } else {
-                            if (features[1] <= 117) {
+                            if (humidity <= 117) {
                                 return 0;
                             } else {
-                                if (features[2] <= 24) {
+                                if (light <= 24) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -15386,11 +15391,11 @@ int predict_tree_83(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 40) {
+                if (co2 <= 40) {
                     return 1;
                 } else {
-                    if (features[4] <= 85) {
-                        if (features[2] <= 28) {
+                    if (humidity_ratio <= 85) {
+                        if (light <= 28) {
                             return 0;
                         } else {
                             return 1;
@@ -15404,21 +15409,21 @@ int predict_tree_83(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[3] <= 7) {
-            if (features[2] <= 67) {
+        if (co2 <= 7) {
+            if (light <= 67) {
                 return 1;
             } else {
                 return 0;
             }
         } else {
-            if (features[1] <= 104) {
-                if (features[4] <= 40) {
-                    if (features[1] <= 30) {
-                        if (features[3] <= 37) {
+            if (humidity <= 104) {
+                if (humidity_ratio <= 40) {
+                    if (humidity <= 30) {
+                        if (co2 <= 37) {
                             return 1;
                         } else {
-                            if (features[0] <= 168) {
-                                if (features[0] <= 159) {
+                            if (temperature <= 168) {
+                                if (temperature <= 159) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -15428,13 +15433,13 @@ int predict_tree_83(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[4] <= 40) {
+                        if (humidity_ratio <= 40) {
                             return 1;
                         } else {
-                            if (features[3] <= 62) {
+                            if (co2 <= 62) {
                                 return 1;
                             } else {
-                                if (features[2] <= 79) {
+                                if (light <= 79) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -15446,24 +15451,24 @@ int predict_tree_83(unsigned short features[]) {
                     return 1;
                 }
             } else {
-                if (features[1] <= 108) {
-                    if (features[2] <= 73) {
+                if (humidity <= 108) {
+                    if (light <= 73) {
                         return 1;
                     } else {
-                        if (features[3] <= 94) {
-                            if (features[3] <= 82) {
-                                if (features[2] <= 74) {
-                                    if (features[4] <= 111) {
+                        if (co2 <= 94) {
+                            if (co2 <= 82) {
+                                if (light <= 74) {
+                                    if (humidity_ratio <= 111) {
                                         return 1;
                                     } else {
                                         return 0;
                                     }
                                 } else {
-                                    if (features[1] <= 106) {
-                                        if (features[3] <= 61) {
+                                    if (humidity <= 106) {
+                                        if (co2 <= 61) {
                                             return 0;
                                         } else {
-                                            if (features[3] <= 63) {
+                                            if (co2 <= 63) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -15474,7 +15479,7 @@ int predict_tree_83(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[0] <= 241) {
+                                if (temperature <= 241) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -15485,20 +15490,20 @@ int predict_tree_83(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[4] <= 82) {
-                        if (features[1] <= 120) {
+                    if (humidity_ratio <= 82) {
+                        if (humidity <= 120) {
                             return 1;
                         } else {
                             return 0;
                         }
                     } else {
-                        if (features[1] <= 116) {
-                            if (features[2] <= 83) {
-                                if (features[3] <= 100) {
-                                    if (features[4] <= 113) {
+                        if (humidity <= 116) {
+                            if (light <= 83) {
+                                if (co2 <= 100) {
+                                    if (humidity_ratio <= 113) {
                                         return 1;
                                     } else {
-                                        if (features[2] <= 75) {
+                                        if (light <= 75) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -15508,20 +15513,20 @@ int predict_tree_83(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[0] <= 227) {
-                                    if (features[4] <= 116) {
+                                if (temperature <= 227) {
+                                    if (humidity_ratio <= 116) {
                                         return 0;
                                     } else {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[3] <= 112) {
-                                        if (features[4] <= 125) {
-                                            if (features[1] <= 111) {
+                                    if (co2 <= 112) {
+                                        if (humidity_ratio <= 125) {
+                                            if (humidity <= 111) {
                                                 return 0;
                                             } else {
-                                                if (features[0] <= 230) {
-                                                    if (features[2] <= 86) {
+                                                if (temperature <= 230) {
+                                                    if (light <= 86) {
                                                         return 1;
                                                     } else {
                                                         return 0;
@@ -15547,17 +15552,17 @@ int predict_tree_83(unsigned short features[]) {
         }
     }
 }
-int predict_tree_84(unsigned short features[]) {
-    if (features[3] <= 15) {
-        if (features[0] <= 69) {
-            if (features[2] <= 71) {
-                if (features[3] <= 10) {
+int predict_tree_84(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 15) {
+        if (temperature <= 69) {
+            if (light <= 71) {
+                if (co2 <= 10) {
                     return 0;
                 } else {
-                    if (features[2] <= 24) {
+                    if (light <= 24) {
                         return 0;
                     } else {
-                        if (features[1] <= 120) {
+                        if (humidity <= 120) {
                             return 1;
                         } else {
                             return 0;
@@ -15568,26 +15573,26 @@ int predict_tree_84(unsigned short features[]) {
                 return 1;
             }
         } else {
-            if (features[3] <= 13) {
-                if (features[2] <= 63) {
-                    if (features[2] <= 59) {
+            if (co2 <= 13) {
+                if (light <= 63) {
+                    if (light <= 59) {
                         return 0;
                     } else {
-                        if (features[1] <= 38) {
+                        if (humidity <= 38) {
                             return 0;
                         } else {
                             return 1;
                         }
                     }
                 } else {
-                    if (features[3] <= 10) {
-                        if (features[2] <= 67) {
+                    if (co2 <= 10) {
+                        if (light <= 67) {
                             return 1;
                         } else {
-                            if (features[3] <= 7) {
+                            if (co2 <= 7) {
                                 return 0;
                             } else {
-                                if (features[0] <= 70) {
+                                if (temperature <= 70) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -15599,7 +15604,7 @@ int predict_tree_84(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[2] <= 34) {
+                if (light <= 34) {
                     return 0;
                 } else {
                     return 1;
@@ -15607,12 +15612,12 @@ int predict_tree_84(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 35) {
-            if (features[2] <= 5) {
+        if (light <= 35) {
+            if (light <= 5) {
                 return 0;
             } else {
-                if (features[2] <= 5) {
-                    if (features[0] <= 187) {
+                if (light <= 5) {
+                    if (temperature <= 187) {
                         return 1;
                     } else {
                         return 0;
@@ -15622,12 +15627,12 @@ int predict_tree_84(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[1] <= 116) {
-                if (features[0] <= 204) {
-                    if (features[4] <= 41) {
-                        if (features[3] <= 62) {
-                            if (features[1] <= 30) {
-                                if (features[0] <= 163) {
+            if (humidity <= 116) {
+                if (temperature <= 204) {
+                    if (humidity_ratio <= 41) {
+                        if (co2 <= 62) {
+                            if (humidity <= 30) {
+                                if (temperature <= 163) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -15636,9 +15641,9 @@ int predict_tree_84(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[4] <= 41) {
-                                if (features[3] <= 62) {
-                                    if (features[0] <= 171) {
+                            if (humidity_ratio <= 41) {
+                                if (co2 <= 62) {
+                                    if (temperature <= 171) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -15651,19 +15656,19 @@ int predict_tree_84(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[3] <= 100) {
-                            if (features[4] <= 108) {
+                        if (co2 <= 100) {
+                            if (humidity_ratio <= 108) {
                                 return 1;
                             } else {
-                                if (features[0] <= 201) {
+                                if (temperature <= 201) {
                                     return 1;
                                 } else {
                                     return 0;
                                 }
                             }
                         } else {
-                            if (features[3] <= 100) {
-                                if (features[2] <= 76) {
+                            if (co2 <= 100) {
+                                if (light <= 76) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -15674,12 +15679,12 @@ int predict_tree_84(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[2] <= 74) {
-                        if (features[4] <= 113) {
-                            if (features[1] <= 106) {
+                    if (light <= 74) {
+                        if (humidity_ratio <= 113) {
+                            if (humidity <= 106) {
                                 return 1;
                             } else {
-                                if (features[3] <= 85) {
+                                if (co2 <= 85) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -15689,10 +15694,10 @@ int predict_tree_84(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[4] <= 118) {
-                            if (features[3] <= 76) {
-                                if (features[2] <= 75) {
-                                    if (features[3] <= 61) {
+                        if (humidity_ratio <= 118) {
+                            if (co2 <= 76) {
+                                if (light <= 75) {
+                                    if (co2 <= 61) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -15704,17 +15709,17 @@ int predict_tree_84(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[0] <= 227) {
+                            if (temperature <= 227) {
                                 return 1;
                             } else {
-                                if (features[1] <= 106) {
+                                if (humidity <= 106) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 126) {
+                                    if (humidity_ratio <= 126) {
                                         return 0;
                                     } else {
-                                        if (features[2] <= 91) {
-                                            if (features[3] <= 110) {
+                                        if (light <= 91) {
+                                            if (co2 <= 110) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -15734,21 +15739,21 @@ int predict_tree_84(unsigned short features[]) {
         }
     }
 }
-int predict_tree_85(unsigned short features[]) {
-    if (features[4] <= 115) {
-        if (features[2] <= 61) {
-            if (features[4] <= 28) {
+int predict_tree_85(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (humidity_ratio <= 115) {
+        if (light <= 61) {
+            if (humidity_ratio <= 28) {
                 return 0;
             } else {
-                if (features[3] <= 10) {
-                    if (features[1] <= 65) {
-                        if (features[0] <= 105) {
+                if (co2 <= 10) {
+                    if (humidity <= 65) {
+                        if (temperature <= 105) {
                             return 0;
                         } else {
-                            if (features[1] <= 55) {
+                            if (humidity <= 55) {
                                 return 0;
                             } else {
-                                if (features[2] <= 29) {
+                                if (light <= 29) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -15759,7 +15764,7 @@ int predict_tree_85(unsigned short features[]) {
                         return 0;
                     }
                 } else {
-                    if (features[2] <= 33) {
+                    if (light <= 33) {
                         return 0;
                     } else {
                         return 1;
@@ -15767,16 +15772,16 @@ int predict_tree_85(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[1] <= 24) {
+            if (humidity <= 24) {
                 return 0;
             } else {
-                if (features[2] <= 94) {
-                    if (features[0] <= 204) {
-                        if (features[3] <= 99) {
-                            if (features[1] <= 30) {
-                                if (features[1] <= 30) {
-                                    if (features[0] <= 163) {
-                                        if (features[3] <= 26) {
+                if (light <= 94) {
+                    if (temperature <= 204) {
+                        if (co2 <= 99) {
+                            if (humidity <= 30) {
+                                if (humidity <= 30) {
+                                    if (temperature <= 163) {
+                                        if (co2 <= 26) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -15788,26 +15793,26 @@ int predict_tree_85(unsigned short features[]) {
                                     return 0;
                                 }
                             } else {
-                                if (features[0] <= 36) {
-                                    if (features[0] <= 34) {
+                                if (temperature <= 36) {
+                                    if (temperature <= 34) {
                                         return 1;
                                     } else {
                                         return 0;
                                     }
                                 } else {
-                                    if (features[4] <= 109) {
-                                        if (features[0] <= 107) {
-                                            if (features[3] <= 11) {
+                                    if (humidity_ratio <= 109) {
+                                        if (temperature <= 107) {
+                                            if (co2 <= 11) {
                                                 return 0;
                                             } else {
                                                 return 1;
                                             }
                                         } else {
-                                            if (features[1] <= 43) {
-                                                if (features[4] <= 41) {
+                                            if (humidity <= 43) {
+                                                if (humidity_ratio <= 41) {
                                                     return 1;
                                                 } else {
-                                                    if (features[0] <= 171) {
+                                                    if (temperature <= 171) {
                                                         return 0;
                                                     } else {
                                                         return 1;
@@ -15818,7 +15823,7 @@ int predict_tree_85(unsigned short features[]) {
                                             }
                                         }
                                     } else {
-                                        if (features[4] <= 109) {
+                                        if (humidity_ratio <= 109) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -15827,13 +15832,13 @@ int predict_tree_85(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[0] <= 191) {
+                            if (temperature <= 191) {
                                 return 0;
                             } else {
-                                if (features[1] <= 113) {
+                                if (humidity <= 113) {
                                     return 1;
                                 } else {
-                                    if (features[2] <= 77) {
+                                    if (light <= 77) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -15842,22 +15847,22 @@ int predict_tree_85(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[2] <= 74) {
-                            if (features[2] <= 73) {
+                        if (light <= 74) {
+                            if (light <= 73) {
                                 return 1;
                             } else {
-                                if (features[3] <= 83) {
+                                if (co2 <= 83) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             }
                         } else {
-                            if (features[3] <= 75) {
-                                if (features[2] <= 80) {
+                            if (co2 <= 75) {
+                                if (light <= 80) {
                                     return 0;
                                 } else {
-                                    if (features[3] <= 67) {
+                                    if (co2 <= 67) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -15869,7 +15874,7 @@ int predict_tree_85(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[0] <= 196) {
+                    if (temperature <= 196) {
                         return 1;
                     } else {
                         return 0;
@@ -15878,37 +15883,37 @@ int predict_tree_85(unsigned short features[]) {
             }
         }
     } else {
-        if (features[0] <= 126) {
-            if (features[4] <= 150) {
+        if (temperature <= 126) {
+            if (humidity_ratio <= 150) {
                 return 1;
             } else {
-                if (features[2] <= 36) {
+                if (light <= 36) {
                     return 0;
                 } else {
                     return 1;
                 }
             }
         } else {
-            if (features[1] <= 110) {
-                if (features[2] <= 31) {
+            if (humidity <= 110) {
+                if (light <= 31) {
                     return 0;
                 } else {
-                    if (features[4] <= 121) {
+                    if (humidity_ratio <= 121) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[1] <= 221) {
-                    if (features[0] <= 230) {
-                        if (features[2] <= 33) {
+                if (humidity <= 221) {
+                    if (temperature <= 230) {
+                        if (light <= 33) {
                             return 0;
                         } else {
-                            if (features[0] <= 227) {
+                            if (temperature <= 227) {
                                 return 1;
                             } else {
-                                if (features[4] <= 124) {
+                                if (humidity_ratio <= 124) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -15916,14 +15921,14 @@ int predict_tree_85(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[4] <= 128) {
+                        if (humidity_ratio <= 128) {
                             return 0;
                         } else {
                             return 1;
                         }
                     }
                 } else {
-                    if (features[2] <= 27) {
+                    if (light <= 27) {
                         return 0;
                     } else {
                         return 1;
@@ -15933,23 +15938,23 @@ int predict_tree_85(unsigned short features[]) {
         }
     }
 }
-int predict_tree_86(unsigned short features[]) {
-    if (features[3] <= 27) {
-        if (features[3] <= 13) {
-            if (features[2] <= 66) {
-                if (features[4] <= 75) {
+int predict_tree_86(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 27) {
+        if (co2 <= 13) {
+            if (light <= 66) {
+                if (humidity_ratio <= 75) {
                     return 0;
                 } else {
-                    if (features[4] <= 75) {
+                    if (humidity_ratio <= 75) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[3] <= 7) {
-                    if (features[1] <= 22) {
-                        if (features[3] <= 4) {
+                if (co2 <= 7) {
+                    if (humidity <= 22) {
+                        if (co2 <= 4) {
                             return 0;
                         } else {
                             return 1;
@@ -15958,9 +15963,9 @@ int predict_tree_86(unsigned short features[]) {
                         return 0;
                     }
                 } else {
-                    if (features[3] <= 9) {
-                        if (features[1] <= 23) {
-                            if (features[3] <= 7) {
+                    if (co2 <= 9) {
+                        if (humidity <= 23) {
+                            if (co2 <= 7) {
                                 return 1;
                             } else {
                                 return 0;
@@ -15969,7 +15974,7 @@ int predict_tree_86(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[0] <= 94) {
+                        if (temperature <= 94) {
                             return 1;
                         } else {
                             return 0;
@@ -15978,24 +15983,24 @@ int predict_tree_86(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[0] <= 66) {
+            if (temperature <= 66) {
                 return 1;
             } else {
-                if (features[0] <= 127) {
-                    if (features[3] <= 23) {
-                        if (features[2] <= 33) {
+                if (temperature <= 127) {
+                    if (co2 <= 23) {
+                        if (light <= 33) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[4] <= 21) {
+                        if (humidity_ratio <= 21) {
                             return 1;
                         } else {
-                            if (features[0] <= 123) {
+                            if (temperature <= 123) {
                                 return 0;
                             } else {
-                                if (features[4] <= 44) {
+                                if (humidity_ratio <= 44) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -16009,13 +16014,13 @@ int predict_tree_86(unsigned short features[]) {
             }
         }
     } else {
-        if (features[1] <= 189) {
-            if (features[2] <= 28) {
-                if (features[2] <= 5) {
+        if (humidity <= 189) {
+            if (light <= 28) {
+                if (light <= 5) {
                     return 0;
                 } else {
-                    if (features[2] <= 5) {
-                        if (features[3] <= 111) {
+                    if (light <= 5) {
+                        if (co2 <= 111) {
                             return 0;
                         } else {
                             return 1;
@@ -16025,23 +16030,23 @@ int predict_tree_86(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[4] <= 109) {
-                    if (features[4] <= 27) {
-                        if (features[0] <= 159) {
+                if (humidity_ratio <= 109) {
+                    if (humidity_ratio <= 27) {
+                        if (temperature <= 159) {
                             return 1;
                         } else {
-                            if (features[4] <= 27) {
+                            if (humidity_ratio <= 27) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         }
                     } else {
-                        if (features[1] <= 43) {
-                            if (features[1] <= 43) {
+                        if (humidity <= 43) {
+                            if (humidity <= 43) {
                                 return 1;
                             } else {
-                                if (features[0] <= 183) {
+                                if (temperature <= 183) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -16052,12 +16057,12 @@ int predict_tree_86(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[1] <= 108) {
-                        if (features[2] <= 75) {
-                            if (features[1] <= 107) {
-                                if (features[3] <= 79) {
-                                    if (features[2] <= 74) {
-                                        if (features[3] <= 63) {
+                    if (humidity <= 108) {
+                        if (light <= 75) {
+                            if (humidity <= 107) {
+                                if (co2 <= 79) {
+                                    if (light <= 74) {
+                                        if (co2 <= 63) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -16072,20 +16077,20 @@ int predict_tree_86(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[4] <= 109) {
+                            if (humidity_ratio <= 109) {
                                 return 1;
                             } else {
-                                if (features[1] <= 106) {
-                                    if (features[0] <= 223) {
+                                if (humidity <= 106) {
+                                    if (temperature <= 223) {
                                         return 0;
                                     } else {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[4] <= 113) {
+                                    if (humidity_ratio <= 113) {
                                         return 0;
                                     } else {
-                                        if (features[2] <= 79) {
+                                        if (light <= 79) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -16095,10 +16100,10 @@ int predict_tree_86(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[2] <= 87) {
-                            if (features[3] <= 99) {
-                                if (features[1] <= 114) {
-                                    if (features[3] <= 99) {
+                        if (light <= 87) {
+                            if (co2 <= 99) {
+                                if (humidity <= 114) {
+                                    if (co2 <= 99) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -16110,19 +16115,19 @@ int predict_tree_86(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[2] <= 87) {
-                                if (features[4] <= 133) {
+                            if (light <= 87) {
+                                if (humidity_ratio <= 133) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             } else {
-                                if (features[0] <= 237) {
-                                    if (features[0] <= 230) {
+                                if (temperature <= 237) {
+                                    if (temperature <= 230) {
                                         return 1;
                                     } else {
-                                        if (features[3] <= 110) {
-                                            if (features[0] <= 232) {
+                                        if (co2 <= 110) {
+                                            if (temperature <= 232) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -16140,7 +16145,7 @@ int predict_tree_86(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 30) {
+            if (light <= 30) {
                 return 0;
             } else {
                 return 1;
@@ -16148,16 +16153,16 @@ int predict_tree_86(unsigned short features[]) {
         }
     }
 }
-int predict_tree_87(unsigned short features[]) {
-    if (features[3] <= 27) {
-        if (features[1] <= 80) {
-            if (features[3] <= 12) {
-                if (features[2] <= 63) {
-                    if (features[4] <= 47) {
+int predict_tree_87(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 27) {
+        if (humidity <= 80) {
+            if (co2 <= 12) {
+                if (light <= 63) {
+                    if (humidity_ratio <= 47) {
                         return 0;
                     } else {
-                        if (features[1] <= 65) {
-                            if (features[2] <= 29) {
+                        if (humidity <= 65) {
+                            if (light <= 29) {
                                 return 0;
                             } else {
                                 return 1;
@@ -16167,9 +16172,9 @@ int predict_tree_87(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 7) {
-                        if (features[4] <= 3) {
-                            if (features[0] <= 74) {
+                    if (co2 <= 7) {
+                        if (humidity_ratio <= 3) {
+                            if (temperature <= 74) {
                                 return 0;
                             } else {
                                 return 1;
@@ -16178,13 +16183,13 @@ int predict_tree_87(unsigned short features[]) {
                             return 0;
                         }
                     } else {
-                        if (features[4] <= 3) {
+                        if (humidity_ratio <= 3) {
                             return 0;
                         } else {
-                            if (features[3] <= 9) {
+                            if (co2 <= 9) {
                                 return 1;
                             } else {
-                                if (features[0] <= 108) {
+                                if (temperature <= 108) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -16194,19 +16199,19 @@ int predict_tree_87(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[2] <= 33) {
+                if (light <= 33) {
                     return 0;
                 } else {
                     return 1;
                 }
             }
         } else {
-            if (features[4] <= 92) {
-                if (features[2] <= 39) {
+            if (humidity_ratio <= 92) {
+                if (light <= 39) {
                     return 0;
                 } else {
-                    if (features[3] <= 13) {
-                        if (features[4] <= 76) {
+                    if (co2 <= 13) {
+                        if (humidity_ratio <= 76) {
                             return 1;
                         } else {
                             return 0;
@@ -16220,36 +16225,36 @@ int predict_tree_87(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 31) {
-            if (features[2] <= 5) {
+        if (light <= 31) {
+            if (light <= 5) {
                 return 0;
             } else {
-                if (features[3] <= 122) {
+                if (co2 <= 122) {
                     return 0;
                 } else {
                     return 1;
                 }
             }
         } else {
-            if (features[2] <= 93) {
-                if (features[3] <= 76) {
-                    if (features[4] <= 107) {
-                        if (features[2] <= 78) {
+            if (light <= 93) {
+                if (co2 <= 76) {
+                    if (humidity_ratio <= 107) {
+                        if (light <= 78) {
                             return 1;
                         } else {
-                            if (features[1] <= 43) {
-                                if (features[1] <= 43) {
-                                    if (features[3] <= 38) {
-                                        if (features[1] <= 30) {
+                            if (humidity <= 43) {
+                                if (humidity <= 43) {
+                                    if (co2 <= 38) {
+                                        if (humidity <= 30) {
                                             return 1;
                                         } else {
                                             return 0;
                                         }
                                     } else {
-                                        if (features[1] <= 42) {
+                                        if (humidity <= 42) {
                                             return 1;
                                         } else {
-                                            if (features[2] <= 79) {
+                                            if (light <= 79) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -16257,7 +16262,7 @@ int predict_tree_87(unsigned short features[]) {
                                         }
                                     }
                                 } else {
-                                    if (features[4] <= 45) {
+                                    if (humidity_ratio <= 45) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -16268,16 +16273,16 @@ int predict_tree_87(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[4] <= 114) {
-                            if (features[3] <= 60) {
-                                if (features[0] <= 201) {
+                        if (humidity_ratio <= 114) {
+                            if (co2 <= 60) {
+                                if (temperature <= 201) {
                                     return 1;
                                 } else {
                                     return 0;
                                 }
                             } else {
-                                if (features[2] <= 75) {
-                                    if (features[3] <= 61) {
+                                if (light <= 75) {
+                                    if (co2 <= 61) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -16291,16 +16296,16 @@ int predict_tree_87(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[0] <= 227) {
-                        if (features[3] <= 100) {
-                            if (features[3] <= 100) {
-                                if (features[1] <= 113) {
+                    if (temperature <= 227) {
+                        if (co2 <= 100) {
+                            if (co2 <= 100) {
+                                if (humidity <= 113) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 97) {
+                                    if (co2 <= 97) {
                                         return 1;
                                     } else {
-                                        if (features[4] <= 127) {
+                                        if (humidity_ratio <= 127) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -16308,7 +16313,7 @@ int predict_tree_87(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[1] <= 112) {
+                                if (humidity <= 112) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -16318,11 +16323,11 @@ int predict_tree_87(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[1] <= 113) {
-                            if (features[2] <= 86) {
+                        if (humidity <= 113) {
+                            if (light <= 86) {
                                 return 1;
                             } else {
-                                if (features[3] <= 97) {
+                                if (co2 <= 97) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -16334,8 +16339,8 @@ int predict_tree_87(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 97) {
-                    if (features[1] <= 74) {
+                if (co2 <= 97) {
+                    if (humidity <= 74) {
                         return 1;
                     } else {
                         return 0;
@@ -16347,38 +16352,38 @@ int predict_tree_87(unsigned short features[]) {
         }
     }
 }
-int predict_tree_88(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[3] <= 40) {
-            if (features[2] <= 59) {
-                if (features[2] <= 48) {
+int predict_tree_88(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (co2 <= 40) {
+            if (light <= 59) {
+                if (light <= 48) {
                     return 0;
                 } else {
-                    if (features[3] <= 9) {
+                    if (co2 <= 9) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[3] <= 7) {
+                if (co2 <= 7) {
                     return 0;
                 } else {
                     return 1;
                 }
             }
         } else {
-            if (features[2] <= 31) {
+            if (light <= 31) {
                 return 0;
             } else {
                 return 1;
             }
         }
     } else {
-        if (features[0] <= 227) {
-            if (features[3] <= 7) {
-                if (features[4] <= 3) {
-                    if (features[2] <= 69) {
+        if (temperature <= 227) {
+            if (co2 <= 7) {
+                if (humidity_ratio <= 3) {
+                    if (light <= 69) {
                         return 1;
                     } else {
                         return 0;
@@ -16387,17 +16392,17 @@ int predict_tree_88(unsigned short features[]) {
                     return 0;
                 }
             } else {
-                if (features[1] <= 124) {
-                    if (features[0] <= 201) {
-                        if (features[1] <= 120) {
-                            if (features[3] <= 99) {
-                                if (features[2] <= 78) {
+                if (humidity <= 124) {
+                    if (temperature <= 201) {
+                        if (humidity <= 120) {
+                            if (co2 <= 99) {
+                                if (light <= 78) {
                                     return 1;
                                 } else {
-                                    if (features[0] <= 170) {
-                                        if (features[2] <= 79) {
-                                            if (features[4] <= 42) {
-                                                if (features[3] <= 50) {
+                                    if (temperature <= 170) {
+                                        if (light <= 79) {
+                                            if (humidity_ratio <= 42) {
+                                                if (co2 <= 50) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -16406,9 +16411,9 @@ int predict_tree_88(unsigned short features[]) {
                                                 return 1;
                                             }
                                         } else {
-                                            if (features[3] <= 38) {
-                                                if (features[0] <= 164) {
-                                                    if (features[1] <= 31) {
+                                            if (co2 <= 38) {
+                                                if (temperature <= 164) {
+                                                    if (humidity <= 31) {
                                                         return 0;
                                                     } else {
                                                         return 1;
@@ -16417,10 +16422,10 @@ int predict_tree_88(unsigned short features[]) {
                                                     return 1;
                                                 }
                                             } else {
-                                                if (features[1] <= 43) {
+                                                if (humidity <= 43) {
                                                     return 1;
                                                 } else {
-                                                    if (features[1] <= 43) {
+                                                    if (humidity <= 43) {
                                                         return 0;
                                                     } else {
                                                         return 1;
@@ -16433,14 +16438,14 @@ int predict_tree_88(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[3] <= 99) {
+                                if (co2 <= 99) {
                                     return 0;
                                 } else {
-                                    if (features[3] <= 100) {
-                                        if (features[1] <= 112) {
+                                    if (co2 <= 100) {
+                                        if (humidity <= 112) {
                                             return 1;
                                         } else {
-                                            if (features[2] <= 75) {
+                                            if (light <= 75) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -16452,17 +16457,17 @@ int predict_tree_88(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[2] <= 69) {
+                            if (light <= 69) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         }
                     } else {
-                        if (features[3] <= 80) {
-                            if (features[1] <= 114) {
-                                if (features[3] <= 62) {
-                                    if (features[1] <= 105) {
+                        if (co2 <= 80) {
+                            if (humidity <= 114) {
+                                if (co2 <= 62) {
+                                    if (humidity <= 105) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -16482,14 +16487,14 @@ int predict_tree_88(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 104) {
-                if (features[3] <= 110) {
+            if (light <= 104) {
+                if (co2 <= 110) {
                     return 0;
                 } else {
                     return 1;
                 }
             } else {
-                if (features[0] <= 237) {
+                if (temperature <= 237) {
                     return 1;
                 } else {
                     return 0;
@@ -16498,22 +16503,22 @@ int predict_tree_88(unsigned short features[]) {
         }
     }
 }
-int predict_tree_89(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[4] <= 247) {
-            if (features[2] <= 35) {
-                if (features[4] <= 175) {
+int predict_tree_89(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (humidity_ratio <= 247) {
+            if (light <= 35) {
+                if (humidity_ratio <= 175) {
                     return 0;
                 } else {
-                    if (features[1] <= 189) {
+                    if (humidity <= 189) {
                         return 1;
                     } else {
                         return 0;
                     }
                 }
             } else {
-                if (features[4] <= 115) {
-                    if (features[3] <= 9) {
+                if (humidity_ratio <= 115) {
+                    if (co2 <= 9) {
                         return 0;
                     } else {
                         return 1;
@@ -16526,16 +16531,16 @@ int predict_tree_89(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[1] <= 24) {
-            if (features[1] <= 22) {
-                if (features[2] <= 69) {
+        if (humidity <= 24) {
+            if (humidity <= 22) {
+                if (light <= 69) {
                     return 1;
                 } else {
                     return 0;
                 }
             } else {
-                if (features[0] <= 73) {
-                    if (features[2] <= 69) {
+                if (temperature <= 73) {
+                    if (light <= 69) {
                         return 0;
                     } else {
                         return 1;
@@ -16545,15 +16550,15 @@ int predict_tree_89(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[3] <= 12) {
-                if (features[1] <= 120) {
-                    if (features[0] <= 91) {
+            if (co2 <= 12) {
+                if (humidity <= 120) {
+                    if (temperature <= 91) {
                         return 1;
                     } else {
-                        if (features[0] <= 107) {
+                        if (temperature <= 107) {
                             return 0;
                         } else {
-                            if (features[2] <= 155) {
+                            if (light <= 155) {
                                 return 1;
                             } else {
                                 return 0;
@@ -16564,21 +16569,21 @@ int predict_tree_89(unsigned short features[]) {
                     return 0;
                 }
             } else {
-                if (features[2] <= 86) {
-                    if (features[4] <= 115) {
-                        if (features[4] <= 108) {
-                            if (features[3] <= 13) {
-                                if (features[4] <= 67) {
+                if (light <= 86) {
+                    if (humidity_ratio <= 115) {
+                        if (humidity_ratio <= 108) {
+                            if (co2 <= 13) {
+                                if (humidity_ratio <= 67) {
                                     return 1;
                                 } else {
                                     return 0;
                                 }
                             } else {
-                                if (features[1] <= 43) {
-                                    if (features[1] <= 43) {
+                                if (humidity <= 43) {
+                                    if (humidity <= 43) {
                                         return 1;
                                     } else {
-                                        if (features[3] <= 64) {
+                                        if (co2 <= 64) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -16589,16 +16594,16 @@ int predict_tree_89(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[1] <= 107) {
-                                if (features[3] <= 85) {
-                                    if (features[0] <= 200) {
+                            if (humidity <= 107) {
+                                if (co2 <= 85) {
+                                    if (temperature <= 200) {
                                         return 1;
                                     } else {
-                                        if (features[4] <= 111) {
-                                            if (features[3] <= 62) {
+                                        if (humidity_ratio <= 111) {
+                                            if (co2 <= 62) {
                                                 return 0;
                                             } else {
-                                                if (features[3] <= 63) {
+                                                if (co2 <= 63) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -16612,16 +16617,16 @@ int predict_tree_89(unsigned short features[]) {
                                     return 1;
                                 }
                             } else {
-                                if (features[4] <= 115) {
-                                    if (features[2] <= 80) {
-                                        if (features[4] <= 113) {
+                                if (humidity_ratio <= 115) {
+                                    if (light <= 80) {
+                                        if (humidity_ratio <= 113) {
                                             return 1;
                                         } else {
-                                            if (features[0] <= 192) {
+                                            if (temperature <= 192) {
                                                 return 0;
                                             } else {
-                                                if (features[3] <= 99) {
-                                                    if (features[2] <= 74) {
+                                                if (co2 <= 99) {
+                                                    if (light <= 74) {
                                                         return 1;
                                                     } else {
                                                         return 0;
@@ -16643,22 +16648,22 @@ int predict_tree_89(unsigned short features[]) {
                         return 1;
                     }
                 } else {
-                    if (features[0] <= 230) {
-                        if (features[1] <= 114) {
-                            if (features[0] <= 203) {
-                                if (features[0] <= 163) {
+                    if (temperature <= 230) {
+                        if (humidity <= 114) {
+                            if (temperature <= 203) {
+                                if (temperature <= 163) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             } else {
-                                if (features[0] <= 216) {
+                                if (temperature <= 216) {
                                     return 0;
                                 } else {
-                                    if (features[0] <= 227) {
+                                    if (temperature <= 227) {
                                         return 1;
                                     } else {
-                                        if (features[3] <= 101) {
+                                        if (co2 <= 101) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -16670,8 +16675,8 @@ int predict_tree_89(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[3] <= 110) {
-                            if (features[2] <= 113) {
+                        if (co2 <= 110) {
+                            if (light <= 113) {
                                 return 0;
                             } else {
                                 return 1;
@@ -16685,15 +16690,15 @@ int predict_tree_89(unsigned short features[]) {
         }
     }
 }
-int predict_tree_90(unsigned short features[]) {
-    if (features[2] <= 62) {
-        if (features[1] <= 247) {
-            if (features[3] <= 10) {
-                if (features[3] <= 7) {
+int predict_tree_90(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 62) {
+        if (humidity <= 247) {
+            if (co2 <= 10) {
+                if (co2 <= 7) {
                     return 0;
                 } else {
-                    if (features[3] <= 7) {
-                        if (features[2] <= 58) {
+                    if (co2 <= 7) {
+                        if (light <= 58) {
                             return 0;
                         } else {
                             return 1;
@@ -16703,13 +16708,13 @@ int predict_tree_90(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 10) {
+                if (co2 <= 10) {
                     return 1;
                 } else {
-                    if (features[3] <= 68) {
+                    if (co2 <= 68) {
                         return 0;
                     } else {
-                        if (features[2] <= 31) {
+                        if (light <= 31) {
                             return 0;
                         } else {
                             return 1;
@@ -16721,11 +16726,11 @@ int predict_tree_90(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[1] <= 25) {
-            if (features[4] <= 9) {
-                if (features[2] <= 69) {
-                    if (features[4] <= 4) {
-                        if (features[4] <= 3) {
+        if (humidity <= 25) {
+            if (humidity_ratio <= 9) {
+                if (light <= 69) {
+                    if (humidity_ratio <= 4) {
+                        if (humidity_ratio <= 3) {
                             return 1;
                         } else {
                             return 0;
@@ -16740,22 +16745,22 @@ int predict_tree_90(unsigned short features[]) {
                 return 0;
             }
         } else {
-            if (features[0] <= 204) {
-                if (features[2] <= 76) {
-                    if (features[2] <= 65) {
-                        if (features[1] <= 125) {
+            if (temperature <= 204) {
+                if (light <= 76) {
+                    if (light <= 65) {
+                        if (humidity <= 125) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[0] <= 201) {
+                        if (temperature <= 201) {
                             return 1;
                         } else {
-                            if (features[1] <= 103) {
+                            if (humidity <= 103) {
                                 return 1;
                             } else {
-                                if (features[3] <= 75) {
+                                if (co2 <= 75) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -16764,10 +16769,10 @@ int predict_tree_90(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[0] <= 190) {
-                        if (features[1] <= 30) {
-                            if (features[0] <= 163) {
-                                if (features[1] <= 30) {
+                    if (temperature <= 190) {
+                        if (humidity <= 30) {
+                            if (temperature <= 163) {
+                                if (humidity <= 30) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -16776,11 +16781,11 @@ int predict_tree_90(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[1] <= 43) {
-                                if (features[4] <= 41) {
+                            if (humidity <= 43) {
+                                if (humidity_ratio <= 41) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 64) {
+                                    if (co2 <= 64) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -16791,19 +16796,19 @@ int predict_tree_90(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[2] <= 76) {
-                            if (features[1] <= 110) {
+                        if (light <= 76) {
+                            if (humidity <= 110) {
                                 return 1;
                             } else {
-                                if (features[3] <= 103) {
+                                if (co2 <= 103) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             }
                         } else {
-                            if (features[0] <= 191) {
-                                if (features[3] <= 86) {
+                            if (temperature <= 191) {
+                                if (co2 <= 86) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -16815,9 +16820,9 @@ int predict_tree_90(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 76) {
-                    if (features[3] <= 63) {
-                        if (features[1] <= 105) {
+                if (co2 <= 76) {
+                    if (co2 <= 63) {
+                        if (humidity <= 105) {
                             return 0;
                         } else {
                             return 1;
@@ -16826,20 +16831,20 @@ int predict_tree_90(unsigned short features[]) {
                         return 0;
                     }
                 } else {
-                    if (features[3] <= 98) {
-                        if (features[2] <= 91) {
+                    if (co2 <= 98) {
+                        if (light <= 91) {
                             return 1;
                         } else {
                             return 0;
                         }
                     } else {
-                        if (features[1] <= 116) {
-                            if (features[4] <= 124) {
-                                if (features[4] <= 124) {
+                        if (humidity <= 116) {
+                            if (humidity_ratio <= 124) {
+                                if (humidity_ratio <= 124) {
                                     return 1;
                                 } else {
-                                    if (features[2] <= 104) {
-                                        if (features[3] <= 102) {
+                                    if (light <= 104) {
+                                        if (co2 <= 102) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -16849,11 +16854,11 @@ int predict_tree_90(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[2] <= 104) {
-                                    if (features[4] <= 128) {
+                                if (light <= 104) {
+                                    if (humidity_ratio <= 128) {
                                         return 0;
                                     } else {
-                                        if (features[3] <= 110) {
+                                        if (co2 <= 110) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -16872,14 +16877,14 @@ int predict_tree_90(unsigned short features[]) {
         }
     }
 }
-int predict_tree_91(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[3] <= 40) {
-            if (features[3] <= 7) {
+int predict_tree_91(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (co2 <= 40) {
+            if (co2 <= 7) {
                 return 0;
             } else {
-                if (features[3] <= 7) {
-                    if (features[2] <= 58) {
+                if (co2 <= 7) {
+                    if (light <= 58) {
                         return 0;
                     } else {
                         return 1;
@@ -16889,11 +16894,11 @@ int predict_tree_91(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 27) {
-                if (features[3] <= 131) {
+            if (light <= 27) {
+                if (co2 <= 131) {
                     return 0;
                 } else {
-                    if (features[2] <= 3) {
+                    if (light <= 3) {
                         return 0;
                     } else {
                         return 1;
@@ -16904,12 +16909,12 @@ int predict_tree_91(unsigned short features[]) {
             }
         }
     } else {
-        if (features[1] <= 24) {
-            if (features[4] <= 3) {
-                if (features[0] <= 71) {
+        if (humidity <= 24) {
+            if (humidity_ratio <= 3) {
+                if (temperature <= 71) {
                     return 0;
                 } else {
-                    if (features[4] <= 3) {
+                    if (humidity_ratio <= 3) {
                         return 0;
                     } else {
                         return 1;
@@ -16919,26 +16924,26 @@ int predict_tree_91(unsigned short features[]) {
                 return 0;
             }
         } else {
-            if (features[1] <= 116) {
-                if (features[0] <= 227) {
-                    if (features[4] <= 109) {
-                        if (features[2] <= 99) {
-                            if (features[4] <= 41) {
-                                if (features[4] <= 41) {
-                                    if (features[2] <= 87) {
-                                        if (features[3] <= 62) {
+            if (humidity <= 116) {
+                if (temperature <= 227) {
+                    if (humidity_ratio <= 109) {
+                        if (light <= 99) {
+                            if (humidity_ratio <= 41) {
+                                if (humidity_ratio <= 41) {
+                                    if (light <= 87) {
+                                        if (co2 <= 62) {
                                             return 1;
                                         } else {
-                                            if (features[2] <= 78) {
+                                            if (light <= 78) {
                                                 return 1;
                                             } else {
-                                                if (features[2] <= 79) {
+                                                if (light <= 79) {
                                                     return 0;
                                                 } else {
-                                                    if (features[1] <= 43) {
+                                                    if (humidity <= 43) {
                                                         return 1;
                                                     } else {
-                                                        if (features[0] <= 159) {
+                                                        if (temperature <= 159) {
                                                             return 1;
                                                         } else {
                                                             return 0;
@@ -16948,8 +16953,8 @@ int predict_tree_91(unsigned short features[]) {
                                             }
                                         }
                                     } else {
-                                        if (features[3] <= 38) {
-                                            if (features[0] <= 164) {
+                                        if (co2 <= 38) {
+                                            if (temperature <= 164) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -16968,16 +16973,16 @@ int predict_tree_91(unsigned short features[]) {
                             return 0;
                         }
                     } else {
-                        if (features[3] <= 76) {
-                            if (features[2] <= 74) {
-                                if (features[0] <= 203) {
+                        if (co2 <= 76) {
+                            if (light <= 74) {
+                                if (temperature <= 203) {
                                     return 1;
                                 } else {
                                     return 0;
                                 }
                             } else {
-                                if (features[3] <= 63) {
-                                    if (features[4] <= 111) {
+                                if (co2 <= 63) {
+                                    if (humidity_ratio <= 111) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -16987,13 +16992,13 @@ int predict_tree_91(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[1] <= 112) {
+                            if (humidity <= 112) {
                                 return 1;
                             } else {
-                                if (features[0] <= 192) {
+                                if (temperature <= 192) {
                                     return 0;
                                 } else {
-                                    if (features[3] <= 99) {
+                                    if (co2 <= 99) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -17003,12 +17008,12 @@ int predict_tree_91(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[4] <= 122) {
+                    if (humidity_ratio <= 122) {
                         return 1;
                     } else {
-                        if (features[2] <= 108) {
-                            if (features[4] <= 124) {
-                                if (features[2] <= 86) {
+                        if (light <= 108) {
+                            if (humidity_ratio <= 124) {
+                                if (light <= 86) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -17017,7 +17022,7 @@ int predict_tree_91(unsigned short features[]) {
                                 return 0;
                             }
                         } else {
-                            if (features[1] <= 110) {
+                            if (humidity <= 110) {
                                 return 0;
                             } else {
                                 return 1;
@@ -17026,8 +17031,8 @@ int predict_tree_91(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[0] <= 36) {
-                    if (features[3] <= 12) {
+                if (temperature <= 36) {
+                    if (co2 <= 12) {
                         return 1;
                     } else {
                         return 0;
@@ -17039,54 +17044,54 @@ int predict_tree_91(unsigned short features[]) {
         }
     }
 }
-int predict_tree_92(unsigned short features[]) {
-    if (features[2] <= 61) {
-        if (features[3] <= 131) {
-            if (features[2] <= 59) {
-                if (features[0] <= 238) {
-                    if (features[2] <= 48) {
+int predict_tree_92(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 61) {
+        if (co2 <= 131) {
+            if (light <= 59) {
+                if (temperature <= 238) {
+                    if (light <= 48) {
                         return 0;
                     } else {
-                        if (features[3] <= 9) {
+                        if (co2 <= 9) {
                             return 0;
                         } else {
                             return 1;
                         }
                     }
                 } else {
-                    if (features[4] <= 72) {
+                    if (humidity_ratio <= 72) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[0] <= 165) {
+                if (temperature <= 165) {
                     return 1;
                 } else {
                     return 0;
                 }
             }
         } else {
-            if (features[3] <= 132) {
+            if (co2 <= 132) {
                 return 1;
             } else {
                 return 0;
             }
         }
     } else {
-        if (features[0] <= 230) {
-            if (features[3] <= 7) {
-                if (features[2] <= 67) {
+        if (temperature <= 230) {
+            if (co2 <= 7) {
+                if (light <= 67) {
                     return 1;
                 } else {
                     return 0;
                 }
             } else {
-                if (features[0] <= 204) {
-                    if (features[2] <= 66) {
-                        if (features[4] <= 83) {
-                            if (features[3] <= 14) {
+                if (temperature <= 204) {
+                    if (light <= 66) {
+                        if (humidity_ratio <= 83) {
+                            if (co2 <= 14) {
                                 return 0;
                             } else {
                                 return 1;
@@ -17095,27 +17100,27 @@ int predict_tree_92(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[2] <= 74) {
+                        if (light <= 74) {
                             return 1;
                         } else {
-                            if (features[2] <= 74) {
-                                if (features[1] <= 109) {
+                            if (light <= 74) {
+                                if (humidity <= 109) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             } else {
-                                if (features[3] <= 100) {
-                                    if (features[2] <= 79) {
-                                        if (features[3] <= 99) {
-                                            if (features[4] <= 114) {
-                                                if (features[1] <= 43) {
-                                                    if (features[2] <= 78) {
+                                if (co2 <= 100) {
+                                    if (light <= 79) {
+                                        if (co2 <= 99) {
+                                            if (humidity_ratio <= 114) {
+                                                if (humidity <= 43) {
+                                                    if (light <= 78) {
                                                         return 1;
                                                     } else {
-                                                        if (features[0] <= 170) {
-                                                            if (features[2] <= 79) {
-                                                                if (features[3] <= 61) {
+                                                        if (temperature <= 170) {
+                                                            if (light <= 79) {
+                                                                if (co2 <= 61) {
                                                                     return 1;
                                                                 } else {
                                                                     return 0;
@@ -17131,25 +17136,25 @@ int predict_tree_92(unsigned short features[]) {
                                                     return 1;
                                                 }
                                             } else {
-                                                if (features[4] <= 125) {
+                                                if (humidity_ratio <= 125) {
                                                     return 0;
                                                 } else {
                                                     return 1;
                                                 }
                                             }
                                         } else {
-                                            if (features[1] <= 112) {
+                                            if (humidity <= 112) {
                                                 return 1;
                                             } else {
                                                 return 0;
                                             }
                                         }
                                     } else {
-                                        if (features[0] <= 163) {
-                                            if (features[2] <= 87) {
+                                        if (temperature <= 163) {
+                                            if (light <= 87) {
                                                 return 1;
                                             } else {
-                                                if (features[4] <= 36) {
+                                                if (humidity_ratio <= 36) {
                                                     return 0;
                                                 } else {
                                                     return 1;
@@ -17166,7 +17171,7 @@ int predict_tree_92(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 81) {
+                    if (co2 <= 81) {
                         return 0;
                     } else {
                         return 1;
@@ -17174,9 +17179,9 @@ int predict_tree_92(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 89) {
-                if (features[2] <= 87) {
-                    if (features[3] <= 109) {
+            if (light <= 89) {
+                if (light <= 87) {
+                    if (co2 <= 109) {
                         return 0;
                     } else {
                         return 1;
@@ -17185,7 +17190,7 @@ int predict_tree_92(unsigned short features[]) {
                     return 1;
                 }
             } else {
-                if (features[2] <= 104) {
+                if (light <= 104) {
                     return 0;
                 } else {
                     return 1;
@@ -17194,17 +17199,17 @@ int predict_tree_92(unsigned short features[]) {
         }
     }
 }
-int predict_tree_93(unsigned short features[]) {
-    if (features[3] <= 27) {
-        if (features[3] <= 12) {
-            if (features[0] <= 69) {
-                if (features[0] <= 32) {
+int predict_tree_93(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 27) {
+        if (co2 <= 12) {
+            if (temperature <= 69) {
+                if (temperature <= 32) {
                     return 0;
                 } else {
-                    if (features[2] <= 43) {
+                    if (light <= 43) {
                         return 0;
                     } else {
-                        if (features[2] <= 48) {
+                        if (light <= 48) {
                             return 1;
                         } else {
                             return 0;
@@ -17212,21 +17217,21 @@ int predict_tree_93(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[0] <= 73) {
-                    if (features[2] <= 68) {
+                if (temperature <= 73) {
+                    if (light <= 68) {
                         return 0;
                     } else {
                         return 1;
                     }
                 } else {
-                    if (features[2] <= 64) {
-                        if (features[3] <= 7) {
+                    if (light <= 64) {
+                        if (co2 <= 7) {
                             return 0;
                         } else {
-                            if (features[4] <= 39) {
+                            if (humidity_ratio <= 39) {
                                 return 0;
                             } else {
-                                if (features[2] <= 29) {
+                                if (light <= 29) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -17234,7 +17239,7 @@ int predict_tree_93(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[2] <= 70) {
+                        if (light <= 70) {
                             return 1;
                         } else {
                             return 0;
@@ -17243,31 +17248,31 @@ int predict_tree_93(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[0] <= 66) {
-                if (features[1] <= 124) {
+            if (temperature <= 66) {
+                if (humidity <= 124) {
                     return 0;
                 } else {
                     return 1;
                 }
             } else {
-                if (features[0] <= 127) {
-                    if (features[4] <= 108) {
-                        if (features[1] <= 52) {
-                            if (features[4] <= 11) {
+                if (temperature <= 127) {
+                    if (humidity_ratio <= 108) {
+                        if (humidity <= 52) {
+                            if (humidity_ratio <= 11) {
                                 return 1;
                             } else {
-                                if (features[1] <= 32) {
-                                    if (features[2] <= 34) {
+                                if (humidity <= 32) {
+                                    if (light <= 34) {
                                         return 0;
                                     } else {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[4] <= 19) {
+                                    if (humidity_ratio <= 19) {
                                         return 1;
                                     } else {
-                                        if (features[1] <= 34) {
-                                            if (features[2] <= 35) {
+                                        if (humidity <= 34) {
+                                            if (light <= 35) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -17290,15 +17295,15 @@ int predict_tree_93(unsigned short features[]) {
             }
         }
     } else {
-        if (features[2] <= 35) {
-            if (features[0] <= 154) {
+        if (light <= 35) {
+            if (temperature <= 154) {
                 return 0;
             } else {
-                if (features[0] <= 157) {
-                    if (features[3] <= 131) {
+                if (temperature <= 157) {
+                    if (co2 <= 131) {
                         return 0;
                     } else {
-                        if (features[1] <= 208) {
+                        if (humidity <= 208) {
                             return 1;
                         } else {
                             return 0;
@@ -17309,15 +17314,15 @@ int predict_tree_93(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[0] <= 204) {
-                if (features[3] <= 38) {
-                    if (features[2] <= 86) {
+            if (temperature <= 204) {
+                if (co2 <= 38) {
+                    if (light <= 86) {
                         return 1;
                     } else {
-                        if (features[2] <= 87) {
+                        if (light <= 87) {
                             return 0;
                         } else {
-                            if (features[3] <= 37) {
+                            if (co2 <= 37) {
                                 return 1;
                             } else {
                                 return 0;
@@ -17325,12 +17330,12 @@ int predict_tree_93(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[0] <= 190) {
-                        if (features[1] <= 43) {
-                            if (features[1] <= 43) {
+                    if (temperature <= 190) {
+                        if (humidity <= 43) {
+                            if (humidity <= 43) {
                                 return 1;
                             } else {
-                                if (features[2] <= 80) {
+                                if (light <= 80) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -17340,11 +17345,11 @@ int predict_tree_93(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[2] <= 78) {
+                        if (light <= 78) {
                             return 1;
                         } else {
-                            if (features[0] <= 191) {
-                                if (features[2] <= 78) {
+                            if (temperature <= 191) {
+                                if (light <= 78) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -17356,20 +17361,20 @@ int predict_tree_93(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[1] <= 108) {
-                    if (features[1] <= 104) {
+                if (humidity <= 108) {
+                    if (humidity <= 104) {
                         return 1;
                     } else {
-                        if (features[1] <= 107) {
-                            if (features[2] <= 74) {
+                        if (humidity <= 107) {
+                            if (light <= 74) {
                                 return 1;
                             } else {
-                                if (features[4] <= 117) {
-                                    if (features[1] <= 106) {
-                                        if (features[3] <= 61) {
+                                if (humidity_ratio <= 117) {
+                                    if (humidity <= 106) {
+                                        if (co2 <= 61) {
                                             return 0;
                                         } else {
-                                            if (features[1] <= 105) {
+                                            if (humidity <= 105) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -17379,7 +17384,7 @@ int predict_tree_93(unsigned short features[]) {
                                         return 0;
                                     }
                                 } else {
-                                    if (features[4] <= 122) {
+                                    if (humidity_ratio <= 122) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -17387,7 +17392,7 @@ int predict_tree_93(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[2] <= 81) {
+                            if (light <= 81) {
                                 return 1;
                             } else {
                                 return 0;
@@ -17395,23 +17400,23 @@ int predict_tree_93(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 80) {
+                    if (co2 <= 80) {
                         return 0;
                     } else {
-                        if (features[2] <= 86) {
+                        if (light <= 86) {
                             return 1;
                         } else {
-                            if (features[2] <= 87) {
-                                if (features[3] <= 105) {
+                            if (light <= 87) {
+                                if (co2 <= 105) {
                                     return 0;
                                 } else {
                                     return 1;
                                 }
                             } else {
-                                if (features[3] <= 109) {
+                                if (co2 <= 109) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 109) {
+                                    if (co2 <= 109) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -17425,17 +17430,17 @@ int predict_tree_93(unsigned short features[]) {
         }
     }
 }
-int predict_tree_94(unsigned short features[]) {
-    if (features[3] <= 27) {
-        if (features[4] <= 90) {
-            if (features[1] <= 127) {
-                if (features[3] <= 13) {
-                    if (features[2] <= 67) {
-                        if (features[2] <= 48) {
+int predict_tree_94(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (co2 <= 27) {
+        if (humidity_ratio <= 90) {
+            if (humidity <= 127) {
+                if (co2 <= 13) {
+                    if (light <= 67) {
+                        if (light <= 48) {
                             return 0;
                         } else {
-                            if (features[0] <= 34) {
-                                if (features[1] <= 119) {
+                            if (temperature <= 34) {
+                                if (humidity <= 119) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -17445,10 +17450,10 @@ int predict_tree_94(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[3] <= 7) {
+                        if (co2 <= 7) {
                             return 0;
                         } else {
-                            if (features[3] <= 9) {
+                            if (co2 <= 9) {
                                 return 1;
                             } else {
                                 return 0;
@@ -17456,11 +17461,11 @@ int predict_tree_94(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[4] <= 48) {
-                        if (features[1] <= 28) {
+                    if (humidity_ratio <= 48) {
+                        if (humidity <= 28) {
                             return 1;
                         } else {
-                            if (features[2] <= 34) {
+                            if (light <= 34) {
                                 return 0;
                             } else {
                                 return 1;
@@ -17471,7 +17476,7 @@ int predict_tree_94(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 11) {
+                if (co2 <= 11) {
                     return 0;
                 } else {
                     return 1;
@@ -17481,26 +17486,26 @@ int predict_tree_94(unsigned short features[]) {
             return 0;
         }
     } else {
-        if (features[1] <= 189) {
-            if (features[2] <= 31) {
-                if (features[1] <= 188) {
+        if (humidity <= 189) {
+            if (light <= 31) {
+                if (humidity <= 188) {
                     return 0;
                 } else {
                     return 1;
                 }
             } else {
-                if (features[1] <= 104) {
+                if (humidity <= 104) {
                     return 1;
                 } else {
-                    if (features[0] <= 201) {
-                        if (features[3] <= 99) {
-                            if (features[2] <= 77) {
+                    if (temperature <= 201) {
+                        if (co2 <= 99) {
+                            if (light <= 77) {
                                 return 1;
                             } else {
-                                if (features[1] <= 112) {
+                                if (humidity <= 112) {
                                     return 1;
                                 } else {
-                                    if (features[0] <= 196) {
+                                    if (temperature <= 196) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -17511,15 +17516,15 @@ int predict_tree_94(unsigned short features[]) {
                             return 1;
                         }
                     } else {
-                        if (features[3] <= 76) {
-                            if (features[2] <= 73) {
+                        if (co2 <= 76) {
+                            if (light <= 73) {
                                 return 1;
                             } else {
-                                if (features[2] <= 75) {
-                                    if (features[4] <= 111) {
+                                if (light <= 75) {
+                                    if (humidity_ratio <= 111) {
                                         return 0;
                                     } else {
-                                        if (features[3] <= 65) {
+                                        if (co2 <= 65) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -17530,18 +17535,18 @@ int predict_tree_94(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[3] <= 97) {
-                                if (features[2] <= 86) {
+                            if (co2 <= 97) {
+                                if (light <= 86) {
                                     return 1;
                                 } else {
                                     return 0;
                                 }
                             } else {
-                                if (features[0] <= 227) {
+                                if (temperature <= 227) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 127) {
-                                        if (features[3] <= 101) {
+                                    if (humidity_ratio <= 127) {
+                                        if (co2 <= 101) {
                                             return 1;
                                         } else {
                                             return 0;
@@ -17556,7 +17561,7 @@ int predict_tree_94(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 35) {
+            if (light <= 35) {
                 return 0;
             } else {
                 return 1;
@@ -17564,20 +17569,20 @@ int predict_tree_94(unsigned short features[]) {
         }
     }
 }
-int predict_tree_95(unsigned short features[]) {
-    if (features[2] <= 61) {
-        if (features[3] <= 233) {
-            if (features[2] <= 35) {
-                if (features[0] <= 155) {
+int predict_tree_95(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 61) {
+        if (co2 <= 233) {
+            if (light <= 35) {
+                if (temperature <= 155) {
                     return 0;
                 } else {
-                    if (features[4] <= 147) {
+                    if (humidity_ratio <= 147) {
                         return 0;
                     } else {
-                        if (features[2] <= 3) {
+                        if (light <= 3) {
                             return 0;
                         } else {
-                            if (features[3] <= 131) {
+                            if (co2 <= 131) {
                                 return 0;
                             } else {
                                 return 1;
@@ -17586,7 +17591,7 @@ int predict_tree_95(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 9) {
+                if (co2 <= 9) {
                     return 0;
                 } else {
                     return 1;
@@ -17596,14 +17601,14 @@ int predict_tree_95(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[4] <= 4) {
-            if (features[2] <= 67) {
+        if (humidity_ratio <= 4) {
+            if (light <= 67) {
                 return 1;
             } else {
-                if (features[3] <= 7) {
+                if (co2 <= 7) {
                     return 0;
                 } else {
-                    if (features[3] <= 7) {
+                    if (co2 <= 7) {
                         return 1;
                     } else {
                         return 0;
@@ -17611,17 +17616,17 @@ int predict_tree_95(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[0] <= 234) {
-                if (features[3] <= 7) {
+            if (temperature <= 234) {
+                if (co2 <= 7) {
                     return 0;
                 } else {
-                    if (features[0] <= 204) {
-                        if (features[3] <= 13) {
-                            if (features[2] <= 67) {
+                    if (temperature <= 204) {
+                        if (co2 <= 13) {
+                            if (light <= 67) {
                                 return 0;
                             } else {
-                                if (features[4] <= 48) {
-                                    if (features[4] <= 29) {
+                                if (humidity_ratio <= 48) {
+                                    if (humidity_ratio <= 29) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -17631,12 +17636,12 @@ int predict_tree_95(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[1] <= 30) {
-                                if (features[4] <= 27) {
+                            if (humidity <= 30) {
+                                if (humidity_ratio <= 27) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 27) {
-                                        if (features[0] <= 165) {
+                                    if (humidity_ratio <= 27) {
+                                        if (temperature <= 165) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -17646,14 +17651,14 @@ int predict_tree_95(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[4] <= 41) {
-                                    if (features[4] <= 41) {
-                                        if (features[4] <= 40) {
+                                if (humidity_ratio <= 41) {
+                                    if (humidity_ratio <= 41) {
+                                        if (humidity_ratio <= 40) {
                                             return 1;
                                         } else {
-                                            if (features[4] <= 40) {
-                                                if (features[2] <= 78) {
-                                                    if (features[3] <= 61) {
+                                            if (humidity_ratio <= 40) {
+                                                if (light <= 78) {
+                                                    if (co2 <= 61) {
                                                         return 1;
                                                     } else {
                                                         return 0;
@@ -17666,8 +17671,8 @@ int predict_tree_95(unsigned short features[]) {
                                             }
                                         }
                                     } else {
-                                        if (features[0] <= 171) {
-                                            if (features[3] <= 61) {
+                                        if (temperature <= 171) {
+                                            if (co2 <= 61) {
                                                 return 1;
                                             } else {
                                                 return 0;
@@ -17677,18 +17682,18 @@ int predict_tree_95(unsigned short features[]) {
                                         }
                                     }
                                 } else {
-                                    if (features[2] <= 75) {
+                                    if (light <= 75) {
                                         return 1;
                                     } else {
-                                        if (features[0] <= 201) {
-                                            if (features[0] <= 190) {
+                                        if (temperature <= 201) {
+                                            if (temperature <= 190) {
                                                 return 1;
                                             } else {
-                                                if (features[4] <= 113) {
+                                                if (humidity_ratio <= 113) {
                                                     return 1;
                                                 } else {
-                                                    if (features[1] <= 113) {
-                                                        if (features[3] <= 99) {
+                                                    if (humidity <= 113) {
+                                                        if (co2 <= 99) {
                                                             return 0;
                                                         } else {
                                                             return 1;
@@ -17699,7 +17704,7 @@ int predict_tree_95(unsigned short features[]) {
                                                 }
                                             }
                                         } else {
-                                            if (features[4] <= 114) {
+                                            if (humidity_ratio <= 114) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -17710,10 +17715,10 @@ int predict_tree_95(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[1] <= 108) {
-                            if (features[3] <= 76) {
-                                if (features[4] <= 111) {
-                                    if (features[4] <= 110) {
+                        if (humidity <= 108) {
+                            if (co2 <= 76) {
+                                if (humidity_ratio <= 111) {
+                                    if (humidity_ratio <= 110) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -17725,24 +17730,24 @@ int predict_tree_95(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[3] <= 80) {
+                            if (co2 <= 80) {
                                 return 0;
                             } else {
-                                if (features[2] <= 86) {
+                                if (light <= 86) {
                                     return 1;
                                 } else {
-                                    if (features[2] <= 87) {
-                                        if (features[3] <= 102) {
+                                    if (light <= 87) {
+                                        if (co2 <= 102) {
                                             return 1;
                                         } else {
                                             return 0;
                                         }
                                     } else {
-                                        if (features[0] <= 230) {
+                                        if (temperature <= 230) {
                                             return 1;
                                         } else {
-                                            if (features[3] <= 112) {
-                                                if (features[2] <= 89) {
+                                            if (co2 <= 112) {
+                                                if (light <= 89) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -17758,7 +17763,7 @@ int predict_tree_95(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[2] <= 91) {
+                if (light <= 91) {
                     return 1;
                 } else {
                     return 0;
@@ -17767,23 +17772,23 @@ int predict_tree_95(unsigned short features[]) {
         }
     }
 }
-int predict_tree_96(unsigned short features[]) {
-    if (features[2] <= 61) {
-        if (features[1] <= 247) {
-            if (features[4] <= 175) {
-                if (features[3] <= 40) {
-                    if (features[4] <= 47) {
+int predict_tree_96(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 61) {
+        if (humidity <= 247) {
+            if (humidity_ratio <= 175) {
+                if (co2 <= 40) {
+                    if (humidity_ratio <= 47) {
                         return 0;
                     } else {
-                        if (features[1] <= 65) {
-                            if (features[2] <= 29) {
+                        if (humidity <= 65) {
+                            if (light <= 29) {
                                 return 0;
                             } else {
                                 return 1;
                             }
                         } else {
-                            if (features[4] <= 75) {
-                                if (features[2] <= 27) {
+                            if (humidity_ratio <= 75) {
+                                if (light <= 27) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -17794,8 +17799,8 @@ int predict_tree_96(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[4] <= 28) {
-                        if (features[3] <= 40) {
+                    if (humidity_ratio <= 28) {
+                        if (co2 <= 40) {
                             return 1;
                         } else {
                             return 0;
@@ -17805,7 +17810,7 @@ int predict_tree_96(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[1] <= 189) {
+                if (humidity <= 189) {
                     return 1;
                 } else {
                     return 0;
@@ -17815,28 +17820,28 @@ int predict_tree_96(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[4] <= 14) {
-            if (features[2] <= 69) {
+        if (humidity_ratio <= 14) {
+            if (light <= 69) {
                 return 1;
             } else {
                 return 0;
             }
         } else {
-            if (features[2] <= 86) {
-                if (features[0] <= 204) {
-                    if (features[0] <= 34) {
-                        if (features[1] <= 120) {
+            if (light <= 86) {
+                if (temperature <= 204) {
+                    if (temperature <= 34) {
+                        if (humidity <= 120) {
                             return 1;
                         } else {
                             return 0;
                         }
                     } else {
-                        if (features[2] <= 76) {
-                            if (features[0] <= 107) {
-                                if (features[0] <= 105) {
+                        if (light <= 76) {
+                            if (temperature <= 107) {
+                                if (temperature <= 105) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 14) {
+                                    if (co2 <= 14) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -17846,15 +17851,15 @@ int predict_tree_96(unsigned short features[]) {
                                 return 1;
                             }
                         } else {
-                            if (features[3] <= 100) {
-                                if (features[1] <= 111) {
-                                    if (features[0] <= 169) {
-                                        if (features[2] <= 79) {
-                                            if (features[4] <= 41) {
-                                                if (features[2] <= 78) {
+                            if (co2 <= 100) {
+                                if (humidity <= 111) {
+                                    if (temperature <= 169) {
+                                        if (light <= 79) {
+                                            if (humidity_ratio <= 41) {
+                                                if (light <= 78) {
                                                     return 1;
                                                 } else {
-                                                    if (features[0] <= 156) {
+                                                    if (temperature <= 156) {
                                                         return 1;
                                                     } else {
                                                         return 0;
@@ -17870,7 +17875,7 @@ int predict_tree_96(unsigned short features[]) {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[1] <= 122) {
+                                    if (humidity <= 122) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -17882,13 +17887,13 @@ int predict_tree_96(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[1] <= 107) {
-                        if (features[4] <= 109) {
+                    if (humidity <= 107) {
+                        if (humidity_ratio <= 109) {
                             return 1;
                         } else {
-                            if (features[3] <= 87) {
-                                if (features[1] <= 106) {
-                                    if (features[1] <= 105) {
+                            if (co2 <= 87) {
+                                if (humidity <= 106) {
+                                    if (humidity <= 105) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -17901,8 +17906,8 @@ int predict_tree_96(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[4] <= 114) {
-                            if (features[1] <= 108) {
+                        if (humidity_ratio <= 114) {
+                            if (humidity <= 108) {
                                 return 1;
                             } else {
                                 return 0;
@@ -17913,18 +17918,18 @@ int predict_tree_96(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[0] <= 227) {
-                    if (features[0] <= 163) {
-                        if (features[4] <= 26) {
+                if (temperature <= 227) {
+                    if (temperature <= 163) {
+                        if (humidity_ratio <= 26) {
                             return 1;
                         } else {
                             return 0;
                         }
                     } else {
-                        if (features[0] <= 204) {
+                        if (temperature <= 204) {
                             return 1;
                         } else {
-                            if (features[4] <= 117) {
+                            if (humidity_ratio <= 117) {
                                 return 0;
                             } else {
                                 return 1;
@@ -17932,17 +17937,17 @@ int predict_tree_96(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 92) {
+                    if (co2 <= 92) {
                         return 1;
                     } else {
-                        if (features[0] <= 234) {
-                            if (features[3] <= 100) {
+                        if (temperature <= 234) {
+                            if (co2 <= 100) {
                                 return 1;
                             } else {
-                                if (features[1] <= 116) {
+                                if (humidity <= 116) {
                                     return 0;
                                 } else {
-                                    if (features[3] <= 110) {
+                                    if (co2 <= 110) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -17958,24 +17963,24 @@ int predict_tree_96(unsigned short features[]) {
         }
     }
 }
-int predict_tree_97(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[2] <= 48) {
-            if (features[3] <= 68) {
+int predict_tree_97(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (light <= 48) {
+            if (co2 <= 68) {
                 return 0;
             } else {
-                if (features[4] <= 85) {
-                    if (features[4] <= 83) {
+                if (humidity_ratio <= 85) {
+                    if (humidity_ratio <= 83) {
                         return 0;
                     } else {
                         return 1;
                     }
                 } else {
-                    if (features[0] <= 154) {
+                    if (temperature <= 154) {
                         return 0;
                     } else {
-                        if (features[1] <= 189) {
-                            if (features[4] <= 147) {
+                        if (humidity <= 189) {
+                            if (humidity_ratio <= 147) {
                                 return 0;
                             } else {
                                 return 1;
@@ -17987,11 +17992,11 @@ int predict_tree_97(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[3] <= 9) {
-                if (features[4] <= 36) {
+            if (co2 <= 9) {
+                if (humidity_ratio <= 36) {
                     return 0;
                 } else {
-                    if (features[0] <= 82) {
+                    if (temperature <= 82) {
                         return 0;
                     } else {
                         return 1;
@@ -18002,15 +18007,15 @@ int predict_tree_97(unsigned short features[]) {
             }
         }
     } else {
-        if (features[0] <= 230) {
-            if (features[3] <= 7) {
-                if (features[4] <= 3) {
+        if (temperature <= 230) {
+            if (co2 <= 7) {
+                if (humidity_ratio <= 3) {
                     return 1;
                 } else {
-                    if (features[3] <= 7) {
+                    if (co2 <= 7) {
                         return 0;
                     } else {
-                        if (features[3] <= 7) {
+                        if (co2 <= 7) {
                             return 1;
                         } else {
                             return 0;
@@ -18018,14 +18023,14 @@ int predict_tree_97(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 74) {
-                    if (features[4] <= 108) {
-                        if (features[3] <= 12) {
-                            if (features[0] <= 54) {
+                if (co2 <= 74) {
+                    if (humidity_ratio <= 108) {
+                        if (co2 <= 12) {
+                            if (temperature <= 54) {
                                 return 0;
                             } else {
-                                if (features[1] <= 66) {
-                                    if (features[3] <= 9) {
+                                if (humidity <= 66) {
+                                    if (co2 <= 9) {
                                         return 1;
                                     } else {
                                         return 0;
@@ -18035,13 +18040,13 @@ int predict_tree_97(unsigned short features[]) {
                                 }
                             }
                         } else {
-                            if (features[1] <= 43) {
-                                if (features[1] <= 43) {
-                                    if (features[1] <= 30) {
-                                        if (features[4] <= 27) {
+                            if (humidity <= 43) {
+                                if (humidity <= 43) {
+                                    if (humidity <= 30) {
+                                        if (humidity_ratio <= 27) {
                                             return 1;
                                         } else {
-                                            if (features[0] <= 164) {
+                                            if (temperature <= 164) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -18051,7 +18056,7 @@ int predict_tree_97(unsigned short features[]) {
                                         return 1;
                                     }
                                 } else {
-                                    if (features[4] <= 42) {
+                                    if (humidity_ratio <= 42) {
                                         return 0;
                                     } else {
                                         return 1;
@@ -18062,27 +18067,27 @@ int predict_tree_97(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[0] <= 202) {
+                        if (temperature <= 202) {
                             return 1;
                         } else {
                             return 0;
                         }
                     }
                 } else {
-                    if (features[3] <= 100) {
-                        if (features[3] <= 100) {
-                            if (features[1] <= 112) {
-                                if (features[4] <= 113) {
+                    if (co2 <= 100) {
+                        if (co2 <= 100) {
+                            if (humidity <= 112) {
+                                if (humidity_ratio <= 113) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 114) {
+                                    if (humidity_ratio <= 114) {
                                         return 0;
                                     } else {
                                         return 1;
                                     }
                                 }
                             } else {
-                                if (features[4] <= 120) {
+                                if (humidity_ratio <= 120) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -18097,11 +18102,11 @@ int predict_tree_97(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 89) {
+            if (light <= 89) {
                 return 1;
             } else {
-                if (features[2] <= 105) {
-                    if (features[3] <= 112) {
+                if (light <= 105) {
+                    if (co2 <= 112) {
                         return 0;
                     } else {
                         return 1;
@@ -18113,30 +18118,30 @@ int predict_tree_97(unsigned short features[]) {
         }
     }
 }
-int predict_tree_98(unsigned short features[]) {
-    if (features[0] <= 113) {
-        if (features[3] <= 10) {
-            if (features[1] <= 21) {
-                if (features[2] <= 33) {
+int predict_tree_98(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (temperature <= 113) {
+        if (co2 <= 10) {
+            if (humidity <= 21) {
+                if (light <= 33) {
                     return 0;
                 } else {
-                    if (features[4] <= 3) {
+                    if (humidity_ratio <= 3) {
                         return 0;
                     } else {
                         return 1;
                     }
                 }
             } else {
-                if (features[3] <= 7) {
+                if (co2 <= 7) {
                     return 0;
                 } else {
-                    if (features[2] <= 50) {
+                    if (light <= 50) {
                         return 0;
                     } else {
-                        if (features[4] <= 3) {
+                        if (humidity_ratio <= 3) {
                             return 0;
                         } else {
-                            if (features[3] <= 9) {
+                            if (co2 <= 9) {
                                 return 1;
                             } else {
                                 return 0;
@@ -18146,11 +18151,11 @@ int predict_tree_98(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 32) {
+            if (light <= 32) {
                 return 0;
             } else {
-                if (features[0] <= 37) {
-                    if (features[2] <= 67) {
+                if (temperature <= 37) {
+                    if (light <= 67) {
                         return 0;
                     } else {
                         return 1;
@@ -18161,22 +18166,22 @@ int predict_tree_98(unsigned short features[]) {
             }
         }
     } else {
-        if (features[4] <= 26) {
-            if (features[1] <= 32) {
-                if (features[3] <= 29) {
+        if (humidity_ratio <= 26) {
+            if (humidity <= 32) {
+                if (co2 <= 29) {
                     return 0;
                 } else {
                     return 1;
                 }
             } else {
-                if (features[3] <= 27) {
-                    if (features[2] <= 37) {
+                if (co2 <= 27) {
+                    if (light <= 37) {
                         return 0;
                     } else {
                         return 1;
                     }
                 } else {
-                    if (features[2] <= 35) {
+                    if (light <= 35) {
                         return 0;
                     } else {
                         return 1;
@@ -18184,35 +18189,35 @@ int predict_tree_98(unsigned short features[]) {
                 }
             }
         } else {
-            if (features[2] <= 24) {
+            if (light <= 24) {
                 return 0;
             } else {
-                if (features[0] <= 203) {
-                    if (features[1] <= 29) {
-                        if (features[1] <= 29) {
+                if (temperature <= 203) {
+                    if (humidity <= 29) {
+                        if (humidity <= 29) {
                             return 1;
                         } else {
                             return 0;
                         }
                     } else {
-                        if (features[1] <= 104) {
+                        if (humidity <= 104) {
                             return 1;
                         } else {
-                            if (features[3] <= 58) {
+                            if (co2 <= 58) {
                                 return 0;
                             } else {
-                                if (features[4] <= 115) {
-                                    if (features[4] <= 115) {
-                                        if (features[4] <= 113) {
+                                if (humidity_ratio <= 115) {
+                                    if (humidity_ratio <= 115) {
+                                        if (humidity_ratio <= 113) {
                                             return 1;
                                         } else {
-                                            if (features[4] <= 113) {
+                                            if (humidity_ratio <= 113) {
                                                 return 0;
                                             } else {
-                                                if (features[4] <= 114) {
+                                                if (humidity_ratio <= 114) {
                                                     return 1;
                                                 } else {
-                                                    if (features[3] <= 100) {
+                                                    if (co2 <= 100) {
                                                         return 0;
                                                     } else {
                                                         return 1;
@@ -18230,18 +18235,18 @@ int predict_tree_98(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[1] <= 109) {
-                        if (features[1] <= 104) {
+                    if (humidity <= 109) {
+                        if (humidity <= 104) {
                             return 1;
                         } else {
-                            if (features[3] <= 99) {
-                                if (features[1] <= 106) {
-                                    if (features[0] <= 223) {
-                                        if (features[1] <= 105) {
-                                            if (features[4] <= 111) {
+                            if (co2 <= 99) {
+                                if (humidity <= 106) {
+                                    if (temperature <= 223) {
+                                        if (humidity <= 105) {
+                                            if (humidity_ratio <= 111) {
                                                 return 0;
                                             } else {
-                                                if (features[3] <= 63) {
+                                                if (co2 <= 63) {
                                                     return 1;
                                                 } else {
                                                     return 0;
@@ -18261,17 +18266,17 @@ int predict_tree_98(unsigned short features[]) {
                             }
                         }
                     } else {
-                        if (features[0] <= 227) {
+                        if (temperature <= 227) {
                             return 1;
                         } else {
-                            if (features[2] <= 105) {
-                                if (features[2] <= 86) {
+                            if (light <= 105) {
+                                if (light <= 86) {
                                     return 1;
                                 } else {
-                                    if (features[4] <= 127) {
+                                    if (humidity_ratio <= 127) {
                                         return 0;
                                     } else {
-                                        if (features[0] <= 232) {
+                                        if (temperature <= 232) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -18288,20 +18293,20 @@ int predict_tree_98(unsigned short features[]) {
         }
     }
 }
-int predict_tree_99(unsigned short features[]) {
-    if (features[2] <= 60) {
-        if (features[1] <= 247) {
-            if (features[3] <= 39) {
+int predict_tree_99(unsigned short temperature, unsigned short humidity, unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
+    if (light <= 60) {
+        if (humidity <= 247) {
+            if (co2 <= 39) {
                 return 0;
             } else {
-                if (features[2] <= 31) {
-                    if (features[2] <= 5) {
+                if (light <= 31) {
+                    if (light <= 5) {
                         return 0;
                     } else {
-                        if (features[4] <= 169) {
+                        if (humidity_ratio <= 169) {
                             return 0;
                         } else {
-                            if (features[3] <= 131) {
+                            if (co2 <= 131) {
                                 return 0;
                             } else {
                                 return 1;
@@ -18316,35 +18321,35 @@ int predict_tree_99(unsigned short features[]) {
             return 1;
         }
     } else {
-        if (features[3] <= 7) {
-            if (features[2] <= 67) {
+        if (co2 <= 7) {
+            if (light <= 67) {
                 return 1;
             } else {
                 return 0;
             }
         } else {
-            if (features[0] <= 230) {
-                if (features[0] <= 200) {
-                    if (features[2] <= 66) {
-                        if (features[0] <= 37) {
+            if (temperature <= 230) {
+                if (temperature <= 200) {
+                    if (light <= 66) {
+                        if (temperature <= 37) {
                             return 0;
                         } else {
                             return 1;
                         }
                     } else {
-                        if (features[3] <= 10) {
-                            if (features[3] <= 9) {
+                        if (co2 <= 10) {
+                            if (co2 <= 9) {
                                 return 1;
                             } else {
                                 return 0;
                             }
                         } else {
-                            if (features[0] <= 193) {
-                                if (features[2] <= 78) {
+                            if (temperature <= 193) {
+                                if (light <= 78) {
                                     return 1;
                                 } else {
-                                    if (features[3] <= 62) {
-                                        if (features[2] <= 78) {
+                                    if (co2 <= 62) {
+                                        if (light <= 78) {
                                             return 0;
                                         } else {
                                             return 1;
@@ -18354,12 +18359,12 @@ int predict_tree_99(unsigned short features[]) {
                                     }
                                 }
                             } else {
-                                if (features[4] <= 114) {
+                                if (humidity_ratio <= 114) {
                                     return 1;
                                 } else {
-                                    if (features[1] <= 113) {
-                                        if (features[1] <= 113) {
-                                            if (features[3] <= 100) {
+                                    if (humidity <= 113) {
+                                        if (humidity <= 113) {
+                                            if (co2 <= 100) {
                                                 return 0;
                                             } else {
                                                 return 1;
@@ -18375,10 +18380,10 @@ int predict_tree_99(unsigned short features[]) {
                         }
                     }
                 } else {
-                    if (features[3] <= 76) {
-                        if (features[4] <= 118) {
-                            if (features[3] <= 63) {
-                                if (features[4] <= 110) {
+                    if (co2 <= 76) {
+                        if (humidity_ratio <= 118) {
+                            if (co2 <= 63) {
+                                if (humidity_ratio <= 110) {
                                     return 0;
                                 } else {
                                     return 1;
@@ -18394,15 +18399,15 @@ int predict_tree_99(unsigned short features[]) {
                     }
                 }
             } else {
-                if (features[3] <= 112) {
-                    if (features[2] <= 113) {
-                        if (features[1] <= 106) {
+                if (co2 <= 112) {
+                    if (light <= 113) {
+                        if (humidity <= 106) {
                             return 1;
                         } else {
-                            if (features[3] <= 108) {
+                            if (co2 <= 108) {
                                 return 0;
                             } else {
-                                if (features[3] <= 110) {
+                                if (co2 <= 110) {
                                     return 1;
                                 } else {
                                     return 0;
@@ -18420,207 +18425,208 @@ int predict_tree_99(unsigned short features[]) {
     }
 }
 
-char predict_random_forest(unsigned short features[]) {
+char predict_random_forest(unsigned short temperature, unsigned short humidity,
+                           unsigned short light, unsigned short co2, unsigned short humidity_ratio) {
     int votes[2] = {0};  // Assuming binary classification (class 0 and class 1)
-    int prediction_0 = predict_tree_0(features);
+    int prediction_0 = predict_tree_0(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_0]++;
-    int prediction_1 = predict_tree_1(features);
+    int prediction_1 = predict_tree_1(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_1]++;
-    int prediction_2 = predict_tree_2(features);
+    int prediction_2 = predict_tree_2(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_2]++;
-    int prediction_3 = predict_tree_3(features);
+    int prediction_3 = predict_tree_3(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_3]++;
-    int prediction_4 = predict_tree_4(features);
+    int prediction_4 = predict_tree_4(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_4]++;
-    int prediction_5 = predict_tree_5(features);
+    int prediction_5 = predict_tree_5(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_5]++;
-    int prediction_6 = predict_tree_6(features);
+    int prediction_6 = predict_tree_6(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_6]++;
-    int prediction_7 = predict_tree_7(features);
+    int prediction_7 = predict_tree_7(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_7]++;
-    int prediction_8 = predict_tree_8(features);
+    int prediction_8 = predict_tree_8(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_8]++;
-    int prediction_9 = predict_tree_9(features);
+    int prediction_9 = predict_tree_9(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_9]++;
-    int prediction_10 = predict_tree_10(features);
+    int prediction_10 = predict_tree_10(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_10]++;
-    int prediction_11 = predict_tree_11(features);
+    int prediction_11 = predict_tree_11(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_11]++;
-    int prediction_12 = predict_tree_12(features);
+    int prediction_12 = predict_tree_12(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_12]++;
-    int prediction_13 = predict_tree_13(features);
+    int prediction_13 = predict_tree_13(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_13]++;
-    int prediction_14 = predict_tree_14(features);
+    int prediction_14 = predict_tree_14(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_14]++;
-    int prediction_15 = predict_tree_15(features);
+    int prediction_15 = predict_tree_15(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_15]++;
-    int prediction_16 = predict_tree_16(features);
+    int prediction_16 = predict_tree_16(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_16]++;
-    int prediction_17 = predict_tree_17(features);
+    int prediction_17 = predict_tree_17(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_17]++;
-    int prediction_18 = predict_tree_18(features);
+    int prediction_18 = predict_tree_18(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_18]++;
-    int prediction_19 = predict_tree_19(features);
+    int prediction_19 = predict_tree_19(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_19]++;
-    int prediction_20 = predict_tree_20(features);
+    int prediction_20 = predict_tree_20(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_20]++;
-    int prediction_21 = predict_tree_21(features);
+    int prediction_21 = predict_tree_21(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_21]++;
-    int prediction_22 = predict_tree_22(features);
+    int prediction_22 = predict_tree_22(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_22]++;
-    int prediction_23 = predict_tree_23(features);
+    int prediction_23 = predict_tree_23(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_23]++;
-    int prediction_24 = predict_tree_24(features);
+    int prediction_24 = predict_tree_24(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_24]++;
-    int prediction_25 = predict_tree_25(features);
+    int prediction_25 = predict_tree_25(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_25]++;
-    int prediction_26 = predict_tree_26(features);
+    int prediction_26 = predict_tree_26(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_26]++;
-    int prediction_27 = predict_tree_27(features);
+    int prediction_27 = predict_tree_27(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_27]++;
-    int prediction_28 = predict_tree_28(features);
+    int prediction_28 = predict_tree_28(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_28]++;
-    int prediction_29 = predict_tree_29(features);
+    int prediction_29 = predict_tree_29(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_29]++;
-    int prediction_30 = predict_tree_30(features);
+    int prediction_30 = predict_tree_30(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_30]++;
-    int prediction_31 = predict_tree_31(features);
+    int prediction_31 = predict_tree_31(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_31]++;
-    int prediction_32 = predict_tree_32(features);
+    int prediction_32 = predict_tree_32(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_32]++;
-    int prediction_33 = predict_tree_33(features);
+    int prediction_33 = predict_tree_33(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_33]++;
-    int prediction_34 = predict_tree_34(features);
+    int prediction_34 = predict_tree_34(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_34]++;
-    int prediction_35 = predict_tree_35(features);
+    int prediction_35 = predict_tree_35(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_35]++;
-    int prediction_36 = predict_tree_36(features);
+    int prediction_36 = predict_tree_36(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_36]++;
-    int prediction_37 = predict_tree_37(features);
+    int prediction_37 = predict_tree_37(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_37]++;
-    int prediction_38 = predict_tree_38(features);
+    int prediction_38 = predict_tree_38(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_38]++;
-    int prediction_39 = predict_tree_39(features);
+    int prediction_39 = predict_tree_39(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_39]++;
-    int prediction_40 = predict_tree_40(features);
+    int prediction_40 = predict_tree_40(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_40]++;
-    int prediction_41 = predict_tree_41(features);
+    int prediction_41 = predict_tree_41(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_41]++;
-    int prediction_42 = predict_tree_42(features);
+    int prediction_42 = predict_tree_42(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_42]++;
-    int prediction_43 = predict_tree_43(features);
+    int prediction_43 = predict_tree_43(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_43]++;
-    int prediction_44 = predict_tree_44(features);
+    int prediction_44 = predict_tree_44(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_44]++;
-    int prediction_45 = predict_tree_45(features);
+    int prediction_45 = predict_tree_45(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_45]++;
-    int prediction_46 = predict_tree_46(features);
+    int prediction_46 = predict_tree_46(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_46]++;
-    int prediction_47 = predict_tree_47(features);
+    int prediction_47 = predict_tree_47(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_47]++;
-    int prediction_48 = predict_tree_48(features);
+    int prediction_48 = predict_tree_48(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_48]++;
-    int prediction_49 = predict_tree_49(features);
+    int prediction_49 = predict_tree_49(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_49]++;
-    int prediction_50 = predict_tree_50(features);
+    int prediction_50 = predict_tree_50(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_50]++;
-    int prediction_51 = predict_tree_51(features);
+    int prediction_51 = predict_tree_51(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_51]++;
-    int prediction_52 = predict_tree_52(features);
+    int prediction_52 = predict_tree_52(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_52]++;
-    int prediction_53 = predict_tree_53(features);
+    int prediction_53 = predict_tree_53(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_53]++;
-    int prediction_54 = predict_tree_54(features);
+    int prediction_54 = predict_tree_54(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_54]++;
-    int prediction_55 = predict_tree_55(features);
+    int prediction_55 = predict_tree_55(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_55]++;
-    int prediction_56 = predict_tree_56(features);
+    int prediction_56 = predict_tree_56(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_56]++;
-    int prediction_57 = predict_tree_57(features);
+    int prediction_57 = predict_tree_57(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_57]++;
-    int prediction_58 = predict_tree_58(features);
+    int prediction_58 = predict_tree_58(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_58]++;
-    int prediction_59 = predict_tree_59(features);
+    int prediction_59 = predict_tree_59(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_59]++;
-    int prediction_60 = predict_tree_60(features);
+    int prediction_60 = predict_tree_60(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_60]++;
-    int prediction_61 = predict_tree_61(features);
+    int prediction_61 = predict_tree_61(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_61]++;
-    int prediction_62 = predict_tree_62(features);
+    int prediction_62 = predict_tree_62(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_62]++;
-    int prediction_63 = predict_tree_63(features);
+    int prediction_63 = predict_tree_63(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_63]++;
-    int prediction_64 = predict_tree_64(features);
+    int prediction_64 = predict_tree_64(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_64]++;
-    int prediction_65 = predict_tree_65(features);
+    int prediction_65 = predict_tree_65(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_65]++;
-    int prediction_66 = predict_tree_66(features);
+    int prediction_66 = predict_tree_66(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_66]++;
-    int prediction_67 = predict_tree_67(features);
+    int prediction_67 = predict_tree_67(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_67]++;
-    int prediction_68 = predict_tree_68(features);
+    int prediction_68 = predict_tree_68(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_68]++;
-    int prediction_69 = predict_tree_69(features);
+    int prediction_69 = predict_tree_69(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_69]++;
-    int prediction_70 = predict_tree_70(features);
+    int prediction_70 = predict_tree_70(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_70]++;
-    int prediction_71 = predict_tree_71(features);
+    int prediction_71 = predict_tree_71(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_71]++;
-    int prediction_72 = predict_tree_72(features);
+    int prediction_72 = predict_tree_72(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_72]++;
-    int prediction_73 = predict_tree_73(features);
+    int prediction_73 = predict_tree_73(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_73]++;
-    int prediction_74 = predict_tree_74(features);
+    int prediction_74 = predict_tree_74(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_74]++;
-    int prediction_75 = predict_tree_75(features);
+    int prediction_75 = predict_tree_75(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_75]++;
-    int prediction_76 = predict_tree_76(features);
+    int prediction_76 = predict_tree_76(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_76]++;
-    int prediction_77 = predict_tree_77(features);
+    int prediction_77 = predict_tree_77(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_77]++;
-    int prediction_78 = predict_tree_78(features);
+    int prediction_78 = predict_tree_78(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_78]++;
-    int prediction_79 = predict_tree_79(features);
+    int prediction_79 = predict_tree_79(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_79]++;
-    int prediction_80 = predict_tree_80(features);
+    int prediction_80 = predict_tree_80(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_80]++;
-    int prediction_81 = predict_tree_81(features);
+    int prediction_81 = predict_tree_81(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_81]++;
-    int prediction_82 = predict_tree_82(features);
+    int prediction_82 = predict_tree_82(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_82]++;
-    int prediction_83 = predict_tree_83(features);
+    int prediction_83 = predict_tree_83(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_83]++;
-    int prediction_84 = predict_tree_84(features);
+    int prediction_84 = predict_tree_84(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_84]++;
-    int prediction_85 = predict_tree_85(features);
+    int prediction_85 = predict_tree_85(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_85]++;
-    int prediction_86 = predict_tree_86(features);
+    int prediction_86 = predict_tree_86(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_86]++;
-    int prediction_87 = predict_tree_87(features);
+    int prediction_87 = predict_tree_87(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_87]++;
-    int prediction_88 = predict_tree_88(features);
+    int prediction_88 = predict_tree_88(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_88]++;
-    int prediction_89 = predict_tree_89(features);
+    int prediction_89 = predict_tree_89(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_89]++;
-    int prediction_90 = predict_tree_90(features);
+    int prediction_90 = predict_tree_90(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_90]++;
-    int prediction_91 = predict_tree_91(features);
+    int prediction_91 = predict_tree_91(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_91]++;
-    int prediction_92 = predict_tree_92(features);
+    int prediction_92 = predict_tree_92(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_92]++;
-    int prediction_93 = predict_tree_93(features);
+    int prediction_93 = predict_tree_93(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_93]++;
-    int prediction_94 = predict_tree_94(features);
+    int prediction_94 = predict_tree_94(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_94]++;
-    int prediction_95 = predict_tree_95(features);
+    int prediction_95 = predict_tree_95(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_95]++;
-    int prediction_96 = predict_tree_96(features);
+    int prediction_96 = predict_tree_96(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_96]++;
-    int prediction_97 = predict_tree_97(features);
+    int prediction_97 = predict_tree_97(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_97]++;
-    int prediction_98 = predict_tree_98(features);
+    int prediction_98 = predict_tree_98(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_98]++;
-    int prediction_99 = predict_tree_99(features);
+    int prediction_99 = predict_tree_99(temperature, humidity, light, co2, humidity_ratio);
     votes[prediction_99]++;
     return (votes[0] > votes[1]) ? 0 : 1;  // Majority voting
 }

@@ -35,13 +35,11 @@ int __mulsi3(int a, int b) {
 }
 
 // Function to calculate Euclidean distance between two points
-unsigned long euclidean_distance(const short *point1, const short *point2) {
+unsigned long euclidean_distance(short moisture1, short temp1, short moisture2, short temp2) {
   unsigned long sum = 0;
-  int i;
-  for (i = 0; i < Num_Features; i++) {
-    short diff = point1[i] - point2[i];
-    sum += diff * diff; // No need for a separate power function
-  }
+  short moisture_diff = moisture1 - moisture2;
+  short temp_diff = temp1 - temp2;
+  sum = moisture_diff * moisture_diff + temp_diff * temp_diff;
   return sum;
 }
 
@@ -55,51 +53,61 @@ char majority_vote(short *labels) {
 }
 
 // Custom implementation of KNN without standard library functions
-int predict_classification(short *test_point) {
-  unsigned long distances[Num_Training_Samples]; // Adjust the size based on your data
-  short labels[Num_Training_Samples];
-
-  // Calculate distances to each training point
+int predict_classification(short test_moisture, short test_temp) {
+  unsigned long max_distance = 0xFFFFFFFF;  // Track largest distance among K smallest
+  int max_idx = 0;                         // Index of largest distance among K smallest
+  short min_labels[K];                     // Labels for K nearest neighbors
+  unsigned long min_distances[K];          // K smallest distances
+  unsigned long curr_distance;
   int i, j;
-  for (i = 0; i < Num_Training_Samples; i++) {
-    distances[i] =
-        euclidean_distance((const short *)Training_Data_Vector[i], test_point);
-    labels[i] = Training_Pump_Vector[i]; // Last column is label
-  }
 
-  // Simple selection sort to find k nearest neighbors
-  for (i = 0; i < Num_Training_Samples - 1; i++) {
-    for (j = i + 1; j < Num_Training_Samples; j++) {
-      if (distances[i] > distances[j]) {
-        // Swap distances
-        unsigned long temp_dist = distances[i];
-        distances[i] = distances[j];
-        distances[j] = temp_dist;
+  // Initialize with first K points
+  for (i = 0; i < K; i++) {
+    curr_distance = euclidean_distance(Training_Moisture_Vector[i], Training_Temp_Vector[i],
+                                     test_moisture, test_temp);
+    min_distances[i] = curr_distance;
+    min_labels[i] = Training_Pump_Vector[i];
+    
 
-        // Swap labels accordingly
-        int temp_label = labels[i];
-        labels[i] = labels[j];
-        labels[j] = temp_label;
-      }
+    if (curr_distance > max_distance) {
+      max_distance = curr_distance;
+      max_idx = i;
     }
   }
 
+  // For remaining points, replace max if we find smaller distance
+  for (i = K; i < Num_Training_Samples; i++) {
+    curr_distance = euclidean_distance(Training_Moisture_Vector[i], Training_Temp_Vector[i],
+                                     test_moisture, test_temp);
+    if (curr_distance < max_distance) {
+      min_distances[max_idx] = curr_distance;
+
+      min_labels[max_idx] = Training_Pump_Vector[i];
+      // Find new maximum distance among K smallest distances
+      max_distance = min_distances[0];
+      max_idx = 0;
+      for (int k = 1; k < K; k++) {
+        if (min_distances[k] > max_distance) {
+          max_distance = min_distances[k];
+          max_idx = k;
+        }
+      }
+    }
+  }
   // Majority vote to decide the class
-  return majority_vote(labels);
+  return majority_vote(min_labels);
 }
 
 char Read_Sensor_Values_Run_KNN() {
 
   char predicted_pump;
-  short sensor_inputs[Num_Features];
-  unsigned short data_sample;
+  short test_moisture, test_temp;
   char GPIO;
 
-  // Fill in current sensor input
-  for (int i = 0; i < Num_Features; ++i)
-    sensor_inputs[i] = Testing_Data[i];
-
-  predicted_pump = predict_classification(sensor_inputs);
+  test_moisture = Testing_Moisture;
+  test_temp = Testing_Temp;
+  
+  predicted_pump = predict_classification(test_moisture, test_temp);
 
   if (predicted_pump)
     GPIO = 1;

@@ -21,24 +21,17 @@ def generate_header(csv_filename, header_filename, quant):
         with open(header_filename, 'w') as header_file:
             header_file.write(f"#define QUANTIZATION {quant}\n\n")
             header_file.write(f"#define Num_Data_Samples {len(rows)-1}\n")
-            header_file.write(f"#define Num_Features {len(var_names)-1}\n")
             header_file.write("\n")
 
-            header_file.write("const volatile unsigned short Features_Vector[Num_Data_Samples][Num_Features] = {\n")
-            for i in range(1, len(rows)):
-                header_file.write("  {")
-                for var in range(len(var_names)-1): # Don't include golden reference
-                    x = rows[i][var]
-                    header_file.write(f"{x},")
-                header_file.write("},\n")
-            header_file.write("};\n\n")
+            # Define the variable names and types
+            quant_types = ["unsigned short", "unsigned short", "unsigned short", "unsigned short", "unsigned short", "char"]
 
-            ref_idx = len(var_names) - 1
-            header_file.write("const char Golden_Reference_Occupancy_Vector[Num_Data_Samples] = {\n")
-            for i in range(1,len(rows)):
-                header_file.write(f"  {rows[i][ref_idx]},\n")
-            header_file.write("};\n\n")
-
+            # Write out each feature vector separately
+            for var in range(0, len(var_names)):
+                header_file.write(f"const volatile {quant_types[var]} {var_names[var]}_Vector[Num_Data_Samples] = {{\n")
+                for i in range(1, len(rows)):
+                    header_file.write(f"  {rows[i][var]},\n")
+                header_file.write("};\n\n")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate a C header file from a CSV row.')
