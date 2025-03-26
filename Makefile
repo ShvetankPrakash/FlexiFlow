@@ -19,6 +19,9 @@ BUILD_DIR = build/
 BUILD_BIN_DIR = $(BUILD_DIR)bin
 BUILD_OBJ_DIR = $(BUILD_DIR)obj
 BUILD_SRC_DIR = $(BUILD_DIR)src
+BUILT_FILES := $(wildcard $(BUILD_BIN_DIR)/*)
+
+TRACE_DIR ?= trace/
 
 # Default values for INFERENCE (multi or single), DATA_SAMPLE_NUM, and
 # QUANTIZATION
@@ -32,6 +35,7 @@ build_dirs:
 	mkdir -p $(BUILD_BIN_DIR)
 	mkdir -p $(BUILD_OBJ_DIR)
 	mkdir -p $(BUILD_SRC_DIR)
+	mkdir -p $(TRACE_DIR)
 
 # Compile all benchmarks
 all: SDG_02 SDG_03_Cardiotocography SDG_03_Arrythmia_Detection SDG_06 SDG_09 SDG_10 SDG_11 SDG_12 SDG_13 SDG_15
@@ -90,5 +94,9 @@ compile_inference: build_dirs
 		$(CC) $(CCFLAGS) -c $(BUILD_SRC_DIR)/$(C_FILE).c -o $(BUILD_OBJ_DIR)/$(notdir $(C_FILE)).o; \
 		$(CC) $(CCFLAGS) -o $(BUILD_BIN_DIR)/$(BIN_FILE)_single_inference_sample_$(DATA_SAMPLE_NUM) $(BUILD_OBJ_DIR)/$(notdir $(C_FILE)).o $(BUILD_OBJ_DIR)/init.o; \
 	fi
+
+trace: build_dirs
+	@for file in $(BUILT_FILES); do ./scripts/gen-trace.sh $$file $(TRACE_DIR); done
+
 clean:
 	rm -rf $(BUILD_DIR)
