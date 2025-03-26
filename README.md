@@ -53,8 +53,25 @@ TODO
 ### Instruction Mix
 TODO
 
-### Latency
-TODO
+### Latency on Bit-Serial Cores (Serv, Qerv, Herv, Nerv)
+1. Install iverilog and vvp for cycle accurate RTL simulation
+2. Clone [Serv Repository](https://github.com/olofk/serv)
+3. `cd serv/`
+4. Compile testbench using this command:
+   ```
+   iverilog -o servant_sim.out -y rtl/ -y  servant/ -y serving/ -y servile/ -y bench/ ./bench/servant_tb.v
+   ```
+5. Run Hello World Simulation using this command:
+   ```
+   vvp servant_sim.out  +uart_baudrate=115200 +firmware=sw/hello_uart.hex
+   ```
+   You will see the following output:
+   ```
+   Preloading servant_tb.dut.dut.ram from hello_uart.hex
+   Loading RAM from sw/hello_uart.hex
+   Hi, I'm Servant!
+   Test complete
+   ```
 
 # References
 [1] SDGs
