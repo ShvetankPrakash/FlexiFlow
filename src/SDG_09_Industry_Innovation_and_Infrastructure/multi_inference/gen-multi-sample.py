@@ -24,7 +24,7 @@ def generate_header(csv_filename, header_filename, quant):
             header_file.write("\n")
 
             # Define the variable names and types
-            quant_types = ["unsigned short", "unsigned short", "unsigned short", "unsigned short", "unsigned short", "char"]
+            quant_types = ["unsigned short", "unsigned short", "unsigned short", "unsigned short", "unsigned short", "char", "char"]
 
             # Write out each feature vector separately
             for var in range(0, len(var_names)):
