@@ -42,18 +42,7 @@ def generate_header(csv_filename, header_filename, sample, quant):
             for var in range(0, len(var_names)):  # Start from 1 to skip "date"
                 var_name = var_names[var]
                 value = row[var]
-
-                # # Convert values to correct types
-                # try:
-                #     if quant_types[var] == "char":
-                #         value = int(float(value))  # Convert to int for char
-                #     elif quant_types[var] == "short":
-                #         value = int(float(value))  # Convert to int for short
-                #     elif quant_types[var] == "float":
-                #         value = float(value)  # Keep as float
-                # except ValueError:
-                #     print(f"Warning: Could not convert {value} for {var_name}")
-
+                
                 # Write to header file
                 header_file.write(f"const volatile {quant_types[var]} {var_name} = {value};\n")
 

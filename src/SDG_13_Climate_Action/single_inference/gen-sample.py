@@ -30,35 +30,50 @@ def generate_header(csv_filename, header_filename, sample, quant):
         var_names = rows[0]
         row = rows[sample+1+training_rows]
 
+        num_features = len(var_names) - 1
+        pump_idx = 2
+
         with open(header_filename, 'w') as header_file:
             header_file.write(f"// Sample {sample}\n")
             header_file.write(f"#define QUANTIZATION {quant}\n")
             header_file.write(f"#define Num_Training_Samples {training_rows}\n")
-            header_file.write("#define Num_Features 2")
 
             header_file.write("\n")
 
             # List of quantization functions to be used on the columns
-            quant_functions = [quantize_moisture,quantize_temp,None]
+            quant_functions = [quantize_moisture,quantize_temp]
 
-            header_file.write("const volatile short Data[Num_Features+1] = {\n")
-            header_file.write(f"  ")
-            for var in range(len(var_names)):
-                x = row[var]
+            header_file.write(f"const volatile char Golden_Reference = {row[pump_idx]};\n");
+
+            moisture = quantize_moisture(row[0], quant)
+            temp = quantize_temp(row[1], quant)
+            
+            header_file.write(f"const volatile short Testing_Moisture = {moisture};\n")
+            header_file.write(f"const volatile short Testing_Temp = {temp};\n")
+            header_file.write("\n")
+
+            header_file.write("const short Training_Moisture_Vector[Num_Training_Samples] = {\n")
+            for i in range(1, training_rows+1):
+                var = 0
+                x = rows[i][var]
                 if quant_functions[var] != None:
                     x = quant_functions[var](x,quant)
-                header_file.write(f"{x},")
-            header_file.write("\n};\n\n")
+                header_file.write(f"  {x},\n")
+            header_file.write("};\n\n")
 
-            header_file.write("const volatile short Training_Vector[Num_Training_Samples][Num_Features+1] = {\n")
+            header_file.write("const short Training_Temp_Vector[Num_Training_Samples] = {\n")
             for i in range(1, training_rows+1):
-                header_file.write("  {")
-                for var in range(len(var_names)):
-                    x = rows[i][var]
-                    if quant_functions[var] != None:
-                        x = quant_functions[var](x,quant)
-                    header_file.write(f"{x},")
-                header_file.write("},\n")
+                var = 1
+                x = rows[i][var]
+                if quant_functions[var] != None:
+                    x = quant_functions[var](x,quant)
+                header_file.write(f"  {x},\n")
+            header_file.write("};\n\n")
+
+            header_file.write("const char Training_Pump_Vector[Num_Training_Samples] = {\n")
+            for i in range(1, training_rows+1):
+                x = rows[i][pump_idx]
+                header_file.write(f"  {x},\n")
             header_file.write("};\n\n")
 
 if __name__ == "__main__":
