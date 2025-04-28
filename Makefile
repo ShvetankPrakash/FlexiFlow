@@ -73,7 +73,7 @@ SDG_13:
 	$(MAKE) compile_inference SDG_DIR=SDG_13_Climate_Action C_FILE=irrigation BIN_FILE=SDG_13_irrigation
 
 SDG_15:
-	$(MAKE) compile_inference SDG_DIR=SDG_15_Life_on_Land C_FILE=animal_tracking BIN_FILE=SDG_15_animal_tracking
+	$(MAKE) compile_inference SDG_DIR=SDG_15_Life_on_Land C_FILE=tree_tracking BIN_FILE=SDG_15_tree_tracking
 
 # Rule to handle multi-inference and single-inference compilation
 compile_inference: build_dirs
@@ -128,7 +128,7 @@ SDG_13_serv:
 	$(MAKE) compile_hex SDG_DIR=SDG_13_Climate_Action C_FILE=irrigation BIN_FILE=SDG_13_irrigation
 
 SDG_15_serv:
-	$(MAKE) compile_hex SDG_DIR=SDG_15_Life_on_Land C_FILE=animal_tracking BIN_FILE=SDG_15_animal_tracking
+	$(MAKE) compile_hex SDG_DIR=SDG_15_Life_on_Land C_FILE=tree_tracking BIN_FILE=SDG_15_tree_tracking
 
 compile_hex: build_dirs
 	cp $(SRC_DIR)/$(SDG_DIR)/single_inference/$(C_FILE).c $(BUILD_SRC_DIR)/
