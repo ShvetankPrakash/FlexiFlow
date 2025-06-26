@@ -14,7 +14,7 @@ plt.rcParams.update({
 })
 
 # Directory containing the trace files
-directory_path = './trace'
+directory_path = './trace-tree-small'
 
 # Regular expression patterns for different types of instructions
 branches = re.compile(r'\b(beq|bne|blt|bge|bltu|bgeu|bnez|beqz|bltz|bgez)\b')
@@ -183,7 +183,7 @@ def plot_instruction_mix(instruction_data, total_instructions_data):
         left=0.10,
         right=0.80
     )
-    plt.savefig("plots/instruction_mix.png", dpi=300, bbox_inches='tight')  # High resolution and better layout
+    plt.savefig("tree-plots/instruction_mix.png", dpi=300, bbox_inches='tight')  # High resolution and better layout
     plt.show()
 
 
@@ -203,7 +203,7 @@ def plot_total_instructions(total_instructions_data):
     plt.title('Total Instruction Count of Workloads')
     plt.xticks(rotation=45, ha='right')  # Rotates x-axis labels and aligns them to the right
     plt.tight_layout()
-    plt.savefig("plots/total_instructions.png", dpi=300, bbox_inches='tight')  # High resolution and better layout
+    plt.savefig("tree-plots/total_instructions.png", dpi=300, bbox_inches='tight')  # High resolution and better layout
     plt.show()
 
 
@@ -253,7 +253,7 @@ def plot_total_cycles_per_instruction(instruction_data, total_instructions_data,
 
     plt.xticks(rotation=45, ha='right')  # Rotates x-axis labels and aligns them to the right
     plt.tight_layout()
-    plt.savefig("plots/total_cycles_per_instruction.png", dpi=300, bbox_inches='tight')  # High resolution and better layout
+    plt.savefig("tree-plots/total_cycles_per_instruction.png", dpi=300, bbox_inches='tight')  # High resolution and better layout
     plt.show()
 
 
@@ -297,7 +297,7 @@ def plot_instruction_mix_by_cycles(instruction_data, total_instructions_data):
 
     plt.xticks(rotation=45, ha='right')  # Rotates x-axis labels and aligns them to the right
     plt.tight_layout()
-    plt.savefig("plots/instruction_mix_by_cycles.png", dpi=300, bbox_inches='tight')  # High resolution and better layout
+    plt.savefig("tree-plots/instruction_mix_by_cycles.png", dpi=300, bbox_inches='tight')  # High resolution and better layout
     plt.show()
 
 
@@ -373,7 +373,7 @@ def plot_runtime_per_core(instruction_data, clock_freq=50000, log_scale=True):
         left=0.15,
         right=0.95
     )
-    plt.savefig("plots/flexibits_runtime_comparison.png", dpi=300)
+    plt.savefig("tree-plots/flexibits_runtime_comparison.png", dpi=300)
     plt.show()
 
 
@@ -422,6 +422,6 @@ def process_trace_files(directory_path):
 
 # Run the processing function
 
-os.makedirs("plots", exist_ok=True)
+os.makedirs("tree-plots", exist_ok=True)
 process_trace_files(directory_path)
 
