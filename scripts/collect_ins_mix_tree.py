@@ -27,7 +27,7 @@ shifts_slts = re.compile(r'srai|slli|srli|sra|sll|srl|slt|sltu|slti|sltiu|snez')
 
 name_dir = {
             "SDG_02": "02. Food Spoilage Detection\n(Decision Tree)",
-            "SDG_03_arrythmia": "06. Arrhythmia Detection\n(Bloom Filter)",
+            "SDG_03_arrhythmia": "06. Arrhythmia Detection\n(Bloom Filter)",
             "SDG_03_cardiotocography": "08. Cardiotocography\n(Classification MLP)",
             "SDG_06": "04. Water Quality Monitoring\n(Threshold)",
             "SDG_09": "05. Smart HVAC Monitoring\n(Random Forest)",

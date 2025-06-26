@@ -30,7 +30,7 @@ generate_sample_indices() {
 declare -A sdgs
 sdgs[SDG_02]=250
 sdgs[SDG_03_Cardiotocography]=427
-sdgs[SDG_03_Arrythmia_Detection]=1
+sdgs[SDG_03_Arrhythmia_Detection]=1
 sdgs[SDG_06]=56
 sdgs[SDG_09]=2665
 sdgs[SDG_10]=5
