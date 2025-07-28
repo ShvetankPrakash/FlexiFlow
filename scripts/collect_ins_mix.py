@@ -14,7 +14,7 @@ plt.rcParams.update({
 })
 
 # Directory containing the trace files
-directory_path = './trace'
+directory_path = './trace-figure/'
 
 # Regular expression patterns for different types of instructions
 branches = re.compile(r'\b(beq|bne|blt|bge|bltu|bgeu|bnez|beqz|bltz|bgez)\b')
@@ -136,7 +136,7 @@ def plot_instruction_mix(instruction_data, total_instructions_data):
     colors = ['#92c6ff', '#97f0aa', '#f4b400', '#d291bc', '#ff4500', '#764428', '#ff55a3']  # Light blue, green, yellow, pink
 
     # Create the stacked bar chart
-    fig, ax = plt.subplots(figsize=(16, 9))  
+    fig, ax = plt.subplots(figsize=(16, 14))  
 
 
     # Initialize the bottom for the stacking
@@ -196,14 +196,27 @@ def plot_total_instructions(total_instructions_data):
     total_instructions = [total_instructions_data[workload] for workload in sorted_workloads]
 
     # Plot
-    plt.figure(figsize=(14, 7))
-    plt.bar(sorted_workloads, total_instructions, color='#add8e6')  # Light blue color
+    plt.figure(figsize=(16, 14))
+    bars = plt.bar(sorted_workloads, total_instructions, color='#add8e6')  # Light blue color
     plt.xlabel('Workload')
-    plt.ylabel('Total Instructions (in billions)')
+    plt.ylabel('Total Instructions')
     plt.title('Total Instruction Count of Workloads')
     plt.xticks(rotation=45, ha='right')  # Rotates x-axis labels and aligns them to the right
     plt.tight_layout()
     plt.savefig("plots/total_instructions.png", dpi=300, bbox_inches='tight')  # High resolution and better layout
+
+    outlier_index = 9 # tree tracking
+    for i, bar in enumerate(bars):
+        height = bar.get_height()
+        label_value = total_instructions[i]
+
+        # Place actual value above the capped bar
+        if i == outlier_index:
+            plt.text(bar.get_x() + bar.get_width() / 2, height + 3, f'{label_value}', ha='center', va='bottom', fontsize=10, fontweight='bold')
+        else:
+            plt.text(bar.get_x() + bar.get_width() / 2, height + 1, f'{label_value}', ha='center', va='bottom', fontsize=9)
+    plt.yscale("log")
+
     plt.show()
 
 
@@ -225,7 +238,7 @@ def plot_total_cycles_per_instruction(instruction_data, total_instructions_data,
     colors = ['orange', 'orange', 'orange', 'orange', 'orange', 'orange', 'orange']  # Light blue, green, yellow, pink
 
     # Create the stacked bar chart
-    fig, ax = plt.subplots(figsize=(14, 7))
+    fig, ax = plt.subplots(figsize=(16, 14))
 
     # Initialize the bottom for the stacking
     bottom = [0] * len(sorted_workloads)
@@ -249,7 +262,8 @@ def plot_total_cycles_per_instruction(instruction_data, total_instructions_data,
 
     ax.set_ylabel('Total Cycles')
     ax.set_title('Total Cycles Per Instruction of Workloads')
-    ax.legend(loc='upper right', bbox_to_anchor=(1.15, 1))  # Moves legend outside the plot
+    # ax.legend(loc='upper right', bbox_to_anchor=(1.15, 1))  # Moves legend outside the plot
+    ax.set_ylim(1,1e12)
 
     plt.xticks(rotation=45, ha='right')  # Rotates x-axis labels and aligns them to the right
     plt.tight_layout()
@@ -267,7 +281,7 @@ def plot_instruction_mix_by_cycles(instruction_data, total_instructions_data):
     colors = ['#92c6ff', '#97f0aa', '#f4b400', '#d291bc', '#ff4500', '#764428', '#ff55a3']  # Light blue, green, yellow, pink
 
     # Create the stacked bar chart
-    fig, ax = plt.subplots(figsize=(14, 7))
+    fig, ax = plt.subplots(figsize=(16, 12))
 
     # Initialize the bottom for the stacking
     bottom = [0] * len(sorted_workloads)
@@ -293,7 +307,8 @@ def plot_instruction_mix_by_cycles(instruction_data, total_instructions_data):
 
     ax.set_ylabel('Percentage of Cycles')
     ax.set_title('Instruction Mix by Cycles of Workloads')
-    ax.legend(loc='upper right', bbox_to_anchor=(1.15, 1))  # Moves legend outside the plot
+    ax.legend(loc='upper right', bbox_to_anchor=(1.25, 1))  # Moves legend outside the plot
+    ax.set_ylim(0,105)
 
     plt.xticks(rotation=45, ha='right')  # Rotates x-axis labels and aligns them to the right
     plt.tight_layout()
@@ -323,7 +338,7 @@ def plot_runtime_per_core(instruction_data, clock_freq=50000, log_scale=True):
             runtime_data[core].append(runtime_seconds)
 
     # Plotting
-    fig, ax = plt.subplots(figsize=(12, 6))
+    fig, ax = plt.subplots(figsize=(16, 10))
     for i, core in enumerate(cores):
         x_positions = [j + (i - 1) * width for j in range(len(sorted_workloads))]
         ax.bar(x_positions, runtime_data[core], width, label=core, color=colors[i])
@@ -411,12 +426,33 @@ def process_trace_files(directory_path):
                 print('______________________')
             else:
                 print(f'No instructions found in file: {filename}')
+    
+    # Manually add in tree tracking
+    tree_instruction_counts = {
+        'I-types': 268315600,
+        'Loads': 123756000,  # Assuming 70 cycle latency for mem read
+        'R-types': 883490100,
+        'Stores': 85096600,  # Assuming 35 cycle latency for mem write
+        'Branches': 802534300,
+        'Shifts and SLTs': 897548100,
+        'Jumps': 84845600
+    }
+    tree_total_instructions = 3145586300
+    tree_other_instructions = 0
+    workload_name = "SDG_15_tree_tracking_single_inference_sample_0"
+    friendly_name = next((v for k, v in name_dir.items() if k in workload_name), workload_name)
+
+    total_instructions_data[friendly_name] = tree_total_instructions
+    for category, count in tree_instruction_counts.items():
+        instruction_data[friendly_name][category] = count
+    all_other_instructions[friendly_name] = tree_other_instructions
+
 
     # Once all files are processed, plot the instruction mix and total instructions
-    plot_instruction_mix(instruction_data, total_instructions_data)
-    plot_total_instructions(total_instructions_data)
-    plot_total_cycles_per_instruction(instruction_data, total_instructions_data)
-    plot_instruction_mix_by_cycles(instruction_data, total_instructions_data)
+    #plot_instruction_mix(instruction_data, total_instructions_data)
+    #plot_total_instructions(total_instructions_data)
+    #plot_total_cycles_per_instruction(instruction_data, total_instructions_data)
+    #plot_instruction_mix_by_cycles(instruction_data, total_instructions_data)
     plot_runtime_per_core(instruction_data)
 
 
