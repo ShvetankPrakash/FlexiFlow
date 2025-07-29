@@ -34,10 +34,10 @@ def generate_header(csv_filename, header_filename, sample, quant):
             # List of quantization functions to be used on the columns
             names = ["MQ135", "MQ136", "MQ137", "MQ138", "MQ2", "MQ3", "MQ4", "MQ5", "MQ6", "MQ8", "MQ9"]
             
-            header_file.write(f"const volatile char Golden_Reference = {row[label_idx]};\n");
+            header_file.write(f"volatile char Golden_Reference = {row[label_idx]};\n");
             
             for idx, name in enumerate(names):
-                header_file.write(f"const volatile unsigned char Testing_{name} = {row[idx]};\n")
+                header_file.write(f"volatile unsigned char Testing_{name} = {row[idx]};\n")
             header_file.write("\n")
 
 if __name__ == "__main__":
