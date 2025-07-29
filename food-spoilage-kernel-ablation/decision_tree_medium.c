@@ -14,15 +14,31 @@ char kernel_predict(
 ) {
     if (MQ4 <= 27) {
         if (MQ136 <= 32) {
-            return 3;
+            if (MQ137 <= 112) {
+                return 1;
+            } else {
+                return 3;
+            }
         } else {
-            return 2;
+            if (MQ9 <= 54) {
+                return 3;
+            } else {
+                return 2;
+            }
         }
     } else {
         if (MQ138 <= 145) {
-            return 1;
+            if (MQ137 <= 149) {
+                return 1;
+            } else {
+                return 2;
+            }
         } else {
-            return 0;
+            if (MQ4 <= 46) {
+                return 1;
+            } else {
+                return 0;
+            }
         }
     }
 }
