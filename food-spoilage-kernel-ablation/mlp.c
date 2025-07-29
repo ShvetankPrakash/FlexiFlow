@@ -42,9 +42,6 @@ int weights_two_shifted[HIDDEN_DIM*OUTPUT_DIM];  // TODO: Refactor
 int layer_one_activations[HIDDEN_DIM];
 int output_activations[OUTPUT_DIM];
 
-// Global volatile variable to verify result is not optimized out
-volatile signed char result = -1;  
-
 // Software implementation of integer multiplication adapted from: https://github.com/gcc-mirror/gcc/blob/master/libgcc/config/epiphany/mulsi3.c
 int __mulsi3(int a, int b) {
     int result = 0;

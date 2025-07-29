@@ -1,4 +1,4 @@
-// C implementation of the decision tree (max_depth=3)
+// C implementation of the decision tree (max_depth=2)
 char kernel_predict(
     unsigned char MQ135,
     unsigned char MQ136,
