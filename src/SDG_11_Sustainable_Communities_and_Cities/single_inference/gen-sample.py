@@ -10,27 +10,35 @@ def generate_header(csv_filename, header_filename, sample, quant):
         csv_reader = csv.reader(csv_file)
         rows = list(csv_reader)
 
-        if sample >= len(rows)-1:
-            print(f"Error: sample {sample} out of range")
+        if quant != 8:
+            print(f"Error: cannot quantize to {quant}")
             return
 
-        if quant != 8:
-            print(f"Error: MLP only supports 8 bit quantization currently. Cannot quantize to {quant}.")
+        data_rows = len(rows) -1
+
+        if sample >= data_rows:
+            print(f"Error: sample {sample} out of range")
             return
 
         var_names = rows[0]
         row = rows[sample+1]
 
+        num_features = len(var_names) - 1
+        label_idx = 5
+
         with open(header_filename, 'w') as header_file:
             header_file.write(f"// Sample {sample}\n")
             header_file.write(f"#define QUANTIZATION {quant}\n")
-
             header_file.write("\n")
 
-            # Iterate through all variables and write out int8 data inputs for this workload
-            for var in range(len(var_names)):
-                x = row[var]
-                header_file.write(f"const volatile signed char {var_names[var]} = {x};\n")
+            # List of quantization functions to be used on the columns
+            names = ["NO2","O3","Temp","Humidity","Wind_Speed"]
+            
+            header_file.write(f"volatile char Golden_Reference = {row[label_idx]};\n");
+            
+            for idx, name in enumerate(names):
+                header_file.write(f"volatile unsigned char {name} = {row[idx]};\n")
+            header_file.write("\n")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate a C header file from a CSV row.')
