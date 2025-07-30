@@ -15,6 +15,7 @@ PYTHON = python3
 
 # Source directory
 SRC_DIR = src
+ABLATION_SRC = food-spoilage-kernel-ablation
 
 # Path to write compiled executables and object files
 BUILD_DIR = build/
@@ -148,6 +149,29 @@ compile_hex: build_dirs
 
 trace: build_dirs
 	@for file in $(BUILT_FILES); do ./scripts/gen-trace.sh $$file $(TRACE_DIR); done
+
+kernel_ablation: build_dirs
+	$(MAKE) compile_inference_kernel C_FILE=knn_large
+	$(MAKE) compile_inference_kernel C_FILE=knn_medium
+	$(MAKE) compile_inference_kernel C_FILE=knn_small
+	$(MAKE) compile_inference_kernel C_FILE=decision_tree_large
+	$(MAKE) compile_inference_kernel C_FILE=decision_tree_medium
+	$(MAKE) compile_inference_kernel C_FILE=decision_tree_small
+	$(MAKE) compile_inference_kernel C_FILE=logistic_regression
+	$(MAKE) compile_inference_kernel C_FILE=mlp
+
+compile_inference_kernel: build_dirs
+	cp $(ABLATION_SRC)/food-spoilage-generic.c $(BUILD_SRC_DIR)/
+	@if find "$(ABLATION_SRC)/" -type f -name "*.h" | grep -q .; then \
+		cp $(ABLATION_SRC)/*.h $(BUILD_SRC_DIR)/ ; \
+	fi 
+	cp $(ABLATION_SRC)/$(C_FILE).c $(BUILD_SRC_DIR)/
+	cp $(SRC_DIR)/asm/init.s $(BUILD_SRC_DIR)/
+	$(PYTHON) $(ABLATION_SRC)/gen-sample.py $(ABLATION_SRC)/samples.csv $(BUILD_SRC_DIR)/ $(DATA_SAMPLE_NUM) $(QUANTIZATION); \
+	$(CC) $(CCFLAGS) -c $(BUILD_SRC_DIR)/init.s -o $(BUILD_OBJ_DIR)/init.o; \
+	$(CC) $(CCFLAGS) -c $(BUILD_SRC_DIR)/food-spoilage-generic.c -o $(BUILD_OBJ_DIR)/food-spoilage-generic.o; \
+	$(CC) $(CCFLAGS) -c $(BUILD_SRC_DIR)/$(C_FILE).c -o $(BUILD_OBJ_DIR)/$(notdir $(C_FILE)).o; \
+	$(CC) $(CCFLAGS) -o $(BUILD_BIN_DIR)/food_kernel_$(C_FILE)_sample_$(DATA_SAMPLE_NUM) $(BUILD_OBJ_DIR)/food-spoilage-generic.o $(BUILD_OBJ_DIR)/$(notdir $(C_FILE)).o $(BUILD_OBJ_DIR)/init.o; \
 
 clean:
 	rm -rf $(BUILD_DIR)
