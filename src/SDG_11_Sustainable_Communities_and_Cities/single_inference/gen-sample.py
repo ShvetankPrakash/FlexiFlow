@@ -24,16 +24,14 @@ def generate_header(csv_filename, header_filename, sample, quant):
         row = rows[sample+1]
 
         num_features = len(var_names) - 1
-        label_idx = 5
+        names = ["PM25","PM10","NO","NO2","NOx","NH3","CO","SO2","O3","Benzene","Toluene","Xylene"]
+        label_idx = 12  # Last column
 
         with open(header_filename, 'w') as header_file:
             header_file.write(f"// Sample {sample}\n")
             header_file.write(f"#define QUANTIZATION {quant}\n")
             header_file.write("\n")
 
-            # List of quantization functions to be used on the columns
-            names = ["NO2","O3","Temp","Humidity","Wind_Speed"]
-            
             header_file.write(f"volatile char Golden_Reference = {row[label_idx]};\n");
             
             for idx, name in enumerate(names):

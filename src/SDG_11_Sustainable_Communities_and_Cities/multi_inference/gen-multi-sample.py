@@ -24,8 +24,8 @@ def generate_multi_header(csv_filename, header_filename, quant):
         num_features = len(var_names) - 1  # Last column is label
 
         # Indices for each MQ column
-        names = ["NO2","O3","Temp","Humidity","Wind_Speed"]
-        label_idx = 5  # Last column
+        names = ["PM25","PM10","NO","NO2","NOx","NH3","CO","SO2","O3","Benzene","Toluene","Xylene"]
+        label_idx = 12  # Last column
 
         # Prepare arrays for each MQ sensor and label
         mq_arrays = {name: [] for name in names}
