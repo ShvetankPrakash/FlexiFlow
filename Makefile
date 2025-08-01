@@ -15,7 +15,7 @@ PYTHON = python3
 
 # Source directory
 SRC_DIR = src
-ABLATION_SRC = food-spoilage-kernel-ablation
+ABLATION_SRC = $(SRC_DIR)/kernel-ablation
 
 # Path to write compiled executables and object files
 BUILD_DIR = build/
