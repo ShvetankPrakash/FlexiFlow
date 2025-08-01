@@ -19,18 +19,21 @@ system_specs = {
     "Herv": {"area": 4.50, "power": 24.9934},
 }
 # In number of cycles
-execution_time = {
-    "Food Spoilage Detection":  {"Serv": 21868.1, "Qerv": 6943.2, "Herv": 4441.0},
-    "Cardiotocography": {"Serv": 415668.9, "Qerv": 131451.8, "Herv": 83444.0},
-    "Arrhythmia Detection": {"Serv": 163598847.5, "Qerv": 51856949.5, "Herv": 33142273.5},
-    "Water Quality Detection": {"Serv": 4380.3, "Qerv": 1402.1, "Herv": 901.3},
-    "Smart HVAC Monitoring": {"Serv": 124699.1, "Qerv": 39724.1, "Herv": 25445.8},
-    "Package Tracking": {"Serv": 3059002.70, "Qerv": 968085.25, "Herv": 615217.85},
-    "Gesture Recognition": {"Serv": 21818684.3, "Qerv": 6905954.1, "Herv": 4403825.3},
-    "Air Pollution Monitoring": {"Serv": 69276.5, "Qerv": 22052.6, "Herv": 14115.6},
-    "Odor Detection": {"Serv": 5358.1, "Qerv": 1708.2, "Herv": 1094.4},
-    "Smart Irrigation": {"Serv": 1097427.7, "Qerv": 346625.9, "Herv": 219609.3},
-}
+import os
+
+def _load_execution_time_from_csv(csv_path="timing.csv"):
+    df = pd.read_csv(csv_path)
+    execution_time = {}
+    for _, row in df.iterrows():
+        workload = row["Workload"]
+        execution_time[workload] = {
+            "Serv": float(row["Serv"]),
+            "Qerv": float(row["Qerv"]),
+            "Herv": float(row["Herv"]),
+        }
+    return execution_time
+
+execution_time = _load_execution_time_from_csv()
 
 rf_sram = 128 # Implementing register file in SRAM for space-saving
 
