@@ -28,17 +28,7 @@ generate_sample_indices() {
 
 # SDG sample data
 declare -A sdgs
-sdgs[SDG_02]=555
-sdgs[SDG_03_Cardiotocography]=426
-sdgs[SDG_03_Arrhythmia_Detection]=1
-sdgs[SDG_06]=56
-sdgs[SDG_07]=2665
-sdgs[SDG_09]=1400
-sdgs[SDG_10]=5
-sdgs[SDG_11]=5907
-sdgs[SDG_12]=179
-sdgs[SDG_13]=40
-#sdgs[SDG_15]=10
+sdgs[kernel_ablation]=555
 
 # Generate make commands for each SDG
 for sdg in "${!sdgs[@]}"; do
