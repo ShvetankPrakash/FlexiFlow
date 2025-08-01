@@ -29,23 +29,49 @@ lprom_area = 0.000359
 sram_overhead_power = 0.0002 # per bit
 sram_overhead_area = 0.0003 # per bit
 
-# Global dictionaries for memory values
-sram = {}
-lprom = {}
 
-def load_memory_from_csv(csv_path="memory.csv"):
-    global sram, lprom
+def _load_execution_time_from_csv(csv_path="timing.csv"):
     df = pd.read_csv(csv_path)
-    temp_sram = {}
-    temp_lprom = {}
+    execution_time = {}
     for _, row in df.iterrows():
         workload = row["Workload"]
-        temp_sram[workload] = int(row["sram"])
-        temp_lprom[workload] = int(row["lprom"])
-    sram.clear()
-    sram.update(temp_sram)
-    lprom.clear()
-    lprom.update(temp_lprom)
+        execution_time[workload] = {
+            "Serv": float(row["Serv"]),
+            "Qerv": float(row["Qerv"]),
+            "Herv": float(row["Herv"]),
+        }
+    return execution_time
+
+execution_time = _load_execution_time_from_csv()
+# In bytes
+sram = {
+    "Food Spoilage Detection": 97,
+    "Cardiotocography": 590,
+    "Arrhythmia Detection": 4170,
+    "Water Quality Detection": 13,
+    "Smart HVAC Monitoring": 63,
+    "Package Tracking": 4238,
+    "Gesture Recognition": 40033,
+    "Air Pollution Monitoring": 92,
+    "Odor Detection": 21,
+    "Smart Irrigation": 77,
+    # "Tree Tracking": 39193
+}
+
+# In bytes
+lprom = {
+    "Food Spoilage Detection": 2655,
+    "Cardiotocography": 3266,
+    "Arrhythmia Detection": 3466,
+    "Water Quality Detection": 306,
+    "Smart HVAC Monitoring": 47494,
+    "Package Tracking": 8809,
+    "Gesture Recognition": 200456,
+    "Air Pollution Monitoring": 63382,
+    "Odor Detection": 738,
+    "Smart Irrigation": 1920,
+    # "Tree Tracking": 3452
+}
 
 # Define carbon intensity values for each power source
 # gCO2 eq / kWhr
@@ -61,44 +87,23 @@ carbon_intensity_values = {
     "Custom": ""
 }
 
-# These need to be loaded in
-execution_time = {}
+# Load embodied carbon values from CSV
+embodied_carbon_df = pd.read_csv("embodied-carbon.csv")
+
+# Build the embodied_values dictionary from the DataFrame
 embodied_values = {}
-
-def load_embodied_values_from_csv(csv_path="embodied-carbon.csv"):
-    global embodied_values
-    df = pd.read_csv(csv_path)
-    temp_embodied_values = {}
-    # Build the embodied_values dictionary from the DataFrame
-    for _, row in df.iterrows():
-        workload = row["Workload"]
-        cpu = row["CPU Design"]
-        min_val = row["Carbon Footprint Min (gCO2e)"]
-        max_val = row["Carbon Footprint Max (gCO2e)"]
-        if workload not in temp_embodied_values:
-            temp_embodied_values[workload] = {}
-        temp_embodied_values[workload][cpu] = {
-            "Carbon Footprint Min (gCO2e)": min_val,
-            "Carbon Footprint Max (gCO2e)": max_val
-        }
-    embodied_values.clear()
-    embodied_values.update(temp_embodied_values)
+for _, row in embodied_carbon_df.iterrows():
+    workload = row["Workload"]
+    cpu = row["CPU Design"]
+    min_val = row["Carbon Footprint Min (gCO2e)"]
+    max_val = row["Carbon Footprint Max (gCO2e)"]
+    if workload not in embodied_values:
+        embodied_values[workload] = {}
+    embodied_values[workload][cpu] = {
+        "Carbon Footprint Min (gCO2e)": min_val,
+        "Carbon Footprint Max (gCO2e)": max_val
+    }
     
-
-def load_execution_time_from_csv(csv_path="timing.csv"):
-    global execution_time
-    df = pd.read_csv(csv_path)
-    temp_execution_time = {}
-    for _, row in df.iterrows():
-        workload = row["Workload"]
-        temp_execution_time[workload] = {
-            "Serv": float(row["Serv"]),
-            "Qerv": float(row["Qerv"]),
-            "Herv": float(row["Herv"]),
-        }
-    execution_time.clear()
-    execution_time.update(temp_execution_time)
-    return execution_time
 
 def compute_total_carbon(
     system: str,

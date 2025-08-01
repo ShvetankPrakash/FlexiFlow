@@ -114,6 +114,10 @@ def plot_all_workloads_best_system_region(lifetime_yrs, inf_freq, carbon_intensi
     plt.close(fig)
 
 if __name__ == '__main__':
+    load_execution_time_from_csv("timing.csv")
+    load_embodied_values_from_csv("embodied-carbon.csv")
+    load_memory_from_csv("memory.csv")
+    
     plot_all_workloads_lifetime(
         lifetime_yrs=1,
         inf_freq=1,
