@@ -29,6 +29,7 @@ char Read_Sensor_Values_Run() {
     test_MQ9   = Testing_MQ9;
 
     predicted_spoilage = kernel_predict(test_MQ135, test_MQ136, test_MQ137, test_MQ138, test_MQ2, test_MQ3, test_MQ4, test_MQ5, test_MQ6, test_MQ8, test_MQ9);
+    GPIO = predicted_spoilage;
 
     return GPIO;
 }
