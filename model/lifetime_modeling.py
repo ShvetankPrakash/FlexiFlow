@@ -13,7 +13,7 @@ MAX_INF_FREQ = 365*100000
 MIN_CORE_FREQ = 1000
 MAX_CORE_FREQ = 100000
 
-system_colors = {'Serv': 'blue', 'Qerv': 'orange', 'Herv': 'green'}
+system_colors = {'Serv': '#4c72b0', 'Qerv': '#dd8452', 'Herv': '#55a868'}
 
 # -------------------------
 # 1) Define Internal Data
