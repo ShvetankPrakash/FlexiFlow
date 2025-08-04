@@ -1,7 +1,8 @@
 import matplotlib.pyplot as plt
+import os
 from lifetime_modeling import *
 
-def plot_all_workloads_lifetime(lifetime_yrs, inf_freq, carbon_intensity, core_freq, output_pdf="all_workloads_lifetime.pdf"):
+def plot_all_workloads_lifetime(lifetime_yrs, inf_freq, carbon_intensity, core_freq, output_pdf="plots/all_workloads_lifetime.pdf"):
     workloads = list(execution_time.keys())
     n = len(workloads)
     ncols = 5
@@ -26,10 +27,12 @@ def plot_all_workloads_lifetime(lifetime_yrs, inf_freq, carbon_intensity, core_f
     for j in range(i+1, len(axes)):
         fig.delaxes(axes[j])
     plt.tight_layout()
+    # Ensure the output directory exists
+    os.makedirs(os.path.dirname(output_pdf), exist_ok=True)
     plt.savefig(output_pdf, format="pdf")
     plt.close(fig)
 
-def plot_all_workloads_frequency(lifetime_yrs, inf_freq, carbon_intensity, core_freq, output_pdf="all_workloads_frequency.pdf"):
+def plot_all_workloads_frequency(lifetime_yrs, inf_freq, carbon_intensity, core_freq, output_pdf="plots/all_workloads_frequency.pdf"):
     workloads = list(execution_time.keys())
     n = len(workloads)
     ncols = 5
@@ -54,10 +57,11 @@ def plot_all_workloads_frequency(lifetime_yrs, inf_freq, carbon_intensity, core_
     for j in range(i+1, len(axes)):
         fig.delaxes(axes[j])
     plt.tight_layout()
+    os.makedirs(os.path.dirname(output_pdf), exist_ok=True)
     plt.savefig(output_pdf, format="pdf")
     plt.close(fig)
 
-def plot_all_workloads_inferences(lifetime_yrs, inf_freq, carbon_intensity, core_freq, output_pdf="all_workloads_inferences.pdf"):
+def plot_all_workloads_inferences(lifetime_yrs, inf_freq, carbon_intensity, core_freq, output_pdf="plots/all_workloads_inferences.pdf"):
     workloads = list(execution_time.keys())
     n = len(workloads)
     ncols = 5
@@ -82,10 +86,11 @@ def plot_all_workloads_inferences(lifetime_yrs, inf_freq, carbon_intensity, core
     for j in range(i+1, len(axes)):
         fig.delaxes(axes[j])
     plt.tight_layout()
+    os.makedirs(os.path.dirname(output_pdf), exist_ok=True)
     plt.savefig(output_pdf, format="pdf")
     plt.close(fig)
 
-def plot_all_workloads_best_system_region(lifetime_yrs, inf_freq, carbon_intensity, core_freq, output_pdf="all_workloads_best_system_region.pdf"):
+def plot_all_workloads_best_system_region(lifetime_yrs, inf_freq, carbon_intensity, core_freq, output_pdf="plots/all_workloads_best_system_region.pdf"):
     workloads = list(execution_time.keys())
     n = len(workloads)
     ncols = 5
@@ -110,6 +115,7 @@ def plot_all_workloads_best_system_region(lifetime_yrs, inf_freq, carbon_intensi
     for j in range(i+1, len(axes)):
         fig.delaxes(axes[j])
     plt.tight_layout()
+    os.makedirs(os.path.dirname(output_pdf), exist_ok=True)
     plt.savefig(output_pdf, format="pdf")
     plt.close(fig)
 
@@ -123,26 +129,26 @@ if __name__ == '__main__':
         inf_freq=1,
         carbon_intensity=367,
         core_freq=10000,
-        output_pdf="all_workloads_lifetime.pdf"
+        output_pdf="plots/all_workloads_lifetime.pdf"
     )
     plot_all_workloads_frequency(
         lifetime_yrs=1,
         inf_freq=1,
         carbon_intensity=367,
         core_freq=10000,
-        output_pdf="all_workloads_frequency.pdf"
+        output_pdf="plots/all_workloads_frequency.pdf"
     )
     plot_all_workloads_inferences(
         lifetime_yrs=1,
         inf_freq=1,
         carbon_intensity=367,
         core_freq=10000,
-        output_pdf="all_workloads_inferences.pdf"
+        output_pdf="plots/all_workloads_inferences.pdf"
     )
     plot_all_workloads_best_system_region(
         lifetime_yrs=1,
         inf_freq=1,
         carbon_intensity=367,
         core_freq=10000,
-        output_pdf="all_workloads_best_system_region.pdf"
+        output_pdf="plots/all_workloads_best_system_region.pdf"
     )
