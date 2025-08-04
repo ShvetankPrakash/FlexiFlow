@@ -1,14 +1,19 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sns
+import matplotlib.pyplot as plt
+from matplotlib.colors import ListedColormap
+import matplotlib.patches as mpatches
 
 # Define global variables for max and min values
-MIN_LIFETIME = 1
+MIN_LIFETIME = 0.01
 MAX_LIFETIME = 20
 MIN_INF_FREQ = 1
-MAX_INF_FREQ = 3650
+MAX_INF_FREQ = 365*100000
 MIN_CORE_FREQ = 1000
 MAX_CORE_FREQ = 100000
+
+system_colors = {'Serv': 'blue', 'Qerv': 'orange', 'Herv': 'green'}
 
 # -------------------------
 # 1) Define Internal Data
@@ -140,15 +145,21 @@ def plot_total_carbon_vs_lifetime_ax(ax, workload_choice, lifetime_yrs, inf_freq
     """
     carbon_intensity = float(carbon_intensity) / 3600 / 1000000
     core_freq = float(core_freq)
-    system_colors = {'Serv': 'blue', 'Qerv': 'orange', 'Herv': 'green'}
 
     lifetimes = np.linspace(MIN_LIFETIME, MAX_LIFETIME, 50)
+    plot_data = []
     for system in system_specs:
         total_carbons = []
         for lifetime in lifetimes:
             _, _, total = compute_total_carbon(system, workload_choice, lifetime, inf_freq, carbon_intensity, core_freq)
             total_carbons.append(total)
-        ax.plot(lifetimes, total_carbons, label=system, color=system_colors[system])
+        plot_data.append(pd.DataFrame({
+            "Lifetime": lifetimes,
+            "Total Carbon": total_carbons,
+            "System": system
+        }))
+    df_plot = pd.concat(plot_data, ignore_index=True)
+    sns.lineplot(data=df_plot, x="Lifetime", y="Total Carbon", hue="System", palette=system_colors, ax=ax)
     ax.axvline(x=lifetime_yrs, color='gray', linestyle ='--', linewidth=1)
     ax.set_title(f"Total Carbon vs. Lifetime\nWorkload: {workload_choice}")
     ax.set_xlabel("Lifetime (years)")
@@ -161,11 +172,11 @@ def plot_total_carbon_vs_frequency_ax(ax, workload_choice, lifetime_yrs, inf_fre
     """
     carbon_intensity = float(carbon_intensity) / 3600 / 1000000
     core_freq = float(core_freq)
-    system_colors = {'Serv': 'blue', 'Qerv': 'orange', 'Herv': 'green'}
 
     inf_frequencies = np.logspace(np.log10(MIN_INF_FREQ), np.log10(MAX_INF_FREQ), 50)
     max_found_valid_freq = MIN_INF_FREQ
     valid_frequencies_any = []
+    plot_data = []
 
     for system in system_specs:
         total_carbons = []
@@ -179,9 +190,15 @@ def plot_total_carbon_vs_frequency_ax(ax, workload_choice, lifetime_yrs, inf_fre
             else:
                 break
         valid_frequencies_any.extend(valid_frequencies)
-        ax.plot(valid_frequencies, total_carbons, label=system, color=system_colors[system])
+        plot_data.append(pd.DataFrame({
+            "Frequency": valid_frequencies,
+            "Total Carbon": total_carbons,
+            "System": system
+        }))
 
     if len(valid_frequencies_any) > 0:
+        df_plot = pd.concat(plot_data, ignore_index=True)
+        sns.lineplot(data=df_plot, x="Frequency", y="Total Carbon", hue="System", palette=system_colors, ax=ax, legend=True)
         ax.axvline(x=inf_freq, color='gray', linestyle ='--', linewidth=1)
         ax.set_xscale('log')
         ax.set_yscale('log')
@@ -198,16 +215,22 @@ def plot_total_carbon_vs_num_inferences_ax(ax, workload_choice, lifetime_yrs, in
     """
     carbon_intensity = float(carbon_intensity) / 3600 / 1000000
     core_freq = float(core_freq)
-    system_colors = {'Serv': 'blue', 'Qerv': 'orange', 'Herv': 'green'}
 
     inferences = np.logspace(np.log10(MIN_INF_FREQ * MIN_LIFETIME), np.log10(MAX_INF_FREQ * MAX_LIFETIME), 50)
+    plot_data = []
     for system in system_specs:
         total_carbons = []
         for inf in inferences:
             lt = inf / inf_freq
             _, _, total = compute_total_carbon(system, workload_choice, lt, inf_freq, carbon_intensity, core_freq)
             total_carbons.append(total)
-        ax.plot(inferences, total_carbons, label=system, color=system_colors[system])
+        plot_data.append(pd.DataFrame({
+            "Inferences": inferences,
+            "Total Carbon": total_carbons,
+            "System": system
+        }))
+    df_plot = pd.concat(plot_data, ignore_index=True)
+    sns.lineplot(data=df_plot, x="Inferences", y="Total Carbon", hue="System", palette=system_colors, ax=ax)
     ax.axvline(x=inf_freq * lifetime_yrs, color='gray', linestyle='--', linewidth=1)
     ax.set_xscale('log')
     ax.set_yscale('log')
@@ -216,15 +239,12 @@ def plot_total_carbon_vs_num_inferences_ax(ax, workload_choice, lifetime_yrs, in
     ax.set_ylabel("Total Carbon Footprint (gCO₂-eq)")
     ax.legend()
 
-def plot_best_system_region_map_ax(ax, workload_choice, lifetime_yrs, inf_freq, carbon_intensity, core_freq):
+def plot_best_system_region_map_ax(ax, workload_choice, lifetime_yrs, inf_freq, carbon_intensity, core_freq, hashes_grey = False):
     """
     Plot a 2D region map of best system choice for a grid of (lifetime, inference frequency) on the given axis.
     """
-    from matplotlib.colors import ListedColormap
-    import matplotlib.patches as mpatches
     carbon_intensity = float(carbon_intensity) / 3600 / 1000000
     core_freq = float(core_freq)
-    system_colors = {'Serv': 'blue', 'Qerv': 'orange', 'Herv': 'green'}
 
     # Create a fine grid for smooth contours
     lifetime_grid = np.logspace(np.log10(MIN_LIFETIME), np.log10(MAX_LIFETIME), 200)
@@ -254,16 +274,21 @@ def plot_best_system_region_map_ax(ax, workload_choice, lifetime_yrs, inf_freq, 
 
     # Color the regions and add legend
     cmap = ListedColormap([system_colors[sys] for sys in systems][np.min(best_indices):np.max(best_indices)+1])
-    mesh = ax.pcolormesh(X, Y, best_indices, shading='auto', alpha=0.3, cmap=cmap)
+    ax.pcolormesh(X, Y, best_indices, shading='auto', alpha=0.3, cmap=cmap)
     handles = [plt.Line2D([0], [0], marker='o', color='w', label=sys, markersize=10, markerfacecolor=system_colors[sys]) for sys in systems]
     freq_mask = Y > max_found_valid_freq
     hatch_mask = np.where(freq_mask, 1, np.nan)
-    ax.contourf(X, Y, hatch_mask, levels=[0.5, 1.5], colors='none', hatches=['xx'], alpha=0)
-    crosshatch_patch = mpatches.Patch(facecolor='none', hatch='xx', label='Freq. Not Possible', edgecolor='black')
+    # Use contour instead of contourf to ensure hatches (crosshatching) are visible
+    if hashes_grey:
+        ax.contourf(X, Y, hatch_mask, levels=[0.5, 1.5], colors='grey', hatches=['xx'])._hatch_color=(0,0,0,1)
+        crosshatch_patch = mpatches.Patch(facecolor='grey', hatch='xx', label='Task Freq. Not Possible', edgecolor='black')
+    else:
+        ax.contourf(X, Y, hatch_mask, levels=[0.5, 1.5], colors='none', hatches=['xx'])._hatch_color=(0,0,0,1)
+        crosshatch_patch = mpatches.Patch(facecolor='none', hatch='xx', label='Task Freq. Not Possible', edgecolor='black')
     handles.append(crosshatch_patch)
-    # ax.legend(handles=handles, title="Systems", loc='lower left')
+    ax.legend(handles=handles, title="Systems", loc='lower left')
 
-    # Plot a gold star marker at the currently selected lifetime & inference frequency
+    # Plot a star marker at the currently selected lifetime & inference frequency
     ax.plot([lifetime_yrs], [inf_freq], marker='*', color='red', markersize=10)
 
     ax.set_xscale('log')
@@ -272,12 +297,13 @@ def plot_best_system_region_map_ax(ax, workload_choice, lifetime_yrs, inf_freq, 
     ax.set_xlabel("Lifetime (years)")
     ax.set_ylabel("Task Frequency (tasks/year)")
 
+    return X, Y, hatch_mask
+
 def plot_carbon_vs_lifetime(workload_choice, lifetime_yrs, inf_freq, carbon_intensity, core_freq):
     """
     Plot all carbon plots for the given parameters in a 2x2 grid of subplots.
     Returns the matplotlib Figure object.
     """
-    import matplotlib.pyplot as plt
     fig, axs = plt.subplots(2, 2, figsize=(16, 12))
     plt.subplots_adjust(hspace=0.3, wspace=0.25)
 

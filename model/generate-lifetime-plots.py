@@ -1,154 +1,174 @@
+import seaborn as sns
 import matplotlib.pyplot as plt
 import os
 from lifetime_modeling import *
+import matplotlib.patches as mpatches
+import textwrap
 
-def plot_all_workloads_lifetime(lifetime_yrs, inf_freq, carbon_intensity, core_freq, output_pdf="plots/all_workloads_lifetime.pdf"):
-    workloads = list(execution_time.keys())
+# Sample params
+workload_params_dict = {
+    "Food Spoilage Detection": {"lifetime_yrs": 2, "inf_freq": 365},         # 1x/day for 2 years (fridge sensor)
+    "Cardiotocography": {"lifetime_yrs": 0.75, "inf_freq": 365*24*4},        # 4x/hour for 9 months (wearable monitor)
+    "Arrhythmia Detection": {"lifetime_yrs": 3, "inf_freq": 365*24*60},      # 1x/min for 3 years (continuous ECG patch)
+    "Water Quality Detection": {"lifetime_yrs": 1, "inf_freq": 52},          # 1x/week for 1 year (remote sensor)
+    "Smart HVAC Monitoring": {"lifetime_yrs": 10, "inf_freq": 365*24},       # 1x/hour for 10 years (building sensor)
+    "Package Tracking": {"lifetime_yrs": 30/365, "inf_freq": 365*24},        # 1x/hour for 1 month (disposable tracker)
+    "Gesture Recognition": {"lifetime_yrs": 2, "inf_freq": 365*24*60*4},     # 1x/15sec for 2 years (wearable)
+    "Air Pollution Monitoring": {"lifetime_yrs": 5, "inf_freq": 365*24},     # 1x/hour for 5 years (outdoor station)
+    "Odor Detection": {"lifetime_yrs": 3, "inf_freq": 365},                  # 1x/day for 3 years (environmental sensor)
+    "Smart Irrigation": {"lifetime_yrs": 2, "inf_freq": 365/3},              # 1x/3 days for 2 years (field sensor)
+}
+
+def plot_all_workloads_best_system_region(
+    carbon_intensity = 367,
+    core_freq = 10000,
+    workload_params_dict = {},  # dict: workload -> dict with keys 'lifetime_yrs', 'inf_freq'
+    output_pdf="plots/all_workloads_best_system_region.pdf",
+    subplot_order=None,    # Optional: list of workloads in desired order
+    ncols=5,
+    nrows=2,
+    title_wrap_width=16,   # Number of characters before wrapping workload names
+    hashes_grey = False
+):
+    """
+    Args:
+        workload_params_dict: dict mapping workload name to dict with keys 'lifetime_yrs' and 'inf_freq'
+            Example: {
+                "workload1": {"lifetime_yrs": 2, "inf_freq": 1000},
+                "workload2": {"lifetime_yrs": 1, "inf_freq": 500},
+                ...
+            }
+        carbon_intensity: float
+        core_freq: float
+        output_pdf: str, path to save PDF (if not empty)
+        subplot_order: list of workload names, determines subplot order (optional)
+        ncols: int, number of columns in subplot grid
+        nrows: int, number of rows in subplot grid
+        title_wrap_width: int, max characters per line for workload name
+    """
+    sns.set_theme(style="whitegrid", font_scale=1.2, rc={"axes.facecolor": "white"})
+    # Determine order of workloads
+    if subplot_order is not None:
+        workloads = subplot_order
+    else:
+        workloads = list(embodied_values.keys())
     n = len(workloads)
-    ncols = 5
-    nrows = 2  # 10/5 = 2 rows for 10 workloads
 
-    fig, axes = plt.subplots(nrows, ncols, figsize=(8 * ncols, 6 * nrows))
+    # Make a tight grid, no whitespace between subplots
+    fig, axes = plt.subplots(
+        nrows, ncols, 
+        figsize=(3 * ncols, 3 * nrows), 
+        gridspec_kw=dict(wspace=0, hspace=0)
+    )
     axes = axes.flatten()
 
     for i, workload in enumerate(workloads):
+        if i >= len(axes):
+            break  # Don't plot more than grid allows
         ax = axes[i]
-        plt.sca(ax)
-        plot_total_carbon_vs_lifetime_ax(
+        # Remove axis labels for all subplots
+        ax.set_xlabel("")
+        ax.set_ylabel("")
+        # Determine subplot row and column
+        row = i // ncols
+        col = i % ncols
+        
+        ax.tick_params(labelleft=False, labelbottom = False)
+        if col == 0 and row == nrows-1:
+            ax.tick_params(labelleft=True, labelbottom=True, left=True, bottom=True)
+        # Get params for this workload
+        params = workload_params_dict.get(workload, {})
+        lifetime_yrs = params.get("lifetime_yrs", 1)
+        inf_freq = params.get("inf_freq", 1)
+        x, y, mask = plot_best_system_region_map_ax(
             ax=ax,
             workload_choice=workload,
             lifetime_yrs=lifetime_yrs,
             inf_freq=inf_freq,
             carbon_intensity=carbon_intensity,
-            core_freq=core_freq
+            core_freq=core_freq,
+            hashes_grey=hashes_grey
         )
-        ax.set_title(str(workload))
+        # Wrap long workload names and center vertically
+        wrapped_workload = "\n".join(textwrap.wrap(str(workload), width=title_wrap_width))
+        num_lines = wrapped_workload.count('\n') + 1
+        # Center the text vertically by adjusting y based on number of lines
+        ax.text(
+            0.5, 0.5, wrapped_workload,
+            transform=ax.transAxes,
+            ha='center', va='center',
+            fontsize=18, fontweight='bold',
+            color='black',
+            bbox=dict(facecolor='white', alpha=0.5, edgecolor='none', boxstyle='round,pad=0.2')
+        )
+        # Remove legend from all subplots
+        ax.legend().remove()
+        # Add a visible border to each subplot
+        for spine in ax.spines.values():
+            spine.set_visible(True)
+            spine.set_linewidth(2)
+            spine.set_color('black')
+
     # Hide any unused subplots
     for j in range(i+1, len(axes)):
         fig.delaxes(axes[j])
-    plt.tight_layout()
-    # Ensure the output directory exists
-    os.makedirs(os.path.dirname(output_pdf), exist_ok=True)
-    plt.savefig(output_pdf, format="pdf")
-    plt.close(fig)
+    # Remove any axes and titles labels from all subplots
+    for ax in axes:
+        ax.set_xlabel("")
+        ax.set_ylabel("")
+        ax.set_title("")
 
-def plot_all_workloads_frequency(lifetime_yrs, inf_freq, carbon_intensity, core_freq, output_pdf="plots/all_workloads_frequency.pdf"):
-    workloads = list(execution_time.keys())
-    n = len(workloads)
-    ncols = 5
-    nrows = 2  # 10/5 = 2 rows for 10 workloads
+    # Add one shared x and y label, with x label shifted left
+    fig.supxlabel("Application Lifetime (years)", fontsize=18, x = 0.52, y = 0.05)
+    fig.supylabel("Task Frequency (Program Executions/Year)", fontsize=18, x=-0.01, y=0.55)
 
-    fig, axes = plt.subplots(nrows, ncols, figsize=(8 * ncols, 6 * nrows))
-    axes = axes.flatten()
+    # Use seaborn color palette for legend handles
+    palette = sns.color_palette("colorblind", n_colors=len(system_colors))
+    legend_handles = [
+        plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=palette[i], markersize=15, label=system)
+        for i, system in enumerate(system_colors.keys())
+    ]
+    # Add a red star for "Example Usecase"
+    legend_handles.append(
+        plt.Line2D([0], [0], marker='*', color='w', markerfacecolor='red', markeredgecolor='red', markersize=18, label="Example Usecase")
+    )
 
-    for i, workload in enumerate(workloads):
-        ax = axes[i]
-        plt.sca(ax)
-        plot_total_carbon_vs_frequency_ax(
-            ax=ax,
-            workload_choice=workload,
-            lifetime_yrs=lifetime_yrs,
-            inf_freq=inf_freq,
-            carbon_intensity=carbon_intensity,
-            core_freq=core_freq
-        )
-        ax.set_title(str(workload))
-    # Hide any unused subplots
-    for j in range(i+1, len(axes)):
-        fig.delaxes(axes[j])
-    plt.tight_layout()
-    os.makedirs(os.path.dirname(output_pdf), exist_ok=True)
-    plt.savefig(output_pdf, format="pdf")
-    plt.close(fig)
 
-def plot_all_workloads_inferences(lifetime_yrs, inf_freq, carbon_intensity, core_freq, output_pdf="plots/all_workloads_inferences.pdf"):
-    workloads = list(execution_time.keys())
-    n = len(workloads)
-    ncols = 5
-    nrows = 2  # 10/5 = 2 rows for 10 workloads
+    crosshatch_patch = mpatches.Patch(facecolor='grey' if hashes_grey else 'none', hatch='xx', label='Task Freq. Not Possible', edgecolor='black')
+    legend_handles.append(crosshatch_patch)
+    legend_labels = list(system_colors.keys()) + ["Example Use Case", "Task Freq. Not Possible"]
+    fig.legend(
+        legend_handles, legend_labels,
+        loc='upper center', ncol=len(legend_labels),
+        bbox_to_anchor=(0.5, 1.1), fontsize=16, frameon=False
+    )
 
-    fig, axes = plt.subplots(nrows, ncols, figsize=(8 * ncols, 6 * nrows))
-    axes = axes.flatten()
+    # Remove all whitespace around and between subplots
+    plt.subplots_adjust(left=0, right=1, top=1, bottom=0, wspace=0, hspace=0)
+    plt.tight_layout(pad=0)
 
-    for i, workload in enumerate(workloads):
-        ax = axes[i]
-        plt.sca(ax)
-        plot_total_carbon_vs_num_inferences_ax(
-            ax=ax,
-            workload_choice=workload,
-            lifetime_yrs=lifetime_yrs,
-            inf_freq=inf_freq,
-            carbon_intensity=carbon_intensity,
-            core_freq=core_freq
-        )
-        ax.set_title(str(workload))
-    # Hide any unused subplots
-    for j in range(i+1, len(axes)):
-        fig.delaxes(axes[j])
-    plt.tight_layout()
-    os.makedirs(os.path.dirname(output_pdf), exist_ok=True)
-    plt.savefig(output_pdf, format="pdf")
-    plt.close(fig)
-
-def plot_all_workloads_best_system_region(lifetime_yrs, inf_freq, carbon_intensity, core_freq, output_pdf="plots/all_workloads_best_system_region.pdf"):
-    workloads = list(execution_time.keys())
-    n = len(workloads)
-    ncols = 5
-    nrows = 2  # 10/5 = 2 rows for 10 workloads
-
-    fig, axes = plt.subplots(nrows, ncols, figsize=(8 * ncols, 6 * nrows))
-    axes = axes.flatten()
-
-    for i, workload in enumerate(workloads):
-        ax = axes[i]
-        plt.sca(ax)
-        plot_best_system_region_map_ax(
-            ax=ax,
-            workload_choice=workload,
-            lifetime_yrs=lifetime_yrs,
-            inf_freq=inf_freq,
-            carbon_intensity=carbon_intensity,
-            core_freq=core_freq
-        )
-        ax.set_title(str(workload))
-    # Hide any unused subplots
-    for j in range(i+1, len(axes)):
-        fig.delaxes(axes[j])
-    plt.tight_layout()
-    os.makedirs(os.path.dirname(output_pdf), exist_ok=True)
-    plt.savefig(output_pdf, format="pdf")
+    # Ensure the output directory exists and save if requested
+    if output_pdf:
+        os.makedirs(os.path.dirname(output_pdf), exist_ok=True)
+        plt.savefig(output_pdf, format="pdf", bbox_inches='tight')
     plt.close(fig)
 
 if __name__ == '__main__':
     load_execution_time_from_csv("timing.csv")
     load_embodied_values_from_csv("embodied-carbon.csv")
     load_memory_from_csv("memory.csv")
-    
-    plot_all_workloads_lifetime(
-        lifetime_yrs=1,
-        inf_freq=1,
+
+    plot_all_workloads_best_system_region(
+        workload_params_dict=workload_params_dict,
         carbon_intensity=367,
         core_freq=10000,
-        output_pdf="plots/all_workloads_lifetime.pdf"
-    )
-    plot_all_workloads_frequency(
-        lifetime_yrs=1,
-        inf_freq=1,
-        carbon_intensity=367,
-        core_freq=10000,
-        output_pdf="plots/all_workloads_frequency.pdf"
-    )
-    plot_all_workloads_inferences(
-        lifetime_yrs=1,
-        inf_freq=1,
-        carbon_intensity=367,
-        core_freq=10000,
-        output_pdf="plots/all_workloads_inferences.pdf"
+        output_pdf="plots/all_workloads_best_system_region.pdf",
+        hashes_grey=False
     )
     plot_all_workloads_best_system_region(
-        lifetime_yrs=1,
-        inf_freq=1,
+        workload_params_dict=workload_params_dict,
         carbon_intensity=367,
         core_freq=10000,
-        output_pdf="plots/all_workloads_best_system_region.pdf"
+        output_pdf="plots/all_workloads_best_system_region_grey_region.pdf",
+        hashes_grey=True
     )
