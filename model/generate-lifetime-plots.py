@@ -11,12 +11,12 @@ workload_params_dict = {
     "Cardiotocography": {"lifetime_yrs": 0.75, "inf_freq": 365*24*4},        # 4x/hour for 9 months (wearable monitor)
     "Arrhythmia Detection": {"lifetime_yrs": 3, "inf_freq": 365*24*60},      # 1x/min for 3 years (continuous ECG patch)
     "Water Quality Detection": {"lifetime_yrs": 1, "inf_freq": 52},          # 1x/week for 1 year (remote sensor)
-    "Smart HVAC Monitoring": {"lifetime_yrs": 10, "inf_freq": 365*24},       # 1x/hour for 10 years (building sensor)
+    "HVAC Control": {"lifetime_yrs": 10, "inf_freq": 365*24},       # 1x/hour for 10 years (building sensor)
     "Package Tracking": {"lifetime_yrs": 30/365, "inf_freq": 365*24},        # 1x/hour for 1 month (disposable tracker)
     "Gesture Recognition": {"lifetime_yrs": 2, "inf_freq": 365*24*60*4},     # 1x/15sec for 2 years (wearable)
     "Air Pollution Monitoring": {"lifetime_yrs": 5, "inf_freq": 365*24},     # 1x/hour for 5 years (outdoor station)
-    "Odor Detection": {"lifetime_yrs": 3, "inf_freq": 365},                  # 1x/day for 3 years (environmental sensor)
-    "Smart Irrigation": {"lifetime_yrs": 2, "inf_freq": 365/3},              # 1x/3 days for 2 years (field sensor)
+    "Malodor Classification": {"lifetime_yrs": 3, "inf_freq": 365},                  # 1x/day for 3 years (environmental sensor)
+    "Smart Irrigation Control": {"lifetime_yrs": 2, "inf_freq": 365/3},              # 1x/3 days for 2 years (field sensor)
 }
 
 def plot_all_workloads_best_system_region(
