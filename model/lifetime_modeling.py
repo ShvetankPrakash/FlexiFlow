@@ -115,10 +115,10 @@ def compute_total_carbon(
     sram_bytes = sram[workload] + rf_sram
     lprom_bytes = lprom[workload]
 
-    # 1) Calculate total area
-    core_area = system_specs[system]["area"]
-    device_area = core_area + (sram_area + sram_overhead_area) * sram_bytes * 8 + lprom_area * lprom_bytes * 8
-    # 2) Embodied carbon (simplified)
+    # 1) Calculate total area (Precomputed in CSV)
+    # core_area = system_specs[system]["area"]
+    # device_area = core_area + (sram_area + sram_overhead_area) * sram_bytes * 8 + lprom_area * lprom_bytes * 8
+    # 2) Embodied carbon (Precomputed in CSV)
     embodied_carbon = embodied_values[workload][system]["Carbon Footprint Max (gCO2e)"]
     # 3) Operational carbon
     system_power = system_specs[system]["power"]
