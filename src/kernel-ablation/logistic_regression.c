@@ -1,10 +1,6 @@
-#include "sample_data.h"
-
+// Quantized logistic regression (linear discriminant) model
 #define N_CLASSES 4
 #define N_FEATURES 11
-
-// Global volatile variable to verify result is not optimized out
-volatile signed int result = -1;  
 
 const short coef_q[N_CLASSES][N_FEATURES] = {
     {-1, -7, -61, -30, 8, 10, 108, 10, -10, 1, 20},
@@ -16,7 +12,7 @@ const short coef_q[N_CLASSES][N_FEATURES] = {
 const long intercept_q[N_CLASSES] = {0, 2, -1, -2};
 
 // Predict class for quantized input x_q (uint8_t[N_FEATURES])
-char logreg_infer(
+char kernel_predict(
     unsigned char MQ135,
     unsigned char MQ136,
     unsigned char MQ137,
@@ -50,35 +46,4 @@ char logreg_infer(
         }
     }
     return max_idx;
-}
-
-char Read_Sensor_Values_Run_LR() {
-
-    char predicted_spoilage;
-    unsigned char test_MQ135, test_MQ136, test_MQ137, test_MQ138, test_MQ2, test_MQ3, test_MQ4, test_MQ5, test_MQ6, test_MQ8, test_MQ9;
-    char GPIO;
-
-    test_MQ135 = Testing_MQ135;
-    test_MQ136 = Testing_MQ136;
-    test_MQ137 = Testing_MQ137;
-    test_MQ138 = Testing_MQ138;
-    test_MQ2   = Testing_MQ2;
-    test_MQ3   = Testing_MQ3;
-    test_MQ4   = Testing_MQ4;
-    test_MQ5   = Testing_MQ5;
-    test_MQ6   = Testing_MQ6;
-    test_MQ8   = Testing_MQ8;
-    test_MQ9   = Testing_MQ9;
-
-    predicted_spoilage = logreg_infer(test_MQ135, test_MQ136, test_MQ137, test_MQ138, test_MQ2, test_MQ3, test_MQ4, test_MQ5, test_MQ6, test_MQ8, test_MQ9);
-
-    GPIO = predicted_spoilage;
-
-    return GPIO;
-}
-
-int main() {
-    result = Read_Sensor_Values_Run_LR();
-    // printf("Result: %d\n", result);
-    return 0;
 }

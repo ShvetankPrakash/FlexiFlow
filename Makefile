@@ -15,6 +15,7 @@ PYTHON = python3
 
 # Source directory
 SRC_DIR = src
+ABLATION_SRC = $(SRC_DIR)/kernel-ablation
 
 # Path to write compiled executables and object files
 BUILD_DIR = build/
@@ -42,7 +43,7 @@ build_dirs:
 	mkdir -p $(TRACE_DIR)
 
 # Compile all benchmarks
-all: SDG_02 SDG_03_Cardiotocography SDG_03_Arrythmia_Detection SDG_06 SDG_09 SDG_10 SDG_11 SDG_12 SDG_13 SDG_15
+all: SDG_02 SDG_03_Cardiotocography SDG_03_Arrhythmia_Detection SDG_06 SDG_07 SDG_09 SDG_10 SDG_11 SDG_12 SDG_13 SDG_15
 
 # Compile each benchmark with inference type and sample number
 SDG_02:
@@ -51,14 +52,17 @@ SDG_02:
 SDG_03_Cardiotocography:
 	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being_Cardiotocography C_FILE=cardiotocography BIN_FILE=SDG_03_cardiotocography
 
-SDG_03_Arrythmia_Detection:
-	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being_Arrythmia_Detection C_FILE=tekeste BIN_FILE=SDG_03_arrythmia_detection
+SDG_03_Arrhythmia_Detection:
+	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being_Arrhythmia_Detection C_FILE=tekeste BIN_FILE=SDG_03_arrhythmia_detection
 
 SDG_06:
 	$(MAKE) compile_inference SDG_DIR=SDG_06_Clean_Water_and_Sanitation C_FILE=water_quality_monitoring BIN_FILE=SDG_06_water_quality_monitoring
 
+SDG_07:
+	$(MAKE) compile_inference SDG_DIR=SDG_07_Affordable_and_Clean_Energy C_FILE=hvac BIN_FILE=SDG_07_hvac
+
 SDG_09:
-	$(MAKE) compile_inference SDG_DIR=SDG_09_Industry_Innovation_and_Infrastructure C_FILE=hvac BIN_FILE=SDG_09_hvac
+	$(MAKE) compile_inference SDG_DIR=SDG_09_Industry_Innovation_and_Infrastructure C_FILE=package_tracking BIN_FILE=SDG_09_package_tracking
 
 SDG_10:
 	$(MAKE) compile_inference SDG_DIR=SDG_10_Reduced_Inequality C_FILE=gesture_recognition BIN_FILE=SDG_10_gesture_recognition
@@ -73,7 +77,7 @@ SDG_13:
 	$(MAKE) compile_inference SDG_DIR=SDG_13_Climate_Action C_FILE=irrigation BIN_FILE=SDG_13_irrigation
 
 SDG_15:
-	$(MAKE) compile_inference SDG_DIR=SDG_15_Life_on_Land C_FILE=animal_tracking BIN_FILE=SDG_15_animal_tracking
+	$(MAKE) compile_inference SDG_DIR=SDG_15_Life_on_Land C_FILE=tree_tracking BIN_FILE=SDG_15_tree_tracking
 
 # Rule to handle multi-inference and single-inference compilation
 compile_inference: build_dirs
@@ -106,14 +110,17 @@ SDG_02_serv:
 SDG_03_Cardiotocography_serv:
 	$(MAKE) compile_hex SDG_DIR=SDG_03_Good_Health_and_Well_Being_Cardiotocography C_FILE=cardiotocography BIN_FILE=SDG_03_cardiotocography
 
-SDG_03_Arrythmia_Detection_serv:
-	$(MAKE) compile_hex SDG_DIR=SDG_03_Good_Health_and_Well_Being_Arrythmia_Detection C_FILE=tekeste BIN_FILE=SDG_03_arrythmia_detection
+SDG_03_Arrhythmia_Detection_serv:
+	$(MAKE) compile_hex SDG_DIR=SDG_03_Good_Health_and_Well_Being_Arrhythmia_Detection C_FILE=tekeste BIN_FILE=SDG_03_arrhythmia_detection
 
 SDG_06_serv:
 	$(MAKE) compile_hex SDG_DIR=SDG_06_Clean_Water_and_Sanitation C_FILE=water_quality_monitoring BIN_FILE=SDG_06_water_quality_monitoring
 
+SDG_07_serv:
+	$(MAKE) compile_hex SDG_DIR=SDG_07_Affordable_and_Clean_Energy C_FILE=hvac BIN_FILE=SDG_07_hvac
+
 SDG_09_serv:
-	$(MAKE) compile_hex SDG_DIR=SDG_09_Industry_Innovation_and_Infrastructure C_FILE=hvac BIN_FILE=SDG_09_hvac
+	$(MAKE) compile_hex SDG_DIR=SDG_09_Industry_Innovation_and_Infrastructure C_FILE=package_tracking BIN_FILE=SDG_09_package_tracking
 
 SDG_10_serv:
 	$(MAKE) compile_hex SDG_DIR=SDG_10_Reduced_Inequality C_FILE=gesture_recognition BIN_FILE=SDG_10_gesture_recognition
@@ -128,7 +135,7 @@ SDG_13_serv:
 	$(MAKE) compile_hex SDG_DIR=SDG_13_Climate_Action C_FILE=irrigation BIN_FILE=SDG_13_irrigation
 
 SDG_15_serv:
-	$(MAKE) compile_hex SDG_DIR=SDG_15_Life_on_Land C_FILE=animal_tracking BIN_FILE=SDG_15_animal_tracking
+	$(MAKE) compile_hex SDG_DIR=SDG_15_Life_on_Land C_FILE=tree_tracking BIN_FILE=SDG_15_tree_tracking
 
 compile_hex: build_dirs
 	cp $(SRC_DIR)/$(SDG_DIR)/single_inference/$(C_FILE).c $(BUILD_SRC_DIR)/
@@ -147,7 +154,57 @@ compile_hex: build_dirs
 	$(PYTHON) scripts/makehex.py $(BUILD_OBJ_DIR)/$(BIN_FILE)_serv_sample_$(DATA_SAMPLE_NUM).bin > $(BUILD_HEX_DIR)/$(BIN_FILE)_serv_sample_$(DATA_SAMPLE_NUM).hex
 
 trace: build_dirs
-	@for file in $(BUILT_FILES); do ./scripts/gen-trace.sh $$file $(TRACE_DIR); done
+	@for file in $(BUILT_FILES); do \
+	       	./scripts/gen-trace.sh $$file $(TRACE_DIR) &\
+	       	done
+
+kernel_ablation: build_dirs
+	$(MAKE) compile_inference_kernel C_FILE=knn_large
+	$(MAKE) compile_inference_kernel C_FILE=knn_medium
+	$(MAKE) compile_inference_kernel C_FILE=knn_small
+	$(MAKE) compile_inference_kernel C_FILE=decision_tree_large
+	$(MAKE) compile_inference_kernel C_FILE=decision_tree_medium
+	$(MAKE) compile_inference_kernel C_FILE=decision_tree_small
+	$(MAKE) compile_inference_kernel C_FILE=logistic_regression
+	$(MAKE) compile_inference_kernel C_FILE=mlp
+
+compile_inference_kernel: build_dirs
+	cp $(ABLATION_SRC)/food-spoilage-generic.c $(BUILD_SRC_DIR)/
+	@if find "$(ABLATION_SRC)/" -type f -name "*.h" | grep -q .; then \
+		cp $(ABLATION_SRC)/*.h $(BUILD_SRC_DIR)/ ; \
+	fi 
+	cp $(ABLATION_SRC)/$(C_FILE).c $(BUILD_SRC_DIR)/
+	cp $(SRC_DIR)/asm/init.s $(BUILD_SRC_DIR)/
+	$(PYTHON) $(ABLATION_SRC)/gen-sample.py $(ABLATION_SRC)/samples.csv $(BUILD_SRC_DIR)/ $(DATA_SAMPLE_NUM) $(QUANTIZATION); \
+	$(CC) $(CCFLAGS) -c $(BUILD_SRC_DIR)/init.s -o $(BUILD_OBJ_DIR)/init.o; \
+	$(CC) $(CCFLAGS) -c $(BUILD_SRC_DIR)/food-spoilage-generic.c -o $(BUILD_OBJ_DIR)/food-spoilage-generic.o; \
+	$(CC) $(CCFLAGS) -c $(BUILD_SRC_DIR)/$(C_FILE).c -o $(BUILD_OBJ_DIR)/$(notdir $(C_FILE)).o; \
+	$(CC) $(CCFLAGS) -o $(BUILD_BIN_DIR)/food_kernel_$(C_FILE)_sample_$(DATA_SAMPLE_NUM) $(BUILD_OBJ_DIR)/food-spoilage-generic.o $(BUILD_OBJ_DIR)/$(notdir $(C_FILE)).o $(BUILD_OBJ_DIR)/init.o; \
+
+kernel_ablation_serv:
+	$(MAKE) compile_ablation_hex C_FILE=knn_large
+	$(MAKE) compile_ablation_hex C_FILE=knn_medium
+	$(MAKE) compile_ablation_hex C_FILE=knn_small
+	$(MAKE) compile_ablation_hex C_FILE=decision_tree_large
+	$(MAKE) compile_ablation_hex C_FILE=decision_tree_medium
+	$(MAKE) compile_ablation_hex C_FILE=decision_tree_small
+	$(MAKE) compile_ablation_hex C_FILE=logistic_regression
+	$(MAKE) compile_ablation_hex C_FILE=mlp
+
+compile_ablation_hex: build_dirs
+	cp $(ABLATION_SRC)/food-spoilage-generic.c $(BUILD_SRC_DIR)/
+	@if find "$(ABLATION_SRC)/" -type f -name "*.h" | grep -q .; then \
+		cp $(ABLATION_SRC)/*.h $(BUILD_SRC_DIR)/ ; \
+	fi 
+	cp $(ABLATION_SRC)/$(C_FILE).c $(BUILD_SRC_DIR)/
+	cp $(SRC_DIR)/asm/init.s $(BUILD_SRC_DIR)/
+	$(PYTHON) $(ABLATION_SRC)/gen-sample.py $(ABLATION_SRC)/samples.csv $(BUILD_SRC_DIR)/ $(DATA_SAMPLE_NUM) $(QUANTIZATION);
+	$(CC) $(CCFLAGS_SERV) -c $(BUILD_SRC_DIR)/init-serv.s -o $(BUILD_OBJ_DIR)/init-serv.o;
+	$(CC) $(CCFLAGS_SERV) -c $(BUILD_SRC_DIR)/food-spoilage-generic.c -o $(BUILD_OBJ_DIR)/food-spoilage-generic.o;
+	$(CC) $(CCFLAGS_SERV) -c $(BUILD_SRC_DIR)/$(C_FILE).c -o $(BUILD_OBJ_DIR)/$(C_FILE).o;
+	$(CC) $(CCFLAGS_SERV) -o $(BUILD_OBJ_DIR)/food_kernel_$(C_FILE)_serv_sample_$(DATA_SAMPLE_NUM).elf $(BUILD_OBJ_DIR)/init-serv.o $(BUILD_OBJ_DIR)/food-spoilage-generic.o $(BUILD_OBJ_DIR)/$(C_FILE).o 
+	$(RV_PREFIX)objcopy -O binary $(BUILD_OBJ_DIR)/food_kernel_$(C_FILE)_serv_sample_$(DATA_SAMPLE_NUM).elf $(BUILD_OBJ_DIR)/food_kernel_$(C_FILE)_serv_sample_$(DATA_SAMPLE_NUM).bin
+	$(PYTHON) scripts/makehex.py $(BUILD_OBJ_DIR)/food_kernel_$(C_FILE)_serv_sample_$(DATA_SAMPLE_NUM).bin > $(BUILD_HEX_DIR)/food_kernel_$(C_FILE)_serv_sample_$(DATA_SAMPLE_NUM).hex
 
 clean:
 	rm -rf $(BUILD_DIR)

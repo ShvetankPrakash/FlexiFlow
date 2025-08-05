@@ -55,7 +55,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     data = args.data
-    header_filename = f"{args.output_header}/sample_data.h"
+    header_filename = f"{args.output_header}/sample_multi_data.h"
     quant = args.quant
 
     generate_multi_header(data, header_filename, quant)

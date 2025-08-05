@@ -1,257 +1,83 @@
 #include "sample_data.h"
 // #include <stdio.h>
 
+#define N_CLASSES 4
+#define N_FEATURES 11
+
 // Global volatile variable to verify result is not optimized out
-volatile char correct_result = -1;  
-int num_incorrect = 0;
+volatile signed int result = -1;  
 
-// Function to predict whether a fruit is spoiled based on the decision tree
-char Predict_Spoiled(char Days, char Fruit_Litchi, short CO2, char Fruit_Plum, char Temp, char Humidity, char Fruit_Grapes, char Fruit_Apple, char Fruit_Lemon, char Fruit_Mango, char Fruit_Tomato, char Fruit_Papaya) {
-    char predicted_class;
+const short coef_q[N_CLASSES][N_FEATURES] = {
+    {-1, -7, -61, -30, 8, 10, 108, 10, -10, 1, 20},
+    {8, 44, -21, -19, -2, -26, 38, -1, 18, 8, 7},
+    {5, 29, 43, 32, -28, -27, -18, -6, -6, -3, -15},
+    {-12, -66, 40, 16, 21, 43, -128, -3, -3, -5, -12}
+};
 
-    if (Days <= 4) {
-        if (Fruit_Litchi == 0) {
-            if (CO2 <= 407) {
-                if (Fruit_Plum == 0) {
-                    predicted_class = 0;
-                } else {
-                    if (Temp <= 22) {
-                        predicted_class = 0;
-                    } else {
-                        if (Days <= 3) {
-                            predicted_class = 0;
-                        } else {
-                            predicted_class = 1;
-                        }
-                    }
-                }
-            } else {
-                if (Humidity <= 66) {
-                    predicted_class = 0;
-                } else {
-                    if (Days <= 3) {
-                        predicted_class = 0;
-                    } else {
-                        predicted_class = 1;
-                    }
-                }
-            }
-        } else {
-            if (Days <= 2) {
-                predicted_class = 0;
-            } else {
-                if (Temp <= 20) {
-                    predicted_class = 0;
-                } else {
-                    if (Temp <= 23) {
-                        if (Days <= 3) {
-                            if (CO2 <= 398) {
-                                predicted_class = 1;
-                            } else {
-                                predicted_class = 0;
-                            }
-                        } else {
-                            predicted_class = 1;
-                        }
-                    } else {
-                        predicted_class = 1;
-                    }
-                }
-            }
+const long intercept_q[N_CLASSES] = {0, 2, -1, -2};
+
+// Predict class for quantized input x_q (uint8_t[N_FEATURES])
+char logreg_infer(
+    unsigned char MQ135,
+    unsigned char MQ136,
+    unsigned char MQ137,
+    unsigned char MQ138,
+    unsigned char MQ2,
+    unsigned char MQ3,
+    unsigned char MQ4,
+    unsigned char MQ5,
+    unsigned char MQ6,
+    unsigned char MQ8,
+    unsigned char MQ9
+) {
+    unsigned char x_q[N_FEATURES] = {
+        MQ135, MQ136, MQ137, MQ138, MQ2, MQ3, MQ4, MQ5, MQ6, MQ8, MQ9
+    };
+    long logits[N_CLASSES] = {0};
+    for (int c = 0; c < N_CLASSES; ++c) {
+        long sum = intercept_q[c];
+        for (int f = 0; f < N_FEATURES; ++f) {
+            sum += coef_q[c][f] * (short)x_q[f];
         }
-    } else {
-        if (Days <= 18) {
-            if (Temp <= 22) {
-                if (Days <= 5) {
-                    if (Fruit_Litchi == 0) {
-                        if (Fruit_Plum == 0) {
-                            if (Fruit_Grapes == 0) {
-                                predicted_class = 0;
-                            } else {
-                                if (Humidity <= 60) {
-                                    predicted_class = 1;
-                                } else {
-                                    predicted_class = 0;
-                                }
-                            }
-                        } else {
-                            if (Temp <= 20) {
-                                predicted_class = 0;
-                            } else {
-                                predicted_class = 1;
-                            }
-                        }
-                    } else {
-                        predicted_class = 1;
-                    }
-                } else {
-                    if (Fruit_Apple == 0) {
-                        if (Fruit_Mango == 0) {
-                            if (Days <= 6) {
-                                if (Humidity <= 53) {
-                                    predicted_class = 0;
-                                } else {
-                                    if (Fruit_Lemon == 0) {
-                                        if (CO2 <= 419) {
-                                            if (Humidity <= 58) {
-                                                predicted_class = 1;
-                                            } else {
-                                                predicted_class = 0;
-                                            }
-                                        } else {
-                                            predicted_class = 0;
-                                        }
-                                    } else {
-                                        predicted_class = 0;
-                                    }
-                                }
-                            } else {
-                                if (Humidity <= 55) {
-                                    predicted_class = 1;
-                                } else {
-                                    if (Temp <= 18) {
-                                        if (Days <= 7) {
-                                            predicted_class = 0;
-                                        } else {
-                                            if (CO2 <= 400) {
-                                                predicted_class = 1;
-                                            } else {
-                                                predicted_class = 1;
-                                            }
-                                        }
-                                    } else {
-                                        if (Fruit_Lemon == 0) {
-                                            predicted_class = 1;
-                                        } else {
-                                            if (Humidity <= 70) {
-                                                predicted_class = 0;
-                                            } else {
-                                                predicted_class = 1;
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        } else {
-                            if (Days <= 11) {
-                                predicted_class = 0;
-                            } else {
-                                predicted_class = 1;
-                            }
-                        }
-                    } else {
-                        predicted_class = 0;
-                    }
-                }
-            } else {
-                if (Days <= 5) {
-                    if (Fruit_Tomato == 0) {
-                        if (CO2 <= 399) {
-                            if (Humidity <= 59) {
-                                predicted_class = 0;
-                            } else {
-                                predicted_class = 1;
-                            }
-                        } else {
-                            predicted_class = 1;
-                        }
-                    } else {
-                        if (Temp <= 25) {
-                            predicted_class = 0;
-                        } else {
-                            predicted_class = 1;
-                        }
-                    }
-                } else {
-                    if (Humidity <= 53) {
-                        predicted_class = 1;
-                    } else {
-                        if (Days <= 15) {
-                            if (Fruit_Papaya == 0) {
-                                if (Days <= 6) {
-                                    predicted_class = 0;
-                                } else {
-                                    if (Humidity <= 69) {
-                                        if (Fruit_Apple == 0) {
-                                            if (Days <= 10) {
-                                                predicted_class = 0;
-                                            } else {
-                                                predicted_class = 1;
-                                            }
-                                        } else {
-                                            predicted_class = 0;
-                                        }
-                                    } else {
-                                        if (Days <= 10) {
-                                            predicted_class = 1;
-                                        } else {
-                                            if (Days <= 13) {
-                                                predicted_class = 0;
-                                            } else {
-                                                predicted_class = 1;
-                                            }
-                                        }
-                                    }
-                                }
-                            } else {
-                                predicted_class = 1;
-                            }
-                        } else {
-                            if (Humidity <= 62) {
-                                if (Days <= 17) {
-                                    predicted_class = 0;
-                                } else {
-                                    predicted_class = 1;
-                                }
-                            } else {
-                                predicted_class = 1;
-                            }
-                        }
-                    }
-                }
-            }
-        } else {
-            predicted_class = 1;
+        logits[c] = sum;
+    }
+    // Argmax over logits
+    int max_idx = 0;
+    long max_val = logits[0];
+    for (int c = 1; c < N_CLASSES; ++c) {
+        if (logits[c] > max_val) {
+            max_val = logits[c];
+            max_idx = c;
         }
     }
-
-    return predicted_class;
+    return max_idx;
 }
 
-// Read the sensor values from the data samples and run the DTs to make predictions
-// Compare the predicted class made by this model to the predicted class made by the Python model for equivalence check
-char Read_Sensor_Values_Run_DTs() {
-    char parity_with_python = 1;
-    for (unsigned short data_sample = 0; data_sample < Num_Data_Samples; data_sample++) {
-        char Days = Days_Vector[data_sample];
-        char Temp = Temp_Vector[data_sample];
-        char Humidity = Humidity_Vector[data_sample];
-        short CO2 = CO2_Vector[data_sample];
-        char Fruit_Apple = Fruit_Apple_Vector[data_sample];
-        char Fruit_Banana = Fruit_Banana_Vector[data_sample];
-        char Fruit_Grapes = Fruit_Grapes_Vector[data_sample];
-        char Fruit_Jackfruit = Fruit_Jackfruit_Vector[data_sample];
-        char Fruit_Lemon = Fruit_Lemon_Vector[data_sample];
-        char Fruit_Litchi = Fruit_Litchi_Vector[data_sample];
-        char Fruit_Mango = Fruit_Mango_Vector[data_sample];
-        char Fruit_Papaya = Fruit_Papaya_Vector[data_sample];
-        char Fruit_Plum = Fruit_Plum_Vector[data_sample];
-        char Fruit_Tomato = Fruit_Tomato_Vector[data_sample];
-
-        char python_predicted_class = Spoiled_Vector[data_sample];
-        char c_predicted_class = Predict_Spoiled(Days, Fruit_Litchi, CO2, Fruit_Plum, Temp, Humidity, Fruit_Grapes, Fruit_Apple, Fruit_Lemon, Fruit_Mango, Fruit_Tomato, Fruit_Papaya);
-
-        if (python_predicted_class != c_predicted_class) {
-            parity_with_python = 0;
-            num_incorrect++;
+int Evaluate_All_Samples() {
+    int correct = 0;
+    for (int i = 0; i < NUM_SAMPLES; ++i) {
+        char predicted = logreg_infer(
+            Testing_MQ135_Vector[i],
+            Testing_MQ136_Vector[i],
+            Testing_MQ137_Vector[i],
+            Testing_MQ138_Vector[i],
+            Testing_MQ2_Vector[i],
+            Testing_MQ3_Vector[i],
+            Testing_MQ4_Vector[i],
+            Testing_MQ5_Vector[i],
+            Testing_MQ6_Vector[i],
+            Testing_MQ8_Vector[i],
+            Testing_MQ9_Vector[i]
+        );
+        if (predicted == Label_Vector[i]) {
+            correct++;
         }
     }
-
-    return parity_with_python;
+    return correct;
 }
 
 int main() {
-    correct_result = Read_Sensor_Values_Run_DTs();
-    // printf("Incorrect: %d\n", num_incorrect);
+    result = Evaluate_All_Samples();
+    // printf("Number correct: %d out of %d\n", result, NUM_SAMPLES);
     return 0;
 }

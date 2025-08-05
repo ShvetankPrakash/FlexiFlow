@@ -10,42 +10,35 @@ def generate_header(csv_filename, header_filename, sample, quant):
         csv_reader = csv.reader(csv_file)
         rows = list(csv_reader)
 
-        if sample >= len(rows)-1:
-            print(f"Error: sample {sample} out of range")
-            return
-
-        # Check quantization
         if quant != 8:
             print(f"Error: cannot quantize to {quant}")
             return
 
-        # Extract headers and sample row
-        var_names = rows[0]  # Column names
-        row = rows[sample+1]  # Data row
+        data_rows = len(rows) -1
 
-        # Open header file for writing
+        if sample >= data_rows:
+            print(f"Error: sample {sample} out of range")
+            return
+
+        var_names = rows[0]
+        row = rows[sample+1]
+
+        num_features = len(var_names) - 1
+        label_idx = 33
+
         with open(header_filename, 'w') as header_file:
             header_file.write(f"// Sample {sample}\n")
-            header_file.write(f"#define QUANTIZATION {quant}\n\n")
+            header_file.write(f"#define QUANTIZATION {quant}\n")
+            header_file.write("\n")
 
-            # Define the expected C types for each variable
-            quant_types = [
-                "unsigned short",     # Temperature (rounded)
-                "unsigned short",     # Humidity (rounded)
-                "unsigned short",     # Light
-                "unsigned short",     # CO2
-                "unsigned short",     # HumidityRatio
-                "char",      # Occupancy
-                "char",      # Python prediction
-            ]
-
-            # Skip the "date" column and write each variable
-            for var in range(0, len(var_names)):  # Start from 1 to skip "date"
-                var_name = var_names[var]
-                value = row[var]
-                
-                # Write to header file
-                header_file.write(f"const volatile {quant_types[var]} {var_name} = {value};\n")
+            # List of quantization functions to be used on the columns
+            names = [f"Feature_{i}" for i in range(33)]
+            
+            header_file.write(f"volatile char Golden_Reference = {row[label_idx]};\n");
+            
+            for idx, name in enumerate(names):
+                header_file.write(f"volatile unsigned char {name} = {row[idx]};\n")
+            header_file.write("\n")
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Generate a C header file from a CSV row.')
@@ -62,3 +55,4 @@ if __name__ == "__main__":
     quant = args.quant
 
     generate_header(data, header_filename, sample, quant)
+
