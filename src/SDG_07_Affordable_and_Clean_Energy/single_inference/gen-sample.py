@@ -35,7 +35,8 @@ def generate_header(csv_filename, header_filename, sample, quant):
                 "unsigned short",     # Light
                 "unsigned short",     # CO2
                 "unsigned short",     # HumidityRatio
-                "char"      # Occupancy
+                "char",      # Occupancy
+                "char"       # Python Reference
             ]
 
             # Skip the "date" column and write each variable

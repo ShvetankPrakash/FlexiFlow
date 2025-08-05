@@ -8,7 +8,7 @@ char predict_random_forest(unsigned short temperature, unsigned short humidity,
                            unsigned short light, unsigned short co2, unsigned short humidity_ratio);
 
 char Read_Sensor_Values_Run_RF() {
-    char occupancy, golden_reference, parity_with_python = 1;
+    char occupancy, golden_reference, python_prediction, parity_with_python = 1;
     unsigned short temperature, humidity, light, co2, humidity_ratio;
 
     for (int i = 0; i < Num_Data_Samples; ++i) {
@@ -18,9 +18,10 @@ char Read_Sensor_Values_Run_RF() {
         co2 = CO2_Sensor_Sample_Input_Vector[i];
         humidity_ratio = HumidityRatio_Sensor_Sample_Input_Vector[i];
         golden_reference = Golden_Reference_Occupancy_Vector[i];
+        python_prediction = Python_Predicted_Occupancy_Vector[i];
         occupancy = predict_random_forest(temperature, humidity, light, co2, humidity_ratio);
 
-        if (occupancy != golden_reference) {
+        if (occupancy != python_prediction) {
             parity_with_python = 0;
             num_incorrect++;
         }
