@@ -7,16 +7,16 @@ import textwrap
 
 # Sample params
 workload_params_dict = {
-    "Food Spoilage Detection": {"lifetime_yrs": 2, "inf_freq": 365},         # 1x/day for 2 years (fridge sensor)
+    "Food Spoilage Detection": {"lifetime_yrs": 1/52, "inf_freq": 365},      # 1x/day for 1 week
     "Cardiotocography": {"lifetime_yrs": 0.75, "inf_freq": 365*24*4},        # 4x/hour for 9 months (wearable monitor)
     "Arrhythmia Detection": {"lifetime_yrs": 3, "inf_freq": 365*24*60},      # 1x/min for 3 years (continuous ECG patch)
-    "Water Quality Detection": {"lifetime_yrs": 1, "inf_freq": 52},          # 1x/week for 1 year (remote sensor)
-    "HVAC Control": {"lifetime_yrs": 10, "inf_freq": 365*24},       # 1x/hour for 10 years (building sensor)
-    "Package Tracking": {"lifetime_yrs": 30/365, "inf_freq": 365*24},        # 1x/hour for 1 month (disposable tracker)
+    "Water Quality Detection": {"lifetime_yrs": 7/365, "inf_freq": 365},     # 1x/day for 7 days (single use)
+    "HVAC Control": {"lifetime_yrs": 10, "inf_freq": 365*24},                # 1x/hour for 10 years (building sensor)
+    "Package Tracking": {"lifetime_yrs": 14/365, "inf_freq": 365*24},        # 1x/hour for 2 weeks (disposable tracker)
     "Gesture Recognition": {"lifetime_yrs": 2, "inf_freq": 365*24*60*4},     # 1x/15sec for 2 years (wearable)
     "Air Pollution Monitoring": {"lifetime_yrs": 5, "inf_freq": 365*24},     # 1x/hour for 5 years (outdoor station)
-    "Malodor Classification": {"lifetime_yrs": 3, "inf_freq": 365},                  # 1x/day for 3 years (environmental sensor)
-    "Smart Irrigation Control": {"lifetime_yrs": 2, "inf_freq": 365/3},              # 1x/3 days for 2 years (field sensor)
+    "Malodor Classification": {"lifetime_yrs": 3, "inf_freq": 365},          # 1x/day for 3 years (environmental sensor)
+    "Smart Irrigation Control": {"lifetime_yrs": 0.5, "inf_freq": 365/3},    # 1x/3 days for 6 months (field sensor)
 }
 
 def plot_all_workloads_best_system_region(
@@ -28,7 +28,8 @@ def plot_all_workloads_best_system_region(
     ncols=5,
     nrows=2,
     title_wrap_width=16,   # Number of characters before wrapping workload names
-    hashes_grey = False
+    hashes_grey = False,
+    whitespace = 0
 ):
     """
     Args:
@@ -54,11 +55,11 @@ def plot_all_workloads_best_system_region(
         workloads = list(embodied_values.keys())
     n = len(workloads)
 
-    # Make a tight grid, no whitespace between subplots
+    # Make a grid with more whitespace between subplots
     fig, axes = plt.subplots(
         nrows, ncols, 
         figsize=(3 * ncols, 3 * nrows), 
-        gridspec_kw=dict(wspace=0, hspace=0)
+        gridspec_kw=dict(wspace=whitespace, hspace=whitespace)
     )
     axes = axes.flatten()
 
@@ -74,8 +75,15 @@ def plot_all_workloads_best_system_region(
         col = i % ncols
         
         ax.tick_params(labelleft=False, labelbottom = False)
-        if col == 0 and row == nrows-1:
-            ax.tick_params(labelleft=True, labelbottom=True, left=True, bottom=True)
+        if whitespace == 0:
+            if col == 0 and row == nrows-1:
+                ax.tick_params(labelleft=True, labelbottom=True, left=True, bottom=True)
+        else:
+            if col == 0:
+                ax.tick_params(labelleft=True, left=True)
+            if row == nrows-1:
+                ax.tick_params(labelbottom=True, bottom=True)
+
         # Get params for this workload
         params = workload_params_dict.get(workload, {})
         lifetime_yrs = params.get("lifetime_yrs", 1)
@@ -119,8 +127,12 @@ def plot_all_workloads_best_system_region(
         ax.set_title("")
 
     # Add one shared x and y label, with x label shifted left
-    fig.supxlabel("Application Lifetime (years)", fontsize=18, x = 0.52, y = 0.05)
-    fig.supylabel("Task Frequency (Program Executions/Year)", fontsize=18, x=-0.01, y=0.55)
+    if whitespace == 0:
+        fig.supxlabel("Application Lifetime (years)", fontsize=18, x = 0.52, y = 0.05)
+        fig.supylabel("Task Frequency (Program Executions/Year)", fontsize=18, x=-0.01, y=0.55)
+    else:
+        fig.supxlabel("Application Lifetime (years)", fontsize=18, x = 0.5, y = -0.12)
+        fig.supylabel("Task Frequency (Program Executions/Year)", fontsize=18, x=-0.05, y=0.5)
 
     # Use seaborn color palette for legend handles
     palette = sns.color_palette("colorblind", n_colors=len(system_colors))
@@ -154,6 +166,8 @@ def plot_all_workloads_best_system_region(
     plt.close(fig)
 
 if __name__ == '__main__':
+    whitespace = 0.2
+
     load_execution_time_from_csv("timing.csv")
     load_embodied_values_from_csv("embodied-carbon.csv")
     load_memory_from_csv("memory.csv")
@@ -162,13 +176,15 @@ if __name__ == '__main__':
         workload_params_dict=workload_params_dict,
         carbon_intensity=367,
         core_freq=10000,
-        output_pdf="plots/all_workloads_best_system_region.pdf",
-        hashes_grey=False
+        output_pdf=f"plots/all_workloads_best_system_region{"" if whitespace == 0 else "_whitespace"}.pdf",
+        hashes_grey=False,
+        whitespace=whitespace
     )
     plot_all_workloads_best_system_region(
         workload_params_dict=workload_params_dict,
         carbon_intensity=367,
         core_freq=10000,
-        output_pdf="plots/all_workloads_best_system_region_grey_region.pdf",
-        hashes_grey=True
+        output_pdf=f"plots/all_workloads_best_system_region_grey_region{"" if whitespace == 0 else "_whitespace"}.pdf",
+        hashes_grey=True,
+        whitespace=whitespace
     )
