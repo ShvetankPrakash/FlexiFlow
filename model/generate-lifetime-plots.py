@@ -29,7 +29,8 @@ def plot_all_workloads_best_system_region(
     nrows=2,
     title_wrap_width=16,   # Number of characters before wrapping workload names
     hashes_grey = False,
-    whitespace = 0
+    whitespace = 0,
+    title_top = False
 ):
     """
     Args:
@@ -97,18 +98,22 @@ def plot_all_workloads_best_system_region(
             core_freq=core_freq,
             hashes_grey=hashes_grey
         )
-        # Wrap long workload names and center vertically
-        wrapped_workload = "\n".join(textwrap.wrap(str(workload), width=title_wrap_width))
-        num_lines = wrapped_workload.count('\n') + 1
-        # Center the text vertically by adjusting y based on number of lines
-        ax.text(
-            0.5, 0.5, wrapped_workload,
-            transform=ax.transAxes,
-            ha='center', va='center',
-            fontsize=18, fontweight='bold',
-            color='black',
-            bbox=dict(facecolor='white', alpha=0.5, edgecolor='none', boxstyle='round,pad=0.2')
-        )
+
+        if title_top == False:
+            # Wrap long workload names and center vertically
+            wrapped_workload = "\n".join(textwrap.wrap(str(workload), width=title_wrap_width))
+            num_lines = wrapped_workload.count('\n') + 1
+            # Center the text vertically by adjusting y based on number of lines
+            ax.text(
+                0.5, 0.5, wrapped_workload,
+                transform=ax.transAxes,
+                ha='center', va='center',
+                fontsize=18, fontweight='bold',
+                color='black',
+                bbox=dict(facecolor='white', alpha=0.5, edgecolor='none', boxstyle='round,pad=0.2')
+            )
+        else:
+            ax.set_title(str(workload))
         # Remove legend from all subplots
         ax.legend().remove()
         # Add a visible border to each subplot
@@ -124,7 +129,8 @@ def plot_all_workloads_best_system_region(
     for ax in axes:
         ax.set_xlabel("")
         ax.set_ylabel("")
-        ax.set_title("")
+        if title_top == False:
+            ax.set_title("")
 
     # Add one shared x and y label, with x label shifted left
     if whitespace == 0:
@@ -152,7 +158,7 @@ def plot_all_workloads_best_system_region(
     fig.legend(
         legend_handles, legend_labels,
         loc='upper center', ncol=len(legend_labels),
-        bbox_to_anchor=(0.5, 1.1), fontsize=16, frameon=False
+        bbox_to_anchor=(0.5, 1.1 if title_top == False else 1.13), fontsize=16, frameon=False
     )
 
     # Remove all whitespace around and between subplots
@@ -187,4 +193,22 @@ if __name__ == '__main__':
         output_pdf=f"plots/all_workloads_best_system_region_grey_region{"" if whitespace == 0 else "_whitespace"}.pdf",
         hashes_grey=True,
         whitespace=whitespace
+    )
+    plot_all_workloads_best_system_region(
+        workload_params_dict=workload_params_dict,
+        carbon_intensity=367,
+        core_freq=10000,
+        output_pdf=f"plots/all_workloads_best_system_region_title_top{"" if whitespace == 0 else "_whitespace"}.pdf",
+        hashes_grey=False,
+        whitespace=whitespace,
+        title_top=True
+    )
+    plot_all_workloads_best_system_region(
+        workload_params_dict=workload_params_dict,
+        carbon_intensity=367,
+        core_freq=10000,
+        output_pdf=f"plots/all_workloads_best_system_region_grey_region_title_top{"" if whitespace == 0 else "_whitespace"}.pdf",
+        hashes_grey=True,
+        whitespace=whitespace,
+        title_top=True
     )
