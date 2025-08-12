@@ -2,7 +2,7 @@ Workload,sram,lprom
 Food Spoilage Detection,97,2655
 Cardiotocography,590,3266
 Arrhythmia Detection,4170,3466
-Water Quality Detection,13,306
+Water Quality Monitoring,13,306
 HVAC Control,63,47494
 Package Tracking,4238,8809
 Gesture Recognition,40033,200456

@@ -1,6 +1,6 @@
 Workload,Kernel,Total Number of Instructions,I-types,R-types,Loads,Jumps,Stores,Shifts and SLTs,Branches,Others
 Gesture Recognition,Binary Cosine Similarity,375024,125009,19,124988,8,24985,5,100010,0
-Malodour Classification,Decision Tree,52,25,3,11,6,2,2,3,0
+Malodor Classification,Decision Tree,52,25,3,11,6,2,2,3,0
 Water Quality Monitoring,Thresholding,38,20,4,5,5,1,0,3,0
 HVAC Control,Random Forest,2797,879,500,407,208,107,16,680,0
 Air Pollution Monitoring,XGBoost,1224,453,131,221,102,49,9,259,0

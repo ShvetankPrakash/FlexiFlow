@@ -118,6 +118,8 @@ def plot_accuracy_vs_carbon(
     plt.tight_layout()
     if save_pdf is not None:
         plt.savefig(save_pdf, bbox_inches='tight')
+    
+    return df
 
 if __name__ == "__main__":
     load_execution_time_from_csv("timing-ablation.csv")

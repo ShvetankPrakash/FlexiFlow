@@ -10,7 +10,7 @@ workload_params_dict = {
     "Food Spoilage Detection": {"lifetime_yrs": 1/52, "inf_freq": 365},      # 1x/day for 1 week
     "Cardiotocography": {"lifetime_yrs": 0.75, "inf_freq": 365*24*4},        # 4x/hour for 9 months (wearable monitor)
     "Arrhythmia Detection": {"lifetime_yrs": 3, "inf_freq": 365*24*60},      # 1x/min for 3 years (continuous ECG patch)
-    "Water Quality Detection": {"lifetime_yrs": 7/365, "inf_freq": 365},     # 1x/day for 7 days (single use)
+    "Water Quality Monitoring": {"lifetime_yrs": 7/365, "inf_freq": 365},     # 1x/day for 7 days (single use)
     "HVAC Control": {"lifetime_yrs": 10, "inf_freq": 365*24},                # 1x/hour for 10 years (building sensor)
     "Package Tracking": {"lifetime_yrs": 14/365, "inf_freq": 365*24},        # 1x/hour for 2 weeks (disposable tracker)
     "Gesture Recognition": {"lifetime_yrs": 2, "inf_freq": 365*24*60*4},     # 1x/15sec for 2 years (wearable)
