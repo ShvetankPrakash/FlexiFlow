@@ -242,6 +242,7 @@ def plot_total_carbon_vs_num_inferences_ax(ax, workload_choice, lifetime_yrs, in
 def plot_best_system_region_map_ax(ax, workload_choice, lifetime_yrs, inf_freq, carbon_intensity, core_freq, hashes_grey = False):
     """
     Plot a 2D region map of best system choice for a grid of (lifetime, inference frequency) on the given axis.
+    Uses fill_between to color regions between system intersection contours.
     """
     carbon_intensity = float(carbon_intensity) / 3600 / 1000000
     core_freq = float(core_freq)
@@ -264,32 +265,149 @@ def plot_best_system_region_map_ax(ax, workload_choice, lifetime_yrs, inf_freq, 
 
     best_indices = np.argmin(carbon_values, axis=0)
 
-    # Create contours where systems intersect
-    for i in range(len(systems)):
-        for j in range(i+1, len(systems)):
-            diff = carbon_values[i] - carbon_values[j]
-            mask = (best_indices == i) | (best_indices == j)
-            masked_diff = np.ma.masked_where(~mask, diff)
-            ax.contour(X, Y, masked_diff, levels=[0], colors='black', linestyles='-', linewidths=1)
+    # SERV - QERV Intersection
 
-    # Color the regions and add legend
-    cmap = ListedColormap([system_colors[sys] for sys in systems][np.min(best_indices):np.max(best_indices)+1])
-    ax.pcolormesh(X, Y, best_indices, shading='auto', alpha=0.3, cmap=cmap)
-    handles = [plt.Line2D([0], [0], marker='o', color='w', label=sys, markersize=10, markerfacecolor=system_colors[sys]) for sys in systems]
+    # Draw SERV-QERV intersection contour (only where either is best)
+    diff_serv_qerv = carbon_values[0] - carbon_values[1]
+    mask_serv_qerv = (best_indices == 0) | (best_indices == 1)
+    masked_diff_serv_qerv = np.ma.masked_where(~mask_serv_qerv, diff_serv_qerv)
+    serv_qerv_contour = ax.contour(
+        X, Y, masked_diff_serv_qerv, levels=[0], colors='black', linestyles='-', linewidths=2,zorder=3
+    )
+
+    # Draw QERV-HERV intersection contour (only where either is best)
+    diff_qerv_herv = carbon_values[1] - carbon_values[2]
+    mask_qerv_herv = (best_indices == 2) | (best_indices == 1)
+    masked_diff_qerv_herv = np.ma.masked_where(~mask_qerv_herv, diff_qerv_herv)
+    qerv_herv_contour = ax.contour(
+        X, Y, masked_diff_qerv_herv, levels=[0], colors='black', linestyles='-', linewidths=2,zorder=3
+    )
+
+    # To fill regions between/around the contours, we need to extract the contour lines as (x, y) arrays,
+    # interpolate them onto the same x-grid, and use fill_between.
+
+    # Helper to extract a single contour line as (x, y) arrays, and extend to plot bounds if needed
+    def get_contour_line(contour):
+        # contour: a QuadContourSet object from ax.contour
+        # In recent matplotlib, QuadContourSet has attribute 'collections', but if not, use 'allsegs'
+        # Try to use 'collections' if available, else fallback to 'allsegs'
+        paths = None
+        if hasattr(contour, "collections"):
+            if len(contour.collections) == 0:
+                return None, None
+            paths = contour.collections[0].get_paths()
+        elif hasattr(contour, "allsegs"):
+            # allsegs is a list of lists of arrays: allsegs[level][segment][point]
+            # We want the first level (should be only one, since we used levels=[0])
+            if len(contour.allsegs) == 0 or len(contour.allsegs[0]) == 0:
+                return None, None
+            # Find the longest segment
+            segments = contour.allsegs[0]
+            max_seg = max(segments, key=lambda seg: seg.shape[0])
+            x, y = max_seg[:, 0], max_seg[:, 1]
+            sort_idx = np.argsort(x)
+            x, y = x[sort_idx], y[sort_idx]
+        else:
+            return None, None
+
+        if paths is not None:
+            if len(paths) == 0:
+                return None, None
+            # Take the longest path (in case of multiple)
+            max_path = max(paths, key=lambda p: p.vertices.shape[0])
+            x, y = max_path.vertices[:, 0], max_path.vertices[:, 1]
+            # Sort by x for fill_between
+            sort_idx = np.argsort(x)
+            x, y = x[sort_idx], y[sort_idx]
+
+        # Now, extend the contour to the bounds if needed
+        # Use the global lifetime_grid for bounds
+        x_min, x_max = MIN_LIFETIME, MAX_LIFETIME
+        # If the contour doesn't start at x_min, extend it horizontally at the edge y-value
+        if x[0] > x_min:
+            x = np.insert(x, 0, x_min)
+            y = np.insert(y, 0, y[0])
+        # If the contour doesn't end at x_max, extend it horizontally at the edge y-value
+        if x[-1] < x_max:
+            x = np.append(x, x_max)
+            y = np.append(y, y[-1])
+        return x, y
+
+    # Get (x, y) for SERV-QERV and QERV-HERV contours
+    x_sq, y_sq = get_contour_line(serv_qerv_contour)
+    x_qh, y_qh = get_contour_line(qerv_herv_contour)
+
+    # Use the lifetime_grid as the x-axis for fill_between
+    x_fill = lifetime_grid
+
+    # Helper to interpolate contour y-values onto x_fill
+    def interp_contour(xc, yc):
+        if xc is None or yc is None or len(xc) < 2:
+            return np.full_like(x_fill, np.nan)
+        # Remove duplicate x values for interpolation
+        unique_x, idx = np.unique(xc, return_index=True)
+        unique_y = yc[idx]
+        # Only interpolate within the range of the contour
+        y_interp = np.interp(x_fill, unique_x, unique_y, left=np.nan, right=np.nan)
+        return y_interp
+
+    y_sq_interp = interp_contour(x_sq, y_sq)
+    y_qh_interp = interp_contour(x_qh, y_qh)
+
+    # Fill SERV region: from bottom (min inf freq) to SERV-QERV contour
+    ax.fill_between(
+        x_fill,
+        MIN_INF_FREQ * np.ones_like(x_fill),
+        y_sq_interp,
+        where=~np.isnan(y_sq_interp),
+        color=system_colors['Serv'],
+        alpha=0.5,
+        zorder=0
+    )
+
+    # Fill QERV region: between SERV-QERV and QERV-HERV contours
+    ax.fill_between(
+        x_fill,
+        y_sq_interp,
+        y_qh_interp,
+        where=~np.isnan(y_sq_interp) & ~np.isnan(y_qh_interp) & (y_qh_interp > y_sq_interp),
+        color=system_colors['Qerv'],
+        alpha=0.5,
+        zorder=1
+    )
+
+    # Fill HERV region: from QERV-HERV contour to top (max inf freq)
+    ax.fill_between(
+        x_fill,
+        y_qh_interp,
+        MAX_INF_FREQ * np.ones_like(x_fill),
+        where=~np.isnan(y_qh_interp),
+        color=system_colors['Herv'],
+        alpha=0.5,
+        zorder=0
+    )
+
+    # Add legend handles
+    handles = [
+        plt.Line2D([0], [0], marker='o', color='w', label='Serv', markersize=10, markerfacecolor=system_colors['Serv']),
+        plt.Line2D([0], [0], marker='o', color='w', label='Qerv', markersize=10, markerfacecolor=system_colors['Qerv']),
+        plt.Line2D([0], [0], marker='o', color='w', label='Herv', markersize=10, markerfacecolor=system_colors['Herv']),
+    ]
+
+    # Mask for infeasible frequencies
     freq_mask = Y > max_found_valid_freq
     hatch_mask = np.where(freq_mask, 1, np.nan)
-    # Use contour instead of contourf to ensure hatches (crosshatching) are visible
     if hashes_grey:
-        ax.contourf(X, Y, hatch_mask, levels=[0.5, 1.5], colors='grey', hatches=['xx'])._hatch_color=(0,0,0,1)
+        ax.contourf(X, Y, hatch_mask, levels=[0.5, 1.5], colors='grey', hatches=['xx'],zorder=2)._hatch_color=(0,0,0,1)
         crosshatch_patch = mpatches.Patch(facecolor='grey', hatch='xx', label='Task Freq. Not Possible', edgecolor='black')
     else:
-        ax.contourf(X, Y, hatch_mask, levels=[0.5, 1.5], colors='none', hatches=['xx'])._hatch_color=(0,0,0,1)
+        ax.contourf(X, Y, hatch_mask, levels=[0.5, 1.5], colors='none', hatches=['xx'],zorder=2)._hatch_color=(0,0,0,1)
         crosshatch_patch = mpatches.Patch(facecolor='none', hatch='xx', label='Task Freq. Not Possible', edgecolor='black')
     handles.append(crosshatch_patch)
     ax.legend(handles=handles, title="Systems", loc='lower left')
 
     # Plot a star marker at the currently selected lifetime & inference frequency
-    ax.plot([lifetime_yrs], [inf_freq], marker='*', color='red', markersize=10)
+    ax.plot([lifetime_yrs], [inf_freq], marker='*', color='red', markersize=10, zorder=3)
 
     ax.set_xscale('log')
     ax.set_yscale('log')
@@ -297,7 +415,12 @@ def plot_best_system_region_map_ax(ax, workload_choice, lifetime_yrs, inf_freq, 
     ax.set_xlabel("Lifetime (years)")
     ax.set_ylabel("Task Frequency (tasks/year)")
 
+    # Make grid lines more visible
+    # Only show major gridlines (powers of ten), solid lines
+    ax.grid(True, which='major', color='gray', linestyle='-', linewidth=1.2, alpha=0.7, zorder=5)
+
     return X, Y, hatch_mask
+
 
 def plot_carbon_vs_lifetime(workload_choice, lifetime_yrs, inf_freq, carbon_intensity, core_freq):
     """

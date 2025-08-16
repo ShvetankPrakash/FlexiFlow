@@ -7,8 +7,8 @@ from ipywidgets import interact, FloatSlider, IntSlider, Dropdown
 from lifetime_modeling import *
 import pandas as pd
 
-STAR_SIZE = 250
-X_SIZE = 50
+STAR_SIZE = 350
+X_SIZE = 100
 TEXT_SIZE = 18
 
 workload_accuracies = {
@@ -75,7 +75,8 @@ def plot_accuracy_vs_carbon(
                 marker=row["Marker"],
                 alpha=0.9,
                 edgecolor="k" if row["Marker"] == '*' else None,
-                zorder=2 if row["Marker"] == '*' else 1
+                zorder=2 if row["Marker"] == '*' else 1,
+                linewidths = 2 if row["Marker"] == '*' else 3
             )
 
     for _, row in df.iterrows():
@@ -101,8 +102,8 @@ def plot_accuracy_vs_carbon(
 
     # Custom legend for the variants and marker types
     legend_elements = [
-        Line2D([0], [0], marker='*', color='w', label='Pareto-Optimal', markerfacecolor='gray', markeredgecolor='k', markersize=14, linestyle='None'),
-        Line2D([0], [0], marker='x', color='w', label='Not Pareto-Optimal', markerfacecolor='gray', markeredgecolor='k', markersize=8, linestyle='None'),
+        Line2D([0], [0], marker='*', color='w', label='Pareto-Optimal', markerfacecolor='gray', markeredgecolor='k', markersize=16, linestyle='None'),
+        Line2D([0], [0], marker='x', color='w', label='Not Pareto-Optimal', markerfacecolor='gray', markeredgecolor='k', markersize=12, linestyle='None'),
         Line2D([0], [0], marker='o', color='w', label='Serv', markerfacecolor='tab:blue', markersize=10, linestyle='None'),
         Line2D([0], [0], marker='o', color='w', label='Qerv', markerfacecolor='tab:orange', markersize=10, linestyle='None'),
         Line2D([0], [0], marker='o', color='w', label='Herv', markerfacecolor='tab:green', markersize=10, linestyle='None')
@@ -122,9 +123,20 @@ def plot_accuracy_vs_carbon(
     return df
 
 if __name__ == "__main__":
+    TEXT_SIZE = 23
+    STAR_SIZE = 600
+    X_SIZE = 300
+    plt.rcParams.update({
+        "axes.titlesize": TEXT_SIZE,
+        "axes.labelsize": TEXT_SIZE,
+        "xtick.labelsize": TEXT_SIZE-2,
+        "ytick.labelsize": TEXT_SIZE-2,
+        "legend.fontsize": TEXT_SIZE,
+        "figure.titlesize": TEXT_SIZE
+    }) 
     load_execution_time_from_csv("timing-ablation.csv")
     load_embodied_values_from_csv("embodied-carbon-ablation.csv")
     load_memory_from_csv("memory-ablation.csv")
 
     fig, ax = plt.subplots(figsize=(10, 6))
-    plot_accuracy_vs_carbon(1, 365, 367, ax=ax, save_pdf="plots/kernel_ablation.pdf")
+    plot_accuracy_vs_carbon(1, 365, 367, ax=ax, save_pdf="plots/kernel_ablation.pdf",text_size=TEXT_SIZE)
