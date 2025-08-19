@@ -14,7 +14,7 @@ workload_params_dict = {
     "HVAC Control": {"lifetime_yrs": 10, "inf_freq": 365*24},                # 1x/hour for 10 years (building sensor)
     "Package Tracking": {"lifetime_yrs": 14/365, "inf_freq": 365*24},        # 1x/hour for 2 weeks (disposable tracker)
     "Gesture Recognition": {"lifetime_yrs": 2, "inf_freq": 365*24*60*4},     # 1x/15sec for 2 years (wearable)
-    "Air Pollution Monitoring": {"lifetime_yrs": 5, "inf_freq": 365*24},     # 1x/hour for 5 years (outdoor station)
+    "Air Pollution Monitoring": {"lifetime_yrs": 4, "inf_freq": 365*24},     # 1x/hour for 4 years (outdoor station)
     "Malodor Classification": {"lifetime_yrs": 4, "inf_freq": 365},          # 1x/day for 4 years (clothing sensor)
     "Smart Irrigation Control": {"lifetime_yrs": 0.5, "inf_freq": 365/3},    # 1x/3 days for 6 months (field sensor)
 }
