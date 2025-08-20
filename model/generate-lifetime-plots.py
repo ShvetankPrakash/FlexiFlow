@@ -11,7 +11,7 @@ workload_params_dict = {
     "Arrhythmia Detection": {"lifetime_yrs": 2/52, "inf_freq": 365*24*60},   # 1x/min for 2 weeks (continuous ECG patch)
     "Water Quality Monitoring": {"lifetime_yrs": 7/365, "inf_freq": 365/7},  # 1x over 7 days (single use strip, 7 days to not mess up bounds)
     "HVAC Control": {"lifetime_yrs": 20, "inf_freq": 365*24},                # 1x/hour for 20 years (building sensor)
-    "Package Tracking": {"lifetime_yrs": 14/365, "inf_freq": 365*24},        # 1x/hour for 2 weeks (disposable tracker)
+    "Package Tracking": {"lifetime_yrs": 3/52, "inf_freq": 365*24},          # 1x/hour for 3 weeks (disposable tracker)
     "Gesture Recognition": {"lifetime_yrs": 2, "inf_freq": 365*24*60*4},     # 1x/15sec for 2 years (wearable)
     "Air Pollution Monitoring": {"lifetime_yrs": 4, "inf_freq": 365*24},     # 1x/hour for 4 years (outdoor station)
     "Malodor Classification": {"lifetime_yrs": 4, "inf_freq": 365},          # 1x/day for 4 years (clothing sensor)
