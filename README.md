@@ -18,7 +18,7 @@ Traditional CMOS sillicon design can not be used for these applications due to t
   - [`spike` simulation](#spike-simulation)
 - [RTL-Level Simulation](#rtl-level-simulation)
   - [Compilation](#compilation)
-  - [vvp Simulation](#vvp-simulation)
+  - [`vvp` Simulation](#vvp-simulation)
 - [`FlexiFlow` Modeling](#flexiflow-modeling)
 - [Kernel Ablation Study](#kernel-ablation-study)
 - [References](#references)
@@ -83,7 +83,7 @@ The following table provides an overview of the SDG-based benchmarks implemented
    ```
 
 ### RTL-level Simulation (Icarus Verilog)
-1.  Install iverilog and vvp for cycle-accurate RTL simulation:
+1.  Install `iverilog` and `vvp` for cycle-accurate RTL simulation:
     ```bash
     sudo apt-get install iverilog
     ```
