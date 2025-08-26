@@ -6,6 +6,23 @@ Much of the work in ICT today, looks at sustainable computing (i.e., reducing th
 
 Traditional CMOS sillicon design can not be used for these applications due to the high-cost (raw dollars and environmental footprint) and scale at which these item-level applications will exist. For this reason, research on emerging technologies such as flexible electronics that have a ~1000x reduced footprint[6] and ~100x reduced dollar cost[7] is critical to enable these sustainability applications. 
 
+## Table of Contents
+- [`FlexiBench` Overview](#flexibench-overview)
+- [Installation](#installation)
+  - [RISC-V GNU Toolchain](#risc-v-gnu-toolchain)
+  - [RISC-V Instruction Set Simulator (`spike`)](#risc-v-instruction-set-simulator-spike)
+  - [RTL-level Simulation (Icarus Verilog)](#rtl-level-simulation-icarus-verilog)
+  - [`FlexiBits` Implementations](#flexibits-implementations)
+- [Instruction-level Simulation](#instruction-level-simulation)
+  - [Compiling Benchmarks](#compiling-benchmarks)
+  - [`spike` simulation](#spike-simulation)
+- [RTL-Level Simulation](#rtl-level-simulation)
+  - [Compilation](#compilation)
+  - [vvp Simulation](#vvp-simulation)
+- [`FlexiFlow` Modeling](#flexiflow-modeling)
+- [Kernel Ablation Study](#kernel-ablation-study)
+- [References](#references)
+
 ## `FlexiBench` Overview
 
 The following table provides an overview of the SDG-based benchmarks implemented in this repository:
@@ -23,26 +40,6 @@ The following table provides an overview of the SDG-based benchmarks implemented
 | [Air Pollution Monitoring](src/SDG_11_Sustainable_Communities_and_Cities)          | #11: Sustainable Communities and Cities        | XGBoost                     | 4 years                  | hours-day                                |
 | [Tree Tracking](src/SDG_15_Life_on_Land)                                           | #15: Life on Land                              | Discrete Fourier Transform  | 10 years                 | seconds                                  |
 | [HVAC Control](src/SDG_07_Affordable_and_Clean_Energy)                             | #7: Affordable and Clean Energy                | Random Forest               | 20 years                 | minutes-hours                            |
-
-## `FlexiFlow` Modeling
-
-The `model/` directory contains Jupyter notebooks for analyzing and modeling the FlexiBench workloads. These notebooks provide a framework for exploring the trade-offs between accuracy, energy consumption, and carbon footprint of different system configurations.
-
-- **`FlexiBenchAnalysis.ipynb`**: Instruction-level and cycle-accurate
-  simulation results and analysis of the FlexiBench workloads running on SERV,
-  QERV, and HERV.
-- **`LifetimeModel.ipynb`**: `FlexiFlow` lifetime-aware modeling for
-  carbon-optimal architecture choices across all `FlexiBench` workloads.
-- **`LifetimeModel.ipynb`**: `FlexiFlow` lifetime-aware modeling for
-  carbon-optimal architecture choices across all `FlexiBench` workloads.
-
-## Kernel Ablation Study
-
-The `src/kernel-ablation/` directory provides a case study on the Food Spoilage Detection benchmark, exploring different software kernel implementations and their impact on accuracy and performance. This study demonstrates how `FlexiBench` can be used to evaluate different software and hardware configurations for a given SDG application.
-
-- **Implementations**: The C-code for each kernel implementation can be found in [`src/kernel-ablation/`](src/kernel-ablation/README.md).
-- **Building**: The `scripts/gen-hexes-ablation.sh` script can be used to compile the different kernel implementations.
-- **Analysis**: The `model/KernelAblation.ipynb` notebook provides a detailed analysis of the trade-offs between the different kernel implementations.
 
 ## Installation
 
@@ -66,16 +63,16 @@ The `src/kernel-ablation/` directory provides a case study on the Food Spoilage 
    export PATH="/opt/riscv/bin:$PATH"
    ```
 
-### RISC-V Instruction Set Simulator (Spike)
+### RISC-V Instruction Set Simulator (`spike`)
 1. Install the device-tree-compiler. On Debian/Ubuntu:
    ```bash
    sudo apt-get install device-tree-compiler libboost-regex-dev libboost-system-dev
    ```
-2. Clone the Spike repository:
+2. Clone the `spike` repository:
    ```bash
    git clone https://github.com/riscv-software-src/riscv-isa-sim.git
    ```
-3. Build and install Spike:
+3. Build and install `spike`:
    ```bash
    cd riscv-isa-sim
    mkdir build
@@ -126,15 +123,15 @@ make SDG_02 INFERENCE=multi QUANTIZATION=8
 
 The compiled binaries will be placed in the `build/bin/` directory. The `build/obj/` directory contains the object files, and the `build/src/` directory contains the preprocessed source files.
 
-### Spike simulation
+### `spike` simulation
 
-Instruction-level simulation is performed using Spike, the RISC-V ISA simulator.
+Instruction-level simulation is performed using `spike`, the RISC-V ISA simulator.
 
 **Running a Benchmark:**
 
-After compiling a workload, you can simulate it with Spike:
+After compiling a workload, you can simulate it with `spike`:
 ```bash
-spike -l --isa=rv32e build/bin/[SDG_benchmark_executable]
+`spike` -l --isa=rv32e build/bin/[SDG_benchmark_executable]
 ```
 To debug and verify the output, you can find the memory address of the `result` variable using `objdump`:
 ```bash
@@ -144,7 +141,7 @@ This will show the memory location of `result`, for example:
 ```bash
 80000344 g     O .data  00000001 result
 ```
-You can then run Spike in debug mode to inspect the memory and verify the result:
+You can then run `spike` in debug mode to inspect the memory and verify the result:
 ```bash
 spike -d --isa=rv32e build/bin/[SDG_benchmark_executable]
 (spike) mem 80000344
@@ -198,7 +195,25 @@ Finally, run simulation with generated `FlexiBench` hex files:
 vvp servant_sim.out +firmware=path/to/Flexibench/build/hex/[benchmark].hex
 ```
 
-# References
+## `FlexiFlow` Modeling
+
+The `model/` directory contains Jupyter notebooks for analyzing and modeling the FlexiBench workloads. These notebooks provide a framework for exploring the trade-offs between accuracy, energy consumption, and carbon footprint of different system configurations.
+
+- **`FlexiBenchAnalysis.ipynb`**: Instruction-level and cycle-accurate
+  simulation results and analysis of the FlexiBench workloads running on SERV,
+  QERV, and HERV.
+- **`LifetimeModel.ipynb`**: `FlexiFlow` lifetime-aware modeling for
+  carbon-optimal architecture choices across all `FlexiBench` workloads.
+
+## Kernel Ablation Study
+
+The `src/kernel-ablation/` directory provides a case study on the Food Spoilage Detection benchmark, exploring different software kernel implementations and their impact on accuracy and performance. This study demonstrates how `FlexiBench` can be used to evaluate different software and hardware configurations for a given SDG application.
+
+- **Implementations**: The C-code for each kernel implementation can be found in [`src/kernel-ablation/`](src/kernel-ablation/README.md).
+- **Building**: The `scripts/gen-hexes-ablation.sh` script can be used to compile the different kernel implementations.
+- **Analysis**: The `model/KernelAblation.ipynb` notebook provides a detailed analysis of the trade-offs between the different kernel implementations.
+
+## References
 [1] SDGs
 
 [2] Sustainable Computing Ref.
