@@ -65,8 +65,7 @@ following:
 
 ## `FlexiBench` Benchmarks
 
-The FlexiBench benchmarks are described in detail in the
-[`flexibench/README.md`](./flexibench/README.md) file.
+The FlexiBench benchmarks are described in detail in the [`flexibench`](./flexibench) folder.
 
 ## `FlexiBits` Implementations
 
