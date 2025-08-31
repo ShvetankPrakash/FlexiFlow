@@ -14,18 +14,18 @@ CCFLAGS_SERV = -nostartfiles -march=rv32e_zicsr -mabi=ilp32e -nostdlib -mcmodel=
 PYTHON = python3
 
 # Source directory
-SRC_DIR = src
-ABLATION_SRC = $(SRC_DIR)/kernel-ablation
+SRC_DIR = ../flexibench
+ABLATION_SRC = kernel-ablation/src
 
 # Path to write compiled executables and object files
-BUILD_DIR = build/
+BUILD_DIR = ../build/
 BUILD_BIN_DIR = $(BUILD_DIR)bin
 BUILD_OBJ_DIR = $(BUILD_DIR)obj
 BUILD_SRC_DIR = $(BUILD_DIR)src
 BUILD_HEX_DIR = $(BUILD_DIR)hex
 BUILT_FILES := $(wildcard $(BUILD_BIN_DIR)/*)
 
-TRACE_DIR ?= trace/
+TRACE_DIR ?= ../trace/
 
 # Default values for INFERENCE (multi or single), DATA_SAMPLE_NUM, and
 # QUANTIZATION
@@ -151,11 +151,11 @@ compile_hex: build_dirs
 	$(CC) $(CCFLAGS_SERV) -c $(BUILD_SRC_DIR)/$(C_FILE).c -o $(BUILD_OBJ_DIR)/$(notdir $(C_FILE)).o; 
 	$(CC) $(CCFLAGS_SERV) -o $(BUILD_OBJ_DIR)/$(BIN_FILE)_serv_sample_$(DATA_SAMPLE_NUM).elf $(BUILD_OBJ_DIR)/init-serv.o $(BUILD_OBJ_DIR)/$(notdir $(C_FILE)).o 
 	$(RV_PREFIX)objcopy -O binary $(BUILD_OBJ_DIR)/$(BIN_FILE)_serv_sample_$(DATA_SAMPLE_NUM).elf $(BUILD_OBJ_DIR)/$(BIN_FILE)_serv_sample_$(DATA_SAMPLE_NUM).bin
-	$(PYTHON) scripts/makehex.py $(BUILD_OBJ_DIR)/$(BIN_FILE)_serv_sample_$(DATA_SAMPLE_NUM).bin > $(BUILD_HEX_DIR)/$(BIN_FILE)_serv_sample_$(DATA_SAMPLE_NUM).hex
+	$(PYTHON) cycle-level/makehex.py $(BUILD_OBJ_DIR)/$(BIN_FILE)_serv_sample_$(DATA_SAMPLE_NUM).bin > $(BUILD_HEX_DIR)/$(BIN_FILE)_serv_sample_$(DATA_SAMPLE_NUM).hex
 
 trace: build_dirs
 	@for file in $(BUILT_FILES); do \
-	       	./scripts/gen-trace.sh $$file $(TRACE_DIR) &\
+	       	instruction-level/gen-trace.sh $$file $(TRACE_DIR) &\
 	       	done
 
 kernel_ablation: build_dirs
@@ -204,7 +204,7 @@ compile_ablation_hex: build_dirs
 	$(CC) $(CCFLAGS_SERV) -c $(BUILD_SRC_DIR)/$(C_FILE).c -o $(BUILD_OBJ_DIR)/$(C_FILE).o;
 	$(CC) $(CCFLAGS_SERV) -o $(BUILD_OBJ_DIR)/food_kernel_$(C_FILE)_serv_sample_$(DATA_SAMPLE_NUM).elf $(BUILD_OBJ_DIR)/init-serv.o $(BUILD_OBJ_DIR)/food-spoilage-generic.o $(BUILD_OBJ_DIR)/$(C_FILE).o 
 	$(RV_PREFIX)objcopy -O binary $(BUILD_OBJ_DIR)/food_kernel_$(C_FILE)_serv_sample_$(DATA_SAMPLE_NUM).elf $(BUILD_OBJ_DIR)/food_kernel_$(C_FILE)_serv_sample_$(DATA_SAMPLE_NUM).bin
-	$(PYTHON) scripts/makehex.py $(BUILD_OBJ_DIR)/food_kernel_$(C_FILE)_serv_sample_$(DATA_SAMPLE_NUM).bin > $(BUILD_HEX_DIR)/food_kernel_$(C_FILE)_serv_sample_$(DATA_SAMPLE_NUM).hex
+	$(PYTHON) cycle-level/makehex.py $(BUILD_OBJ_DIR)/food_kernel_$(C_FILE)_serv_sample_$(DATA_SAMPLE_NUM).bin > $(BUILD_HEX_DIR)/food_kernel_$(C_FILE)_serv_sample_$(DATA_SAMPLE_NUM).hex
 
 clean:
 	rm -rf $(BUILD_DIR)

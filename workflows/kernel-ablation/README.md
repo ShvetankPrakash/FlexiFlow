@@ -6,11 +6,11 @@ The following table summarizes the provided implementations and their resulting 
 
 | Kernel Implementation | Accuracy |
 | --------------------- | -------- |
-| [Decision Tree (Small)](decision_tree_small.c) | 74.6% |
-| [Decision Tree (Medium)](decision_tree_medium.c) | 83.8% |
-| [Decision Tree (Large)](decision_tree_large.c) | 95.1% |
-| [K-Nearest Neighbors (Small)](knn_small.c) | 96.4% |
-| [K-Nearest Neighbors (Medium)](knn_medium.c) | 98.6% |
-| [K-Nearest Neighbors (Large)](knn_large.c) | 98.9% |
-| [Logistic Regression](logistic_regression.c) | 98.2% |
-| [MLP](mlp.c) | 91.4% |
+| [Decision Tree (Small)](src/decision_tree_small.c) | 74.6% |
+| [Decision Tree (Medium)](src/decision_tree_medium.c) | 83.8% |
+| [Decision Tree (Large)](src/decision_tree_large.c) | 95.1% |
+| [K-Nearest Neighbors (Small)](src/knn_small.c) | 96.4% |
+| [K-Nearest Neighbors (Medium)](src/knn_medium.c) | 98.6% |
+| [K-Nearest Neighbors (Large)](src/knn_large.c) | 98.9% |
+| [Logistic Regression](src/logistic_regression.c) | 98.2% |
+| [MLP](src/mlp.c) | 91.4% |
