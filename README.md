@@ -22,9 +22,9 @@ To address these challenges, our stack includes:
   - [RISC-V GNU Toolchain](#risc-v-gnu-toolchain)
   - [RISC-V Instruction Set Simulator (`spike`)](#risc-v-instruction-set-simulator-spike)
   - [RTL-level Simulation (Icarus Verilog)](#rtl-level-simulation-icarus-verilog)
-  - [`FlexiBits` Implementations](#flexibits-implementations)
 - [Workflows](#workflows)
 - [`FlexiBench` Benchmarks](#flexibench-benchmarks)
+- [`FlexiBits` Implementations](#flexibits-implementations)
 - [`FlexiFlow` Modeling](#flexiflow-modeling)
 - [References](#references)
 
@@ -54,7 +54,10 @@ sudo apt-get install iverilog
 
 ## Workflows
 
-The core simulation and analysis workflows are located in the [`workflows/`](./workflows) directory. Please refer to the [`workflows/README.md`](./workflows/README.md) for detailed instructions on the following:
+The core simulation and analysis workflows are located in the
+[`workflows/`](./workflows) directory. Please refer to the
+[`workflows/README.md`](./workflows/README.md) for detailed instructions on the
+following:
 
 - **Instruction-level Workflow**: For compiling benchmarks and running them on the `spike` ISA simulator to generate instruction traces for analysis.
 - **Cycle-level Workflow**: For running cycle-accurate RTL-level simulations using Icarus Verilog.
@@ -64,6 +67,12 @@ The core simulation and analysis workflows are located in the [`workflows/`](./w
 
 The FlexiBench benchmarks are described in detail in the
 [`flexibench/README.md`](./flexibench/README.md) file.
+
+## `FlexiBits` Implementations
+
+The RTL implementations of our area-optimized family of cores is shown in
+[`flexibits/`](./flexibits). The three cores presented are SERV, a 1-bit
+datapath core; QERV, a 4-bit datapath core; and HERV, an 8-bit datapath core.
 
 ## `FlexiFlow` Modeling
 
