@@ -6,8 +6,8 @@ RV_PREFIX = /opt/riscv/bin/riscv64-unknown-elf-
 CC = $(RV_PREFIX)gcc
 
 # Flags telling GCC to compile to rv32e, without libraries (e.g. baremetal), to use a different memory model so that we can put our code at 0x80000000, to use the specified linker script, and turn on full optimizations.
-CCFLAGS = -march=rv32e_zicsr -mabi=ilp32e -nostdlib -mcmodel=medany -Tlink.ld -fno-builtin -O3
-CCFLAGS_SERV = -nostartfiles -march=rv32e_zicsr -mabi=ilp32e -nostdlib -mcmodel=medany -Tlink-serv.ld -fno-builtin -O3
+CCFLAGS = -march=rv32e_zicsr -mabi=ilp32e -nostdlib -mcmodel=medany -Tinstruction-level/link.ld -fno-builtin -O3
+CCFLAGS_SERV = -nostartfiles -march=rv32e_zicsr -mabi=ilp32e -nostdlib -mcmodel=medany -Tcycle-level/link-serv.ld -fno-builtin -O3
 
 
 # Python installation
@@ -43,7 +43,7 @@ build_dirs:
 	mkdir -p $(TRACE_DIR)
 
 # Compile all benchmarks
-all: SDG_02 SDG_03_Cardiotocography SDG_03_Arrhythmia_Detection SDG_06 SDG_07 SDG_09 SDG_10 SDG_11 SDG_12 SDG_13 SDG_15
+all: SDG_02 SDG_03_Cardiotocography SDG_03_Arrhythmia_Detection SDG_06 SDG_07 SDG_09 SDG_10 SDG_11 SDG_12 SDG_13 # SDG_15 Excluding SDG_15 due to high runtime
 
 # Compile each benchmark with inference type and sample number
 SDG_02:

@@ -14,7 +14,7 @@ plt.rcParams.update({
 })
 
 # Directory containing the trace files
-directory_path = './trace-figure/'
+directory_path = '../trace/'
 
 # Regular expression patterns for different types of instructions
 branches = re.compile(r'\b(beq|bne|blt|bge|bltu|bgeu|bnez|beqz|bltz|bgez)\b')
@@ -26,16 +26,17 @@ r_types = re.compile(r'add|sub|xor|and|or|mv|csrr')
 shifts_slts = re.compile(r'srai|slli|srli|sra|sll|srl|slt|sltu|slti|sltiu|snez')
 
 name_dir = {
-            "SDG_02": "02. Food Spoilage Detection\n(Decision Tree)",
+            "SDG_02": "07. Food Spoilage Detection\n(Logistic Regression)",
             "SDG_03_arrhythmia": "06. Arrhythmia Detection\n(Bloom Filter)",
-            "SDG_03_cardiotocography": "08. Cardiotocography\n(Classification MLP)",
-            "SDG_06": "04. Water Quality Monitoring\n(Threshold)",
-            "SDG_09": "05. Smart HVAC Monitoring\n(Random Forest)",
+            "SDG_03_cardiotocography": "08. Cardiotocography\n(MLP)",
+            "SDG_06": "03. Water Quality Monitoring\n(Threshold)",
+            "SDG_07": "04. HVAC Control\n(Random Forest)",
+            "SDG_09": "09. Package Tracking\n(MLP)",
             "SDG_10": "01. Gesture Recognition\n(Binary Cosine Similarity)",
-            "SDG_11": "09. Air Pollution Monitoring\n(Regression MLP)",
-            "SDG_12": "03. Odor Detection\n(Decision Tree)",
-            "SDG_13": "07. Smart Irrigation\n(KNN)",
-            "SDG_15": "10. Tree Tracking\n(Discrete Fourier Transform)"
+            "SDG_11": "05. Air Pollution Monitoring\n(XGBoost)",
+            "SDG_12": "02. Malodor Classification\n(Decision Tree)",
+            "SDG_13": "10. Smart Irrigation Control\n(KNN)",
+            "SDG_15": "11. Tree Tracking\n(Discrete Fourier Transform)"
         }
 
 # Define cycles per instruction type
@@ -449,15 +450,15 @@ def process_trace_files(directory_path):
 
 
     # Once all files are processed, plot the instruction mix and total instructions
+    #os.makedirs("plots", exist_ok=True)
     #plot_instruction_mix(instruction_data, total_instructions_data)
     #plot_total_instructions(total_instructions_data)
     #plot_total_cycles_per_instruction(instruction_data, total_instructions_data)
     #plot_instruction_mix_by_cycles(instruction_data, total_instructions_data)
-    plot_runtime_per_core(instruction_data)
+    #plot_runtime_per_core(instruction_data)
 
 
 # Run the processing function
-
-os.makedirs("plots", exist_ok=True)
-process_trace_files(directory_path)
+if __name__ == '__main__':
+    process_trace_files(directory_path)
 

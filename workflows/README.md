@@ -93,7 +93,7 @@ python3 instruction-level/measure-stack.py <trace-file>
 The remaining volatile and non-volatile memory requirements can be determined by
 analyzing the ELF descriptions of compiled programs:
 ```bash
-riscv32-unknown-elf-readelf -a <compiled-benchmark-executable>
+riscv64-unknown-elf-readelf -a <compiled-benchmark-executable>
 ```
 Volatile memory requirement (in addition to any stack usage) can be determined
 from analyzing `.data` section size. Non-volatile memory requirements can be
@@ -137,6 +137,8 @@ Finally, run simulation with generated `FlexiBench` hex files:
 ```bash
 ./servant_sim.out +firmware=path/to/Flexibench/build/hex/[benchmark].hex
 ```
+
+The output of this simulation will be the value of the `result` variable.
 
 The `cycle-level/gen-vcd.sh` script can be used to run simulations and generate VCD waveform files for further analysis. After generating VCDs, the `cycle-level/calc-times.py` script can be used to parse the VCDs and report simulation times.
 
