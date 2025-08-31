@@ -1,7 +1,7 @@
 /*
  * servile.v : Top-level for Servile, the SERV convenience wrapper
  *
- * SPDX-FileCopyrightText: 2024 Olof Kindgren <olof.kindgren@gmail.com>
+ * SPDX-FileCopyrightText: 2024 FlexiFlow Authors
  * SPDX-License-Identifier: Apache-2.0
  */
 

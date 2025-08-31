@@ -2,7 +2,7 @@
  * servile_arbiter.v : I/D arbiter for the servile convenience wrapper.
  *  Relies on the fact that not ibus and dbus are active at the same time.
  *
- * SPDX-FileCopyrightText: 2024 Olof Kindgren <olof.kindgren@gmail.com>
+ * SPDX-FileCopyrightText: 2024 FlexiFlow Authors
  * SPDX-License-Identifier: Apache-2.0
  */
 

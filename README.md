@@ -20,55 +20,26 @@ Traditional CMOS sillicon design can not be used for these applications due to t
 ## Installation
 
 ### RISC-V GNU Toolchain
-1. Install the necessary prerequisites for your operating system. For example, on Debian/Ubuntu:
-   ```bash
-   sudo apt-get install autoconf automake autotools-dev curl python3 libmpc-dev libmpfr-dev libgmp-dev gawk build-essential bison flex texinfo gperf libtool patchutils bc zlib1g-dev libexpat-dev
-   ```
-2. Clone the toolchain repository:
-   ```bash
-   git clone --recursive https://github.com/riscv/riscv-gnu-toolchain
-   cd riscv-gnu-toolchain
-   ```
-3. Configure, build, and install the toolchain:
-   ```bash
-   ./configure --prefix=/opt/riscv --enable-multilib
-   make
-   ```
-4. Finally, add the toolchain to your `PATH`:
-   ```bash
-   export PATH="/opt/riscv/bin:$PATH"
-   ```
+
+For program compilation, ELF header analysis, and hexfile generation, install
+the RISC-V GNU Toolchain by following the instructions from
+<https://github.com/riscv-collab/riscv-gnu-toolchain>.
 
 ### RISC-V Instruction Set Simulator (`spike`)
-1. Install the device-tree-compiler. On Debian/Ubuntu:
-   ```bash
-   sudo apt-get install device-tree-compiler libboost-regex-dev libboost-system-dev
-   ```
-2. Clone the `spike` repository:
-   ```bash
-   git clone https://github.com/riscv-software-src/riscv-isa-sim.git
-   ```
-3. Build and install `spike`:
-   ```bash
-   cd riscv-isa-sim
-   mkdir build
-   cd build
-   ../configure
-   make
-   sudo make install
-   ```
+
+For instruction-level tracing and simulation necessary for memory profiling,
+work measurement, and instruction mix analysis, install the RISC-V `spike`
+instruction set simulator from
+<https://github.com/riscv-software-src/riscv-isa-sim>.
 
 ### RTL-level Simulation (Icarus Verilog)
-1.  Install `iverilog` and `vvp` for cycle-accurate RTL simulation:
-    ```bash
-    sudo apt-get install iverilog
-    ```
 
-### `FlexiBits` Implementations
-1. Pull the submodule implementations for SERV, QERV, and HERV:
-    ```bash
-    git submodule update --init --recursive
-    ```
+Finally, install Icarus Verilog for RTL-level simulation of our `FlexiBits`
+cores:
+
+```bash
+sudo apt-get install iverilog
+```
 
 ## Workflows
 

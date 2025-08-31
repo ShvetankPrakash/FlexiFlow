@@ -1,7 +1,7 @@
 /*
  * servile_mux.v : Simple Wishbone mux for the servile convenience wrapper.
  *
- * SPDX-FileCopyrightText: 2024 Olof Kindgren <olof.kindgren@gmail.com>
+ * SPDX-FileCopyrightText: 2024 FlexiFlow Authors
  * SPDX-License-Identifier: Apache-2.0
  */
 
