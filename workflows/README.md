@@ -123,7 +123,7 @@ iverilog -o servant_sim.out -y rtl/ -y  servant/ -y serving/ -y servile/ -y benc
 
 Test the compiled `servant_sim.out` file. Run Hello World Simulation using this command:
 ```
-vvp servant_sim.out  +uart_baudrate=115200 +firmware=sw/hello_uart.hex
+./servant_sim.out +firmware=../sw/hello_uart.hex
 ```
 You will see the following output:
 ```
@@ -135,7 +135,7 @@ Test complete
 
 Finally, run simulation with generated `FlexiBench` hex files:
 ```bash
-vvp servant_sim.out +firmware=path/to/Flexibench/build/hex/[benchmark].hex
+./servant_sim.out +firmware=path/to/Flexibench/build/hex/[benchmark].hex
 ```
 
 The `cycle-level/gen-vcd.sh` script can be used to run simulations and generate VCD waveform files for further analysis. After generating VCDs, the `cycle-level/calc-times.py` script can be used to parse the VCDs and report simulation times.
