@@ -1,10 +1,21 @@
-# Flexibench / Sustainabench
+# Lifetime-aware Design for Item-Level Intelligence
+## Overview: FlexiBench, FlexiBits, & FlexiFlow 
 
-The United Nations’ (UN) 2030 Agenda for Sustainable Development established a shared framework aiming toward peace and prosperity for people and the planet. At its core are 17 Sustainable Development Goals (SDGs)[1], a call to action for all countries to work toward a more environmentally, economically, and socially sustainable future.
+This repository contains a full-stack, open-source framework for designing and analyzing systems that enable item-level intelligence (ILI) by embedding computation directly into disposable, low-cost items like food packaging, textiles, and medical patches.
 
-Much of the work in ICT today, looks at sustainable computing (i.e., reducing the footprint of computing) [2,3,4]; however there exists a unique opportunity to levarge *computing for sustainability*. In fact, the digital transformation is supposed to enable 20% of the savings outlined in the Paris Accord [5]. But there is currently no systematic framework and benchmark to outline how researchers in computing can work on these goals. This benchmark aims to capture workloads from the SDGs that computing can help address, serving as a call to action and roadmap for computer architects to systematically research. 
+Many ILI applications represent **computing *for* sustainability** where computing directly improves sustainability outcomes (e.g., food waste reduction, health access, water conservation). Specifically, ILI presents a unique opportunity to help make progress towards the [United Nations Sustainable Development Goals](https://sdgs.un.org/goals) (UN SDGs).
 
-Traditional CMOS sillicon design can not be used for these applications due to the high-cost (raw dollars and environmental footprint) and scale at which these item-level applications will exist. For this reason, research on emerging technologies such as flexible electronics that have a ~1000x reduced footprint[6] and ~100x reduced dollar cost[7] is critical to enable these sustainability applications. 
+While ILI opens new avenues for computing to directly support sustainability, it also introduces a distinct set of constraints not addressed by traditional system design. Conventional silicon-based systems are prohibitively expensive, both in terms of dollar cost and environmental impact, when scaled to trillions of low-cost, disposable products. To meet these constraints, our framework targets **flexible electronics**, an emerging technology that enables ultra-low-cost, physically conformable devices with drastically reduced embodied carbon. However, these benefits come with severe limitations as flexible electronics are currently limited to kilohertz clock speeds and support only thousands of gates.
+
+Moreover, environmental impact becomes a first-order concern at ILI scale. With deployments reaching trillions of units, even small inefficiencies in system design can accumulate massive carbon footprints. [Jevons' paradox](https://www.sciencedirect.com/science/article/pii/S0921800905001084?casa_token=GKhR4Fr7TeMAAAAA:_se9ymzPJtdgDEwh250lnxzMvkxi53SzVfF2ialbQqMwQ_WXsUMMbBp2moyKndKKEfp_ZEfqK-o) further warns that gains in efficiency can lead to higher overall consumption, underscoring the need for design frameworks that consider both embodied and operational carbon footprints. Furthermore, ILI workloads exhibit extremely heterogeneous lifetimes (1000x variation), which suggests that a one-size-fits-all hardware approach is suboptimal.
+
+To address these challenges, our stack includes:
+
+- **FlexiBench**: A suite of 11 real-world benchmarks aligned with the UN SDGs, capturing the diversity of workloads relevant for ILI (e.g., spoilage detection, fetal health monitoring, smart irrigation). 
+  
+- **FlexiBits**: A family of open-source, bit-serial RISC-V microprocessors (1-bit, 4-bit, 8-bit) optimized for extreme-area-constrained technologies like flexible electronics.
+
+- **FlexiFlow**: A lifetime-aware design model that guides architecture selection based on expected application lifetime to minimize total carbon footprint.
 
 ## Table of Contents
 - [Installation](#installation)
@@ -60,18 +71,3 @@ Our final `FlexiFlow` model is presented in
 [`flexiflow/LifetimeModel.ipynb`](./flexiflow/LifetimeModel.ipynb). This
 notebook provides the framework for exploring the trade-offs between embodied
 and operational carbon footprint based on workload lifetime.
-
-## References
-[1] SDGs
-
-[2] Sustainable Computing Ref.
-
-[3] Sustainable Computing Ref.
-
-[4] Sustainable Computing Ref.
-
-[5] World Economic Forum 
-
-[6] Pragmatic Sustainability White Paper
-
-[7] Pragmatic Ref.
