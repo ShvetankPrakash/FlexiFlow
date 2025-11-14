@@ -23,8 +23,7 @@ volatile unsigned char rr_bin_num, drr_bin_num;
 volatile unsigned char prev_ecg_data;
 volatile unsigned char rpeak_pos_valid;
 volatile char GPIO_ready = 0;
-volatile int num_incorrect = 0;
-volatile int correct_result;
+volatile char result = -1;
 
 void update_vectors() {
    volatile unsigned char bloom_filter_hash_index;
@@ -155,7 +154,6 @@ void scan_onesecond_ecg_data() {
     th_init = max_aclt_val >> 1;
 }
 
-// Emre: A simplified version of Tekeste's ACLT algorithm
 // The initial threashold value is calculated in the first second of the ECG data
 void aclt(volatile unsigned char curr_ecg_data) {
     volatile unsigned char i;
@@ -228,9 +226,9 @@ void aclt(volatile unsigned char curr_ecg_data) {
 }
 
 
-int Tekeste_RR_Detection() {
+int Appt_RR_Detection() {
  volatile unsigned char i;
- char parity_with_python = 1;
+ char GPIO = -1;
 
  for (i=0; i<3; i++) rpeaks_pos_fifo[i]                    = -1;
  for (i=0; i<ACLT_FIFO_SIZE; i++) aclt_fifo[i]             = 0;
@@ -251,14 +249,11 @@ int Tekeste_RR_Detection() {
     update_vectors();
     appt_predict(); 
 
-    if (prediction_ready == 1) {
-        GPIO_ready = 1;
-        if (Golden_Reference_AF[inference_num] != af_prediction) {
-            parity_with_python = 0;
-            num_incorrect++;
-        }
 
+    if (prediction_ready == 1) {
         inference_num++;
+        GPIO_ready = 1;
+        GPIO = af_prediction;
     } else {
         GPIO_ready = 0;
     }
@@ -266,11 +261,10 @@ int Tekeste_RR_Detection() {
     sample_no++;
  }
 
- return parity_with_python;
+ return GPIO;
 }
 
 int main() {
-    correct_result = Tekeste_RR_Detection();
-    // printf("%d\n", correct_result);
+    result = Appt_RR_Detection();
     return 0;
 }

@@ -53,7 +53,7 @@ SDG_03_Cardiotocography:
 	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being_Cardiotocography C_FILE=cardiotocography BIN_FILE=SDG_03_cardiotocography
 
 SDG_03_Arrhythmia_Detection:
-	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being_Arrhythmia_Detection C_FILE=tekeste BIN_FILE=SDG_03_arrhythmia_detection
+	$(MAKE) compile_inference SDG_DIR=SDG_03_Good_Health_and_Well_Being_Arrhythmia_Detection C_FILE=appt BIN_FILE=SDG_03_arrhythmia_detection
 
 SDG_06:
 	$(MAKE) compile_inference SDG_DIR=SDG_06_Clean_Water_and_Sanitation C_FILE=water_quality_monitoring BIN_FILE=SDG_06_water_quality_monitoring
@@ -111,7 +111,7 @@ SDG_03_Cardiotocography_serv:
 	$(MAKE) compile_hex SDG_DIR=SDG_03_Good_Health_and_Well_Being_Cardiotocography C_FILE=cardiotocography BIN_FILE=SDG_03_cardiotocography
 
 SDG_03_Arrhythmia_Detection_serv:
-	$(MAKE) compile_hex SDG_DIR=SDG_03_Good_Health_and_Well_Being_Arrhythmia_Detection C_FILE=tekeste BIN_FILE=SDG_03_arrhythmia_detection
+	$(MAKE) compile_hex SDG_DIR=SDG_03_Good_Health_and_Well_Being_Arrhythmia_Detection C_FILE=appt BIN_FILE=SDG_03_arrhythmia_detection
 
 SDG_06_serv:
 	$(MAKE) compile_hex SDG_DIR=SDG_06_Clean_Water_and_Sanitation C_FILE=water_quality_monitoring BIN_FILE=SDG_06_water_quality_monitoring
